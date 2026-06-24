@@ -472,14 +472,6 @@ function DesktopRuleDetail({
               {status === "seen" ? "✓ Read" : "Mark as Read"}
             </button>
           )}
-          <Link href={`/quiz/${rule.id}`}
-            className="px-6 py-3 rounded-2xl font-black text-sm text-white press flex items-center gap-2"
-            style={{
-              background: status === "confident" ? "#16a34a" : "#6366f1",
-              boxShadow: "0 4px 12px rgba(99,102,241,0.3)",
-            }}>
-            {status === "confident" ? "🏆" : "📝"} Quiz
-          </Link>
         </div>
       </div>
     </div>

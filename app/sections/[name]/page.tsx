@@ -46,7 +46,11 @@ export default function SectionPage({ params }: { params: Promise<{ name: string
             <span className="text-[10px] font-bold text-slate-400">{currentIndex + 1}/{sectionRules.length}</span>
           </div>
         </div>
-        <div className="w-8" />
+        <Link href={`/test/${encodeURIComponent(sectionName)}`}
+          className="px-3 py-1.5 rounded-xl text-[11px] font-black text-white press flex-shrink-0"
+          style={{ background: color, boxShadow: `0 2px 8px ${color}40` }}>
+          Take Test
+        </Link>
       </div>
 
       <div className="flex-1 overflow-hidden">

@@ -244,7 +244,7 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
               status === "seen" ? "bg-sky-50 text-sky-700 border border-sky-200" :
               "bg-amber-50 text-amber-700 border border-amber-200"
             }`}>
-              {status === "confident" ? "⭐ Confident — quiz passed" :
+              {status === "confident" ? "⭐ Confident — section test passed" :
                status === "seen" ? "👁 Marked as Read" :
                "🔄 Flagged for Revision"}
             </div>
@@ -276,15 +276,6 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
               </button>
             )}
 
-            <Link href={`/quiz/${rule.id}`}
-              className="flex-1 py-3 rounded-xl font-bold text-[12px] text-white press flex items-center justify-center gap-1"
-              style={{
-                background: status === "confident" ? "#16a34a" : "#6366f1",
-                boxShadow: "0 4px 12px rgba(99,102,241,0.25)",
-              }}>
-              {status === "confident" ? "🏆" : "📝"}
-              <span>{status === "confident" ? "Retake" : "Quiz"}</span>
-            </Link>
           </div>
         </div>
       </div>
