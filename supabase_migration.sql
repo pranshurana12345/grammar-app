@@ -1,35 +1,25 @@
--- Run this in Supabase → SQL Editor → New query → Run
+-- Grammy cross-device sync — run in Supabase → SQL Editor → New query → Run.
+--
+-- The app uses 5 local PIN "accounts" (s1..s5), NOT Supabase Auth. So we key by
+-- a plain text student_id. Each student's state is stored as one JSON blob per
+-- key (e.g. 'progress', 'quiz').
 
--- Table: rule progress per user
-create table if not exists rule_progress (
-  user_id uuid references auth.users(id) on delete cascade not null,
-  rule_id integer not null,
-  status text check (status in ('unseen', 'seen', 'confident', 'revise')) not null default 'unseen',
-  updated_at timestamptz default now(),
-  primary key (user_id, rule_id)
+create table if not exists app_state (
+  student_id text not null,
+  key        text not null,
+  value      jsonb not null,
+  updated_at timestamptz not null default now(),
+  primary key (student_id, key)
 );
 
--- Table: quiz scores per user
-create table if not exists quiz_scores (
-  id uuid default gen_random_uuid() primary key,
-  user_id uuid references auth.users(id) on delete cascade not null,
-  rule_id integer not null,
-  score integer not null,
-  passed boolean not null,
-  taken_at timestamptz default now()
-);
+-- Row Level Security is ON, with an open policy: the public anon key (which ships
+-- in the app) may read/write. This is acceptable for a small private group of
+-- known users sharing 5 PIN accounts — it is NOT private between those accounts.
+alter table app_state enable row level security;
 
--- Enable Row Level Security (users only see their own data)
-alter table rule_progress enable row level security;
-alter table quiz_scores enable row level security;
-
--- Policies
-create policy "Users manage own progress"
-  on rule_progress for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-create policy "Users manage own quiz scores"
-  on quiz_scores for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+drop policy if exists "anon can read/write app_state" on app_state;
+create policy "anon can read/write app_state"
+  on app_state for all
+  to anon
+  using (true)
+  with check (true);

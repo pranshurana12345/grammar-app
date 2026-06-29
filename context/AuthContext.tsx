@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { STUDENTS, type Student } from "@/data/students";
+import { syncDown } from "@/lib/storage";
 
 const SESSION_KEY = "grammar_current_student";
 
@@ -29,17 +30,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(SESSION_KEY);
-      if (raw) {
-        const saved = JSON.parse(raw) as { id: string };
-        const found = STUDENTS.find((s) => s.id === saved.id) ?? null;
-        setStudent(found);
+    (async () => {
+      try {
+        const raw = localStorage.getItem(SESSION_KEY);
+        if (raw) {
+          const saved = JSON.parse(raw) as { id: string };
+          const found = STUDENTS.find((s) => s.id === saved.id) ?? null;
+          setStudent(found);
+          // Pull this student's cloud data before showing the app (instant no-op
+          // when Supabase isn't configured).
+          if (found) await syncDown(found.id);
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
-    setLoading(false);
+      setLoading(false);
+    })();
   }, []);
 
   function login(id: string, pin: string): boolean {
@@ -47,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!found || found.pin !== pin) return false;
     localStorage.setItem(SESSION_KEY, JSON.stringify({ id: found.id }));
     setStudent(found);
+    void syncDown(found.id); // pull this account's data in the background
     return true;
   }
 
