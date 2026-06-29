@@ -64,7 +64,7 @@ export default function IdiomsPage() {
 
         {/* Mobile-only reel hint */}
         <p className="no-print lg:hidden text-[12px] font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2 mb-3 flex items-center gap-2">
-          <span>▶️</span> Tap any idiom for a full-screen reel — swipe up to flip through.
+          <span>▶️</span> Tap any idiom for a reel — random order, swipe to flip, 👁 to practice.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
