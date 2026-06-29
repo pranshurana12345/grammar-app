@@ -209,7 +209,7 @@ export default function VerbFormsPage() {
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L5 7L9 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </Link>
             <div className="hidden lg:flex items-center gap-1.5 text-sm text-slate-400 flex-shrink-0">
-              <Link href="/reference" className="hover:text-slate-600 press">Reference</Link>
+              <Link href="/reference" className="hover:text-slate-600 press">Study Hub</Link>
               <span>/</span>
             </div>
             <div className="flex-1 min-w-0">

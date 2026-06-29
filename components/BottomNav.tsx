@@ -72,7 +72,7 @@ const items = [
   },
   {
     href: "/reference",
-    label: "Ref",
+    label: "Study",
     icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
         <rect x="3" y="3" width="16" height="16" rx="3"

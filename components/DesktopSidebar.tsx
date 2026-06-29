@@ -62,7 +62,7 @@ const NAV = [
   },
   {
     href: "/reference",
-    label: "Reference",
+    label: "Study Hub",
     icon: (
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
         <rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />

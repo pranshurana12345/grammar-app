@@ -38,7 +38,7 @@ export default function ConfusablesPage() {
           <div className="flex items-center gap-3">
             <Link href="/reference" className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-sm press lg:hidden">←</Link>
             <div className="hidden lg:flex items-center gap-2">
-              <Link href="/reference" className="text-slate-400 text-sm hover:text-slate-600 press">Reference</Link>
+              <Link href="/reference" className="text-slate-400 text-sm hover:text-slate-600 press">Study Hub</Link>
               <span className="text-slate-300">/</span>
             </div>
             <div>
