@@ -90,24 +90,28 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
           const isKnown = known.has(idi.phrase);
           return (
             <section key={`${idi.phrase}-${i}`} data-reel={i}
-              className="reel-page relative flex flex-col items-center justify-center text-center pl-9 pr-20"
+              className="reel-page relative overflow-hidden"
               style={{ height: "100dvh", background: GRADIENTS[i % GRADIENTS.length] }}>
 
-              <div className="text-[112px] leading-none mb-6 idiom-float" style={{ filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.25))" }}>
-                {idi.pic}
+              {/* big emoji — hero, upper area */}
+              <div className="absolute inset-x-0 top-[17%] flex justify-center pointer-events-none">
+                <span className="text-[140px] leading-none idiom-float" style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }}>
+                  {idi.pic}
+                </span>
               </div>
 
-              <div className="idiom-rise max-w-sm">
-                <h2 className="text-white text-[29px] font-black tracking-tight leading-tight mb-3" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.25)" }}>
+              {/* caption — bottom-left, Instagram style */}
+              <div className="absolute left-6 right-[88px] bottom-28 text-left idiom-rise">
+                <h2 className="text-white text-[31px] font-black tracking-tight leading-[1.08] mb-2.5" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.30)" }}>
                   {idi.phrase}
                 </h2>
                 {show ? (
                   <>
-                    <p className="text-white/95 text-[16px] font-semibold leading-snug mb-4">{idi.meaning}</p>
-                    <p className="text-white/75 text-[13.5px] italic leading-snug">“{idi.example}”</p>
+                    <p className="text-white text-[17px] font-semibold leading-snug mb-3">{idi.meaning}</p>
+                    <p className="text-white/70 text-[14px] italic leading-snug">“{idi.example}”</p>
                   </>
                 ) : (
-                  <div className="mt-1">
+                  <div>
                     <p className="text-white/85 text-[15px] font-semibold mb-3">🤔 Recall the meaning…</p>
                     <button onClick={() => toggleReveal(idi.phrase)}
                       className="px-5 py-2 rounded-full text-[13px] font-bold text-white press"
@@ -134,7 +138,7 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
               </div>
 
               {i === 0 && (
-                <div className="absolute bottom-9 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/80 pointer-events-none">
+                <div className="absolute top-[49%] left-1/2 -translate-x-1/2 flex flex-col items-center text-white/65 pointer-events-none">
                   <svg width="20" height="20" viewBox="0 0 22 22" fill="none" className="idiom-float">
                     <path d="M11 16V5M6 10l5-5 5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
