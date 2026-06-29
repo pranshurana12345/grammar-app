@@ -90,18 +90,16 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
           const isKnown = known.has(idi.phrase);
           return (
             <section key={`${idi.phrase}-${i}`} data-reel={i}
-              className="reel-page relative overflow-hidden"
+              className="reel-page relative overflow-hidden flex flex-col justify-center pl-6 pr-[86px] pb-28"
               style={{ height: "100dvh", background: GRADIENTS[i % GRADIENTS.length] }}>
 
-              {/* big emoji — hero, upper area */}
-              <div className="absolute inset-x-0 top-[17%] flex justify-center pointer-events-none">
-                <span className="text-[140px] leading-none idiom-float" style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }}>
-                  {idi.pic}
-                </span>
-              </div>
+              {/* hero emoji */}
+              <span className="self-start text-[132px] leading-none mb-5 idiom-float" style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }}>
+                {idi.pic}
+              </span>
 
-              {/* caption — bottom-left, Instagram style */}
-              <div className="absolute left-6 right-[88px] bottom-28 text-left idiom-rise">
+              {/* caption */}
+              <div className="text-left idiom-rise">
                 <h2 className="text-white text-[31px] font-black tracking-tight leading-[1.08] mb-2.5" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.30)" }}>
                   {idi.phrase}
                 </h2>
@@ -138,7 +136,7 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
               </div>
 
               {i === 0 && (
-                <div className="absolute top-[49%] left-1/2 -translate-x-1/2 flex flex-col items-center text-white/65 pointer-events-none">
+                <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/65 pointer-events-none">
                   <svg width="20" height="20" viewBox="0 0 22 22" fill="none" className="idiom-float">
                     <path d="M11 16V5M6 10l5-5 5 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
