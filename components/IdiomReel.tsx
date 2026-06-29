@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import type { Idiom } from "@/data/idioms";
+import EmojiPic from "@/components/EmojiPic";
 
 const GRADIENTS = [
   "linear-gradient(160deg,#6d28d9 0%,#4f46e5 100%)",
@@ -94,9 +95,8 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
               style={{ height: "100dvh", background: GRADIENTS[i % GRADIENTS.length] }}>
 
               {/* hero emoji */}
-              <span className="self-start text-[132px] leading-none mb-5 idiom-float" style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }}>
-                {idi.pic}
-              </span>
+              <EmojiPic pic={idi.pic} single={132} className="self-start mb-5 idiom-float"
+                style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }} />
 
               {/* caption */}
               <div className="text-left idiom-rise">

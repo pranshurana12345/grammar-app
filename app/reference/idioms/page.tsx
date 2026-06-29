@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
+import EmojiPic from "@/components/EmojiPic";
 import { IDIOMS } from "@/data/idioms";
 
 const ACCENT = "#d97706"; // amber — the Idioms theme colour
@@ -59,9 +60,9 @@ export default function IdiomsPage() {
             <div key={idi.phrase}
               className="bg-white rounded-2xl border border-slate-100 p-4 flex items-start gap-3.5 print-avoid-break"
               style={{ boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 text-[28px] leading-none"
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
                 style={{ background: `${ACCENT}12`, border: `1px solid ${ACCENT}22` }}>
-                {idi.pic}
+                <EmojiPic pic={idi.pic} single={28} />
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="text-[15px] font-black text-slate-900 tracking-tight leading-tight">{idi.phrase}</h2>
