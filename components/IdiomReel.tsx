@@ -96,7 +96,7 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
 
               {/* hero emoji */}
               <EmojiPic pic={idi.pic} single={132} className="self-start mb-5 idiom-float"
-                style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }} />
+                filter={idi.picFilter} style={{ filter: "drop-shadow(0 12px 26px rgba(0,0,0,0.30))" }} />
 
               {/* caption */}
               <div className="text-left idiom-rise">

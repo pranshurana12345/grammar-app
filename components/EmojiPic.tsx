@@ -14,15 +14,16 @@ function segments(pic: string): string[] {
 }
 
 export default function EmojiPic({
-  pic, single, className, style,
-}: { pic: string; single: number; className?: string; style?: React.CSSProperties }) {
+  pic, single, className, style, filter,
+}: { pic: string; single: number; className?: string; style?: React.CSSProperties; filter?: string }) {
   const units = segments(pic);
   const size = Math.round(single / (0.5 * units.length + 0.5));
   const flank = units.length >= 3 && units[0] === units[units.length - 1];
+  const mergedFilter = [style?.filter, filter].filter(Boolean).join(" ") || undefined;
 
   return (
     <span className={`inline-flex items-center whitespace-nowrap ${className ?? ""}`}
-      style={{ fontSize: size, lineHeight: 1, ...style }}>
+      style={{ fontSize: size, lineHeight: 1, ...style, filter: mergedFilter }}>
       {units.map((u, i) => (
         <span key={i} style={i === 0 && flank ? { display: "inline-block", transform: "scaleX(-1)" } : undefined}>
           {u}
