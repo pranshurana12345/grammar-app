@@ -9,7 +9,9 @@ export type Rule = {
   hinglishTip?: string;
   visual?: string;
   correct: string[];
+  correctWhy?: string[];   // parallel to correct[] — plain-language explanation for each
   wrong?: string[];
+  wrongWhy?: string[];     // parallel to wrong[] — why it's wrong in plain language
   extras?: string[];
   star?: boolean;
   table?: { headers: string[]; rows: string[][] };
@@ -49,9 +51,17 @@ export const rules: Rule[] = [
       "Walk properly, lest you fall.",
       "Walk properly, lest you should fall.",
     ],
+    correctWhy: [
+      "'Lest' already carries a negative meaning ('for fear that'), so no extra negative word or modal is needed — the verb 'fall' stands alone in simple present.",
+      "'Should' is the only modal allowed after 'lest'; this sentence correctly pairs 'lest' with 'should fall'.",
+    ],
     wrong: [
       "Walk properly, lest you should NOT fall. ❌ (already negative)",
       "Walk properly, lest you MAY fall. ❌ (only should)",
+    ],
+    wrongWhy: [
+      "'Lest' is already negative, so adding 'not' creates a double negative that flips the meaning — you would be saying 'for fear that you don't fall', which is the opposite of the intended warning.",
+      "'May' cannot follow 'lest' — the only modal allowed with 'lest' is 'should', making 'may fall' incorrect here.",
     ],
     star: true,
   },
@@ -69,6 +79,11 @@ export const rules: Rule[] = [
       "Riya plays well, doesn't she?",
       "Riya played well, didn't she?",
       "The earth revolves around the sun, doesn't it?",
+    ],
+    correctWhy: [
+      "'Plays' is a simple present verb with no helping verb, so the tag is formed with 'does'; the sentence is positive, making the tag negative 'doesn't'.",
+      "'Played' is simple past with no helping verb, so the tag uses 'did'; the positive sentence gives us the negative 'didn't'.",
+      "'Revolves' is a simple present singular verb with no helping verb, so 'does' is used in the tag; 'the earth' is singular and non-personal, so the pronoun is 'it'.",
     ],
     star: false,
   },
@@ -96,7 +111,15 @@ export const rules: Rule[] = [
       "I had my lunch, didn't I? ✅",
       "I have written a book, haven't I? ✅ (have = auxiliary here)",
     ],
+    correctWhy: [
+      "Here 'have' is the main verb (it means 'possess' a pen), so the tag treats it like any ordinary verb and uses 'do' — giving us 'don't I'.",
+      "'Had' is being used as the main verb (ate lunch), not as a helping verb, so the tag uses 'did' rather than 'hadn't'.",
+      "Here 'have' is the helping verb paired with the past participle 'written', making this present perfect tense — so the tag correctly mirrors the helping verb as 'haven't'.",
+    ],
     wrong: ["I have a beautiful pen, haven't I? ❌"],
+    wrongWhy: [
+      "Because 'have' here means 'possess' (main verb), the tag must use 'don't' — using 'haven't' incorrectly treats it as a helping verb.",
+    ],
     star: true,
   },
   {
@@ -107,11 +130,18 @@ export const rules: Rule[] = [
     title: "Negative Words → Positive Tag",
     rule: "These words are already NEGATIVE — so the tag must be POSITIVE: seldom, hardly, scarcely, barely, rarely, few, little, never, no, none, nothing.",
     hindiTip: "ये सब 'नकारात्मक' शब्द हैं। Sentence negative हुआ तो tag positive होगा। A little / A few = positive होते हैं।",
+    hinglishTip: "Negative words jab sentence mein aate hain toh sentence pehle se hi negative ho jaata hai. Toh tag positive hona chahiye. 'A little' aur 'a few' ko mat bhoolna — yeh POSITIVE hote hain, isliye inke saath normal tag (negative) aata hai.",
     correct: [
       "Barking dogs seldom bite, do they?",
       "Few teachers solved it, did they?",
       "He has little patience, does he?",
       "He did a little work, didn't he? (a little = positive)",
+    ],
+    correctWhy: [
+      "'Seldom' is a negative word, making the sentence already negative in meaning — so the tag flips to positive 'do they'.",
+      "'Few' signals almost none, giving the sentence a negative meaning — the tag therefore uses the positive 'did they'.",
+      "'Little' (without 'a') means almost no patience — a negative sense — so the tag is the positive 'does he'.",
+      "'A little' means some work was done, which is positive — so the tag follows normal rules and becomes the negative 'didn't he'.",
     ],
     star: false,
   },
@@ -123,9 +153,14 @@ export const rules: Rule[] = [
     title: "Let's → Shall We (Always!)",
     rule: "With Let's (Let us), the tag is ALWAYS 'shall we?' — regardless of positive or negative sentence.",
     hindiTip: "Let's देखते ही tag = shall we? — बस इतना याद रखो!",
+    hinglishTip: "Let's = Let us — jab bhi yeh dekho, tag hamesha 'shall we?' hoga. Chahe sentence positive ho ya negative — dono cases mein sirf 'shall we?' aata hai. Koi alternative nahi hai.",
     correct: [
       "Let's have a class, shall we?",
       "Let's not disturb her, shall we?",
+    ],
+    correctWhy: [
+      "'Let's' is a suggestion that includes the speaker, so the tag is always the fixed phrase 'shall we' — no other tag works here.",
+      "Even though the sentence is negative ('not disturb'), the tag stays the same: 'shall we' — 'Let's' always takes this fixed tag regardless of positive or negative.",
     ],
     star: false,
   },
@@ -137,11 +172,18 @@ export const rules: Rule[] = [
     title: "Modal Verbs in Tags",
     rule: "Most modals (can, could, may, might, should, would, must, ought to) → tag uses the SAME modal. Special: Need/Dare are modals ONLY when paired with 'not'. Used to → tag is 'didn't'.",
     hindiTip: "Need not / Dare not → modal → tag: need he? / dare he? | Without 'not' → normal verb → doesn't he?",
+    hinglishTip: "Most modals apna khud ka negative form tag mein lete hain. Lekin 'need' aur 'dare' sirf tab modal hote hain jab unke saath 'not' ho — 'need not', 'dare not'. Agar 'not' nahi hai toh yeh normal verbs hain aur tag mein 'does/did' aayega. 'Used to' ka tag hamesha 'didn't' hoga.",
     correct: [
       "He should stay, shouldn't he?",
       "He need not go, need he?",
       "He needs help, doesn't he? (need = normal verb here)",
       "You used to smoke, didn't you?",
+    ],
+    correctWhy: [
+      "'Should' is a modal verb, so the tag simply uses the same modal in its negative contracted form 'shouldn't'.",
+      "'Need not' is a modal construction (need paired with not), so the tag uses 'need' — giving the positive tag 'need he' because the sentence is already negative.",
+      "Here 'needs' has no 'not' after it, so it functions as a normal verb; the tag is therefore built with 'does' giving 'doesn't he'.",
+      "'Used to' always takes 'didn't' in the tag — it is treated like a past-tense regular verb for tag formation.",
     ],
     table: {
       headers: ["Modal", "Contracted"],
@@ -163,10 +205,16 @@ export const rules: Rule[] = [
     title: "Everybody vs Everything in Tags",
     rule: "PERSONS (Everybody, Nobody, Somebody) → singular subject, but PLURAL tag (they/were/did). THINGS (Everything, Nothing, Something) → singular subject + SINGULAR tag (it/was/did).",
     hindiTip: "इंसान → they | चीज़ → it. बस इतना याद रखो!",
+    hinglishTip: "Ek easy trick: Kya woh insaan hai ya cheez? Insaan (everybody, nobody, somebody) → tag mein 'they/were'. Cheez (everything, nothing, something) → tag mein 'it/was'. Yeh rule AFCAT mein aksar aata hai — yaad rakhna!",
     correct: [
       "Nobody was present, were they? (person → they)",
       "Nothing was available, was it? (thing → it)",
       "Everybody came, didn't they?",
+    ],
+    correctWhy: [
+      "'Nobody' refers to people, so the tag pronoun is the plural 'they'; 'nobody' is already negative so the tag flips to the positive 'were they'.",
+      "'Nothing' refers to a thing (not a person), so the tag pronoun is 'it'; 'nothing' is negative, so the tag is the positive 'was it'.",
+      "'Everybody' refers to people, so the tag pronoun is 'they'; the sentence is positive (no negative word), so the tag is the negative 'didn't they'.",
     ],
     star: false,
   },
@@ -178,10 +226,16 @@ export const rules: Rule[] = [
     title: "Imperative Sentence Tags",
     rule: "Imperative = order, request, advice. Affirmative imperative → will you? OR won't you? (both OK). Negative imperative (Don't...) → will you? ONLY.",
     hindiTip: "Don't के साथ सिर्फ 'will you?' आएगा, 'won't you?' नहीं।",
+    hinglishTip: "Imperative sentences (orders/requests) ke liye: Agar sentence positive hai, toh 'will you?' ya 'won't you?' dono chalte hain. Lekin agar sentence 'Don't' se shuru hota hai (negative imperative), toh SIRF 'will you?' aayega — 'won't you?' nahi.",
     correct: [
       "Shut the window, will you? / won't you? (both OK)",
       "Don't shut the window, will you? (only positive tag)",
       "Get out!, can you? / can't you? (both OK)",
+    ],
+    correctWhy: [
+      "This is a positive imperative (an order to act), so both 'will you' (neutral) and 'won't you' (polite/pleading) are acceptable tags.",
+      "This is a negative imperative starting with 'Don't', so only the positive tag 'will you' is allowed — 'won't you' cannot follow a negative imperative.",
+      "This is a positive imperative where 'can/can't' are both acceptable since the sentence is not negative.",
     ],
     star: false,
   },
@@ -193,15 +247,26 @@ export const rules: Rule[] = [
     title: "Action vs Stative (Non-Action) Verbs",
     rule: "Stative verbs (love, hate, know, think, smell, taste, see) show state/feeling — NO -ing form, qualified by ADJECTIVE. Action verbs show movement — can take -ing, qualified by ADVERB.",
     hindiTip: "Stative verbs = feeling/state वाले verbs। इनकी -ing नहीं बनती। 'I am loving you' गलत है!",
+    hinglishTip: "Stative verbs — love, hate, know, believe, think, smell, taste — yeh feelings aur states dikhate hain. Inki continuous form nahi banti. 'I am loving it' McDonald's ka tagline hai — English grammar mein galat hai! Action verbs jaise run, eat, play — inki -ing form banti hai.",
     correct: [
       "I love you. ✅ (NOT: I am loving you)",
       "The food tastes bitter. ✅ (tastes = stative → adjective 'bitter')",
       "The flowers smell sweet. ✅",
       "Divya ate hungrily. ✅ (action → adverb)",
     ],
+    correctWhy: [
+      "'Love' is a stative verb expressing a feeling — it cannot take the continuous form, so 'love' in simple present is the only correct option.",
+      "'Tastes' is a stative verb linking the subject to its quality, so it takes an adjective ('bitter') to describe the food — not an adverb.",
+      "'Smell' is a stative linking verb, so the word 'sweet' is an adjective describing the flowers, not an adverb modifying how they smell.",
+      "'Ate' is an action verb (physical activity), so it is correctly qualified by the adverb 'hungrily' which describes how the eating happened.",
+    ],
     wrong: [
       "I am loving you. ❌",
       "The food tastes bitterly. ❌",
+    ],
+    wrongWhy: [
+      "'Love' is a stative verb expressing a permanent feeling, so it cannot be used in the continuous form — 'am loving' treats it like an action, which is incorrect.",
+      "'Tastes' is a stative linking verb, so it must be followed by an adjective describing the food, not an adverb — 'bitterly' would describe how something is done, which makes no sense here.",
     ],
     star: false,
   },
@@ -212,9 +277,15 @@ export const rules: Rule[] = [
     sectionColor: "#10b981",
     title: "Transitive vs Intransitive Verbs",
     rule: "Transitive verb → has a direct object attached. Intransitive verb → no direct object (object may come via a preposition).",
+    hindiTip: "Transitive verb = Object directly attached (बिना preposition के)। Intransitive = Object preposition के ज़रिए आता है। 'Fought WITH a wolf' (with = preposition, intransitive)।",
+    hinglishTip: "Simple test: Verb ke baad seedha object hai ya pehle preposition hai? Seedha object → transitive ('He ate food'). Preposition pehle → intransitive ('He fought with a wolf'). Yeh distinction passage mein error find karne ke kaam aata hai.",
     correct: [
       "He fought with a wolf. (fought = intransitive — wolf comes via 'with')",
       "He presented her a ring. (presented = transitive — two direct objects)",
+    ],
+    correctWhy: [
+      "'Fought' here is intransitive because the object 'wolf' arrives through the preposition 'with' rather than being directly attached to the verb.",
+      "'Presented' is transitive here because it directly takes two objects ('her' and 'a ring') with no preposition in between.",
     ],
     star: false,
   },
@@ -225,6 +296,8 @@ export const rules: Rule[] = [
     sectionColor: "#10b981",
     title: "Five Forms of a Verb",
     rule: "Every verb has 5 forms: V1 (base), V2 (past), V3 (past participle), V4 (-ing), V5 (singular present).",
+    hindiTip: "5 forms याद करो: V1 (go), V2 (went), V3 (gone), V4 (going), V5 (goes)। Perfect tenses = V3 | Continuous = V4 | Simple present singular = V5।",
+    hinglishTip: "Verb ke 5 forms ko ek word se practice karo — jaise 'give': give, gave, given, giving, gives. V3 (past participle) perfect tenses aur passive voice mein use hoti hai. V4 (-ing) continuous tenses aur gerund/participle mein use hoti hai.",
     table: {
       headers: ["Form", "Example (give)", "Used in"],
       rows: [
@@ -236,6 +309,7 @@ export const rules: Rule[] = [
       ],
     },
     correct: [],
+    correctWhy: [],
     star: false,
   },
   {
@@ -246,6 +320,7 @@ export const rules: Rule[] = [
     title: "Special Verbs — Same V2 and V3",
     rule: "These verbs have the SAME form in V2 and V3 — don't add -ed!",
     hindiTip: "broadcast, telecast, forecast, cast, cut, put, shut — इनका V2 और V3 same होता है। 'broadcasted' गलत है!",
+    hinglishTip: "Yeh verbs 'irregular' hain jo khud hi apna past form hain. Common mistake: Log broadcast ko broadcasted likhte hain — yeh galat hai. Exam mein agar 'broadcasted', 'telecasted', 'casted' dikh jaaye toh samajh lo woh error hai. Sirf 'broadcast', 'telecast', 'cast' correct hain.",
     table: {
       headers: ["Verb", "V2", "V3"],
       rows: [
@@ -259,7 +334,13 @@ export const rules: Rule[] = [
       ],
     },
     correct: ["The program was broadcast last night. ✅"],
+    correctWhy: [
+      "'Broadcast' is one of the irregular verbs whose past participle is identical to its base form — 'broadcast' is correct as the past participle after 'was'.",
+    ],
     wrong: ["The program was broadcasted. ❌"],
+    wrongWhy: [
+      "'Broadcasted' incorrectly adds the regular '-ed' ending to 'broadcast', but this verb does not change in its past or past participle form.",
+    ],
     star: false,
   },
   {
@@ -270,6 +351,7 @@ export const rules: Rule[] = [
     title: "Tricky Verb Pairs",
     rule: "fly (उड़ना) vs flow (बहना) | fall (गिरना) vs fell (काटना) | bear (सहना/जन्म देना) | lie/lay — three different verbs!",
     hindiTip: "fly→flew→flown (उड़ना) | flow→flowed→flowed (बहना) | fall→fell→fallen (गिरना) | fell→felled→felled (पेड़ काटना)",
+    hinglishTip: "Sabse badi confusion: 'lay' ke 3 meanings hain — (1) lie ka V2 (woh let gaya), (2) rakhna verb ka V1 (rakhna). 'Poor Tom lay in the shade' mein 'lay' actually 'lie' (letna) ka past tense hai. 'Flow' aur 'fly' mat milao — flow (behna) regular hai, fly (urdna) irregular.",
     table: {
       headers: ["Verb", "Meaning", "V2", "V3"],
       rows: [
@@ -283,6 +365,11 @@ export const rules: Rule[] = [
       "Raj has felled the trees. ✅",
       "Poor Tom lay in the shade. ✅ (lay = past of 'lie')",
     ],
+    correctWhy: [
+      "'Flow' is a regular verb (flow → flowed → flowed), so its past participle is 'overflowed' — not 'overflown', which would wrongly treat it like 'fly'.",
+      "'Felled' is the past tense of 'fell', which means to cut down — this is a separate verb from 'fall', and Raj is cutting trees, not causing them to fall by accident.",
+      "'Lay' here is the simple past of the verb 'lie' (to recline) — Tom was reclining in the shade, so 'lay' is the correct past form of 'lie', not of 'lay' (to place).",
+    ],
     star: false,
   },
   {
@@ -293,6 +380,7 @@ export const rules: Rule[] = [
     title: "Verbs with Two V3 Forms",
     rule: "Some verbs have TWO past participle forms — one used as VERB, one as ADJECTIVE (before a noun).",
     hindiTip: "Verb form vs Adjective form: 'The ship has SUNK' (verb) vs 'a SUNKEN ship' (adjective — noun से पहले)।",
+    hinglishTip: "Kuch verbs ke 2 V3 forms hote hain — ek verb ki jagah, doosra adjective ki jagah. 'The ship has SUNK' mein sunk verb hai. 'A SUNKEN ship' mein sunken adjective hai (noun se pehle aaya). Yahi rule 'drunk/drunken' aur 'shrunk/shrunken' pe bhi lagu hoti hai.",
     table: {
       headers: ["Verb", "V3 (verb use)", "V3 (adjective use)"],
       rows: [
@@ -306,6 +394,11 @@ export const rules: Rule[] = [
       "I saw a sunken ship. ✅ (adjective before noun)",
       "A drunken driver. ✅ (adjective)",
     ],
+    correctWhy: [
+      "'Sunk' is the past participle used after the helping verb 'has', so it functions as the verb in present perfect tense.",
+      "'Sunken' is the adjective form of 'sink' used before the noun 'ship' — when the past participle comes before a noun to describe it, the '-en' form is used.",
+      "'Drunken' is the adjective form of 'drink' used before the noun 'driver' to describe a characteristic — this is the correct form when it acts as an adjective before a noun.",
+    ],
     star: false,
   },
   {
@@ -316,9 +409,14 @@ export const rules: Rule[] = [
     title: "8 Forms of 'BE' Verb",
     rule: "BE verb has 8 forms: be, been, being, is, am, are, was, were. Memorize all 8!",
     hindiTip: "Plural: be, are | Singular: is, am, was | V3: been | V4: being | Past plural: were",
+    hinglishTip: "BE verb ke 8 forms ko ek rhyme mein yaad karo: 'be, been, being — is, am, are — was, were'. Tense identify karne ke liye yeh zaroor aata hai. 'Been' hamesha helper hai (have/has/had ke saath). 'Being' continuous ya passive mein aata hai.",
     correct: [
       "be, been, being, is, am, are, was, were",
       "All 8 must be memorized for tense identification!",
+    ],
+    correctWhy: [
+      "These are all 8 forms of the 'be' verb — each appears in a different grammatical context, so knowing all of them helps you identify the tense of any sentence.",
+      "Tense identification questions often hinge on spotting which form of 'be' is present; memorizing all 8 removes guesswork.",
     ],
     star: false,
   },
@@ -337,6 +435,11 @@ export const rules: Rule[] = [
       "The owner, as well as his servants, WAS present. ✅",
       "Sita, with all her sisters, WAS there. ✅",
     ],
+    correctWhy: [
+      "'Food' is the first (main) subject, and 'as well as water' is a bracketed addition — the verb 'is' agrees only with 'food' (singular).",
+      "'The owner' is the first subject; 'as well as his servants' is the bracketed phrase — the singular verb 'was' agrees with 'owner', not 'servants'.",
+      "'Sita' is the main subject; 'with all her sisters' is a parenthetical phrase — the singular verb 'was' agrees with 'Sita' alone.",
+    ],
     star: true,
   },
   {
@@ -353,6 +456,11 @@ export const rules: Rule[] = [
       "More than one student IS here. ✅",
       "Many students ARE here. ✅ (without 'a' → plural)",
     ],
+    correctWhy: [
+      "'Many a' takes a singular noun ('student') and a singular verb ('is') — despite implying more than one, the 'a' forces grammatical singularity.",
+      "'More than one' similarly takes a singular noun and singular verb — grammar treats it as one unit even though it means multiple.",
+      "Without 'a', 'many students' is straightforwardly plural, so the verb correctly becomes 'are'.",
+    ],
     star: true,
   },
   {
@@ -363,9 +471,14 @@ export const rules: Rule[] = [
     title: "A Number of / The Number of",
     rule: "'A number of' + plural noun → PLURAL verb. 'The number of' + plural noun → SINGULAR verb.",
     hindiTip: "'A number of' = कई सारे → plural | 'The number of' = संख्या → singular। Article 'the' आया तो singular!",
+    hinglishTip: "Trick: 'A number of' ka matlab hai 'kai saare' — islia plural. 'The number of' ka matlab hai 'ki sankhya' — sirf ek sankhya, isliya singular. Jaise 'The number of students IS increasing' mein hum student count ki baat kar rahe hain — ek sankhya.",
     correct: [
       "A number of people ARE here. ✅",
       "The number of jobs IS decreasing. ✅",
+    ],
+    correctWhy: [
+      "'A number of' means 'several' or 'many', so it refers to the people themselves — a plural idea — and takes the plural verb 'are'.",
+      "'The number of' refers to a single count or figure (one number), so the verb is the singular 'is' even though 'jobs' is plural.",
     ],
     star: true,
   },
@@ -377,9 +490,14 @@ export const rules: Rule[] = [
     title: "Collective Plural Phrases → Plural Verb",
     rule: "A set of / A chain of / A team of / A crowd of / A band of / A group of / A class of — these always take a PLURAL verb.",
     hindiTip: "ये सब 'group' phrases हैं जो हमेशा plural verb लेते हैं — चाहे देखने में singular लगे।",
+    hinglishTip: "Yeh phrases sunne mein singular lagte hain lekin hamesha plural verb lete hain. 'A set of keys ARE missing' — keys plural hain isliye ARE. Trick: Yeh phrases sirf container hain — andar jo cheez hai woh plural hai, isliye verb bhi plural hoti hai.",
     correct: [
       "A set of keys ARE missing. ✅",
       "A crowd of people WERE gathered. ✅",
+    ],
+    correctWhy: [
+      "'A set of keys' is a collective plural phrase — the real subject is 'keys' (plural), so the verb is the plural 'are'.",
+      "'A crowd of people' is a collective plural phrase — the real subject is 'people' (plural), so the verb is the plural 'were'.",
     ],
     star: false,
   },
@@ -399,9 +517,19 @@ export const rules: Rule[] = [
       "Neither of the candidates IS suitable. ✅",
       "He is one of the students WHO ARE intelligent. ✅",
     ],
+    correctWhy: [
+      "'One of the boys' — the subject is 'one' (singular), not 'boys', so the verb is the singular 'is'.",
+      "'Each of the students' — 'each' is singular regardless of how many students there are, so the verb is the singular 'was'.",
+      "'Neither of the candidates' — 'neither' is singular, so the verb is the singular 'is'.",
+      "After 'who', the verb agrees with 'students' (the plural noun before 'who'), not with 'one' — so 'are' is correct.",
+    ],
     wrong: [
       "One of the boys ARE here. ❌",
       "He is one of the students who IS intelligent. ❌",
+    ],
+    wrongWhy: [
+      "The subject is 'one', not 'boys' — 'boys' is part of the prepositional phrase, so the verb must be the singular 'is', not 'are'.",
+      "The 'who' refers back to 'students' (plural), not to 'one' — so the verb after 'who' must be the plural 'are', not the singular 'is'.",
     ],
     star: true,
   },
@@ -412,7 +540,13 @@ export const rules: Rule[] = [
     sectionColor: "#8b5cf6",
     title: "Negative Words & Verb Agreement",
     rule: "Hardly, scarcely, never, seldom, nobody, no one — these negative-sounding subjects take singular verb + positive question tag.",
+    hindiTip: "Nobody, no one, everybody, nobody = singular verb। लेकिन tag में person वाले = they, चीज़ वाले = it। Negative words (seldom, hardly, never) = singular verb।",
+    hinglishTip: "Negative subjects jaise nobody, no one hamesha singular verb lete hain. Lekin question tag ke liye, agar subject ek insaan hai (nobody, somebody, everybody) → tag mein 'they/were' aata hai. Agar cheez hai (nothing, everything) → 'it/was' aata hai.",
     correct: ["Nobody was there. ✅", "Nobody was there, were they? ✅ (person → they)"],
+    correctWhy: [
+      "'Nobody' is a singular subject, so it correctly takes the singular verb 'was'.",
+      "'Nobody' refers to a person (not a thing), so the tag pronoun is 'they'; since 'nobody' is a negative word, the tag flips to the positive 'were they'.",
+    ],
     star: false,
   },
   {
@@ -423,10 +557,16 @@ export const rules: Rule[] = [
     title: "Either…or / Neither…nor — Nearest Subject",
     rule: "When joining two subjects with Either…or / Neither…nor / Not only…but also → verb agrees with the NEAREST subject.",
     hindiTip: "Nearest subject rule: जो subject verb के पास है, verb उससे agree करेगी। Either/Neither = सिर्फ 2 लोगों के लिए। 2 से ज़्यादा हों तो any/none।",
+    hinglishTip: "Either/or aur neither/nor ke saath verb closest subject ke saath match hoti hai. 'Either he or I AM' — 'I' closest hai isliye AM. 'Either I or he IS' — 'he' closest hai isliye IS. Not only...but also ke saath bhi yahi rule hai. Yaad raho: Either/Neither sirf 2 logon ke liye hote hain.",
     correct: [
       "Either Vikas or his friends ARE going. ✅ (friends is nearest)",
       "Either he or I AM mistaken. ✅ (I is nearest)",
       "Neither the operator nor the foreman WAS present. ✅",
+    ],
+    correctWhy: [
+      "'Friends' is the subject closest to the verb, so the verb 'are' agrees with 'friends' (plural).",
+      "'I' is the subject closest to the verb, and 'I' takes 'am', so the verb is 'am'.",
+      "'Foreman' is the subject closest to the verb and is singular, so the verb is the singular 'was'.",
     ],
     star: true,
   },
@@ -438,10 +578,16 @@ export const rules: Rule[] = [
     title: "Money / Time / Distance as Single Unit",
     rule: "When Money, Time, Distance, or Weight is referred to as a SINGLE UNIT → singular verb.",
     hindiTip: "पैसा, समय, दूरी एक unit के रूप में → singular। 'Five miles IS a long distance.' (पाँच मील = एक दूरी)",
+    hinglishTip: "Jab money, time, ya distance ko ek poori unit ki tarah treat kiya jaaye toh singular verb aati hai. 'Ten thousand rupees IS not enough' — hum total amount ki baat kar rahe hain, ek unit. Lekin agar alag-alag coins/notes ki baat hoti toh plural. Context dekho!",
     correct: [
       "Five miles IS a long distance. ✅",
       "Ten thousand rupees IS not enough. ✅",
       "Two hours IS a long time. ✅",
+    ],
+    correctWhy: [
+      "'Five miles' is treated as a single measurement (one distance), so it takes the singular verb 'is'.",
+      "'Ten thousand rupees' is treated as one total amount, so the singular verb 'is' is correct even though 'rupees' is plural.",
+      "'Two hours' is treated as one block of time, so it takes the singular verb 'is'.",
     ],
     star: false,
   },
@@ -453,9 +599,14 @@ export const rules: Rule[] = [
     title: "Most of + Countable vs Uncountable",
     rule: "'Most of' + plural countable noun → PLURAL verb. 'Most of' + uncountable noun → SINGULAR verb.",
     hindiTip: "Most of के बाद count हो सकता है? → plural | count नहीं हो सकता (water, milk) → singular",
+    hinglishTip: "Quick test: Kya noun ke baad 'are' lagaoge? 'Most of the students' — students ke baad ARE lagega (plural countable). 'Most of the milk' — milk ke baad IS lagega (uncountable). Uncountable nouns = water, milk, sugar, money, information — yeh hamesha singular hote hain.",
     correct: [
       "Most of the students HAVE done their work. ✅",
       "Most of the milk IS spilled. ✅",
+    ],
+    correctWhy: [
+      "'Students' is a countable plural noun, so 'most of the students' takes the plural verb 'have'.",
+      "'Milk' is an uncountable noun, so 'most of the milk' takes the singular verb 'is'.",
     ],
     star: false,
   },
@@ -473,6 +624,10 @@ export const rules: Rule[] = [
       "The patient died after the doctor HAD COME. ✅ (doctor came first)",
       "The patient HAD DIED before the doctor came. ✅ (patient died first)",
     ],
+    correctWhy: [
+      "The doctor came first, then the patient died — the earlier event (doctor coming) is in past perfect 'had come', and the later event (patient dying) is in simple past 'died'.",
+      "The patient died first, then the doctor came — the earlier event (patient dying) is in past perfect 'had died', and the later event (doctor coming) is in simple past 'came'.",
+    ],
     extras: [
       "With AFTER → had+V3 comes after 'after' keyword",
       "With BEFORE → had+V3 comes before 'before' keyword",
@@ -487,12 +642,21 @@ export const rules: Rule[] = [
     title: "It's Time / It's High Time → V2",
     rule: "After 'It's time', 'It's high time', 'It's about time' → always use V2 (past tense form of verb), regardless of subject.",
     hindiTip: "'It's time' देखो → V2 लगाओ। 'It's time Rahul went' — यहाँ 'went' V2 है, present नहीं!",
+    hinglishTip: "Yeh ek special construction hai: 'It's time/high time' ke baad hamesha V2 (past form) aata hai, chahe subject kuch bhi ho. 'It's time she LEFT' — left V2 hai. 'It's time they WENT home.' Common mistake: log V1 lagate hain jaise 'It's time she LEAVES' — yeh galat hai.",
     correct: [
       "It's time Rahul WENT. ✅",
       "It's high time Neha DID her work. ✅",
       "It's about time you STARTED studying. ✅",
     ],
+    correctWhy: [
+      "After 'it's time', the verb must be in simple past form — 'went' is the simple past of 'go', even though we are talking about something that should happen now.",
+      "After 'it's high time', the verb takes the simple past form — 'did' is the correct past form of 'do' here.",
+      "After 'it's about time', simple past is required — 'started' is the correct past form of 'start'.",
+    ],
     wrong: ["It's time Rahul GOES. ❌"],
+    wrongWhy: [
+      "After 'it's time', the verb must be in simple past form ('went'), not the simple present 'goes' — this is a fixed rule for this construction.",
+    ],
     star: true,
   },
   {
@@ -518,6 +682,11 @@ export const rules: Rule[] = [
       "If it rained, I would stay home. ✅",
       "I had had lunch. ✅ (two hads = correct)",
     ],
+    correctWhy: [
+      "This is a real/possible condition — 'if' takes simple present 'rains' (not 'will rain'), and the result clause correctly uses 'will'.",
+      "This is an imaginary/unlikely condition — 'if' takes simple past 'rained', and the result clause correctly uses 'would'.",
+      "The first 'had' is the helping verb and the second 'had' is the past participle of 'have' (meaning to eat) — two 'hads' in a row is grammatically correct in past perfect.",
+    ],
     star: true,
   },
   {
@@ -528,11 +697,19 @@ export const rules: Rule[] = [
     title: "Though → YET (Not But!)",
     rule: "'Though' is a conjunction that pairs with 'YET' — never with 'but'. Or use 'though' alone with no connector.",
     hindiTip: "Though...yet = हालाँकि...फिर भी। 'Though...but' गलत है — दोनों contrast conjunctions एक साथ नहीं आते!",
+    hinglishTip: "Grammar mein ek sentence mein 2 contrast conjunctions ek saath nahi aa sakte. 'Though' aur 'but' dono contrast dikhate hain — isliye ek saath nahi chalte. Though ke saath ya toh 'yet' use karo ya kuch mat lagao. 'Though he is poor, yet he is honest' ✅ ya 'Though he is poor, he is honest' ✅.",
     correct: [
       "Though he is poor, YET he is honest. ✅",
       "Though he is poor, he is honest. ✅ (no connector — fine)",
     ],
+    correctWhy: [
+      "'Though' and 'yet' are the correct pairing — 'though' introduces the contrast and 'yet' reinforces it without creating a clash of conjunctions.",
+      "Using 'though' alone without any connector in the second clause is also perfectly correct — the contrast is already implied.",
+    ],
     wrong: ["Though he is poor, BUT he is honest. ❌"],
+    wrongWhy: [
+      "'Though' and 'but' both express contrast — using both in the same sentence creates a double conjunction error; only one contrast connector is allowed.",
+    ],
     star: false,
   },
   {
@@ -543,9 +720,14 @@ export const rules: Rule[] = [
     title: "Even if vs Even though",
     rule: "'Even if' → for INCOMPLETE/HYPOTHETICAL actions (future possibility). 'Even though' → for COMPLETED actions (already happened).",
     hindiTip: "'Even if' = अगर भी (incomplete/future) | 'Even though' = भले ही (completed). क्या काम हो चुका है? → 'even though'।",
+    hinglishTip: "'Even if' bhavishya ki ya hypothetical situation ke liye — jo abhi hua nahi. 'Even though' jo pehle se ho chuka hai ya ho raha hai uske liye. Simple check: Kya yeh kaam already hua? HAA → 'even though'. NAHI (sirf agar hoga) → 'even if'.",
     correct: [
       "She will come even IF it rains. ✅ (hypothetical future)",
       "He went to work even THOUGH it was raining. ✅ (completed)",
+    ],
+    correctWhy: [
+      "The rain hasn't happened yet — it's a future hypothetical possibility — so 'even if' is correct to introduce this uncertain condition.",
+      "The raining was already happening when he went to work — a real, completed situation — so 'even though' is correct to acknowledge that fact.",
     ],
     star: false,
   },
@@ -557,13 +739,22 @@ export const rules: Rule[] = [
     title: "Unless / Until — Already Negative",
     rule: "Unless and Until are ALREADY negative — NEVER add 'not' to the clause they introduce.",
     hindiTip: "Unless = if not | Until = till not — ये पहले से negative हैं। इनके साथ NOT मत लगाओ!",
+    hinglishTip: "Unless aur until ka khud ka matlab hi negative hai. Unless = 'agar nahi'. Until = 'jab tak nahi'. Isliye inke saath 'not' add karna double negative ban jaata hai — jo galat hai. 'Unless you work hard' ka matlab already hai 'agar mehnat nahi ki' — aur NOT add karna yeh meaning bigad deta hai.",
     correct: [
       "Unless you work hard, you will fail. ✅",
       "Until he comes, don't leave. ✅",
     ],
+    correctWhy: [
+      "'Unless' already means 'if not', so 'unless you work hard' correctly means 'if you do not work hard' — no additional 'not' is needed.",
+      "'Until' already means 'up to the point when … not', so 'until he comes' correctly means 'up to when he arrives' — no 'not' is needed.",
+    ],
     wrong: [
       "Unless you do NOT work hard, you will fail. ❌",
       "Until he does NOT come, don't leave. ❌",
+    ],
+    wrongWhy: [
+      "'Unless' already contains a negative meaning, so adding 'not' creates a double negative that reverses the intended meaning entirely.",
+      "'Until' already carries a negative sense, so 'does not come' creates a double negative — the sentence ends up meaning the opposite of what was intended.",
     ],
     star: true,
   },
@@ -575,11 +766,19 @@ export const rules: Rule[] = [
     title: "If vs Whether",
     rule: "Both can be used for doubt/indirect questions. But with 'OR NOT' → ONLY WHETHER is correct, never 'if'.",
     hindiTip: "'Or not' के साथ = Whether। बाकी cases में if या whether — दोनों चल सकते हैं।",
+    hinglishTip: "'If' aur 'whether' dono doubt ya indirect question dikhate hain — aksar dono chalte hain. Lekin jab sentence mein 'or not' bhi ho, toh SIRF 'whether' correct hai. 'I don't know whether she will come or not' ✅. 'I don't know if she will come or not' ❌ — yeh galat hai exam mein.",
     correct: [
       "I don't know whether/if she loves me. ✅",
       "I don't know WHETHER she loves me OR NOT. ✅",
     ],
+    correctWhy: [
+      "When there is no 'or not' in the sentence, both 'whether' and 'if' can be used interchangeably to express doubt.",
+      "When 'or not' is present in the sentence, only 'whether' is correct — 'whether...or not' is the proper fixed pair.",
+    ],
     wrong: ["I don't know IF she loves me or not. ❌"],
+    wrongWhy: [
+      "When the phrase 'or not' appears, 'if' cannot be used — 'if...or not' is not an accepted construction; only 'whether...or not' is correct.",
+    ],
     star: false,
   },
   {
@@ -590,12 +789,22 @@ export const rules: Rule[] = [
     title: "Wish / Suppose / If — Use WERE",
     rule: "In wish, suppose, if-clauses expressing unreality → use WERE for ALL subjects (including he/she/it/singular).",
     hindiTip: "इच्छा/कल्पना दिखानी है? सभी subjects के साथ WERE। 'If I were you...' — यहाँ 'was' गलत है!",
+    hinglishTip: "Wish, suppose, as if, if (unreality) — inke baad WERE aata hai har subject ke liye. 'If I WERE a bird' — not 'was'. 'I wish I WERE rich.' Yeh subjunctive mood hai — reality nahi, sirf imagination hai. He/she/it ke saath bhi 'were' aata hai, 'was' nahi — yeh exam trap hai.",
     correct: [
       "If I WERE you, I would study harder. ✅",
       "If he WERE rich, he would help. ✅",
       "I wish I WERE taller. ✅",
     ],
+    correctWhy: [
+      "This is an imaginary condition (I am not you), so the subjunctive 'were' is used for all subjects — including 'I', which normally takes 'was'.",
+      "'He' normally takes 'was', but because this is an unreal/hypothetical condition (he is not actually rich), 'were' is the correct subjunctive form.",
+      "'Wish' expresses an unreal desire, so the subjunctive 'were' is required — even though 'I' normally pairs with 'was' in normal past tense.",
+    ],
     wrong: ["If I WAS you... ❌", "If he WAS rich... ❌"],
+    wrongWhy: [
+      "'Was' is the ordinary past tense, but this is an imaginary situation — the subjunctive mood requires 'were' for all subjects, so 'was' is wrong here.",
+      "Similarly, 'was' is the normal past tense for 'he', but in this unreal conditional clause, the subjunctive form 'were' must be used instead.",
+    ],
     star: true,
   },
   {
@@ -605,10 +814,17 @@ export const rules: Rule[] = [
     sectionColor: "#ec4899",
     title: "Singular Group Pronouns",
     rule: "Each, Either, Neither, Everyone, Nobody, No one, Anyone, Someone, One → SINGULAR verb (but tag plural for persons).",
+    hindiTip: "Each, either, neither, everyone, nobody, no one, anyone, someone, one — सब singular verb लेते हैं। Tag में person = they, चीज़ = it। Short mnemonic: EENENAS = Each, Either, Neither, Everyone, Nobody, Anyone, Someone।",
+    hinglishTip: "In sab pronouns ke saath singular verb aati hai — chahe inhe sunne mein bahut saare log lagein. 'Everyone IS here' ✅ (not are). 'Nobody WAS present' ✅. Tag banate waqt: person (nobody, everybody) → 'they', cheez (nothing, everything) → 'it'.",
     correct: [
       "Each new word in this book HAS a different meaning. ✅",
       "Everyone IS here. ✅",
       "Nobody WAS present, were they? ✅",
+    ],
+    correctWhy: [
+      "'Each' is a singular pronoun — it refers to every word individually — so the verb 'has' is correctly singular.",
+      "'Everyone' is always singular, so the verb 'is' is correct even though it refers to many people.",
+      "'Nobody' takes the singular verb 'was'; but in the tag, 'nobody' refers to persons, so the pronoun becomes 'they', and since the sentence is negative, the tag flips to positive 'were they'.",
     ],
     star: false,
   },
@@ -620,9 +836,14 @@ export const rules: Rule[] = [
     title: "⭐ WHO vs WHOM — Quick Trick",
     rule: "WHO = subject | WHOM = object. Quick trick: Count subject-verb pairs. If every verb already has a subject → WHOM. If a verb is left without a subject → WHO.",
     hindiTip: "Trick: Sentence में subject-verb pairs गिनो। अगर सब match हो गए → WHOM (object चाहिए)। कोई verb बिना subject रह गई → WHO (subject चाहिए)। Non-living = WHICH/THAT (never who/whom).",
+    hinglishTip: "WHO/WHOM decide karne ka trick: Sentence mein har verb ko ek subject chahiye. Pehle saare subject-verb pairs match karo. Agar ek verb bachi jiske paas subject nahi → WHO chahiye (subject). Agar sab matched → WHOM chahiye (object). Non-living cheezein ke liye who/whom kabhi nahi — WHICH/THAT use karo.",
     correct: [
       "I met the person WHOM everybody loves. ✅ (everybody=sub, loves=verb — matched → whom)",
       "I met the person WHO I think was arrested. ✅ (was needs subject → who)",
+    ],
+    correctWhy: [
+      "In 'everybody loves ___', 'everybody' is the subject and 'loves' already has its subject — the blank is the object, so the object pronoun 'whom' is correct.",
+      "In 'I think ___ was arrested', the verb 'was' has no subject — it needs a subject pronoun, so 'who' (subject pronoun) is correct; 'I think' is a parenthetical phrase.",
     ],
     star: true,
   },
@@ -634,10 +855,16 @@ export const rules: Rule[] = [
     title: "Which vs That vs Who — Usage Rules",
     rule: "Living + domestic animals → WHO/WHOM. Non-living + wild animals → WHICH. BOTH (confused) → THAT. THAT is COMPULSORY after: all, any, the only, the same, none, superlatives.",
     hindiTip: "घर के जानवर (dog, cat) = who | जंगली जानवर (lion, tiger) = which | दोनों एक साथ = that। Superlative के बाद हमेशा THAT।",
+    hinglishTip: "Simple guide: Ghar ke jaanwar (dog, cat, parrot) ke liye WHO — kyunki hum unhe family member maante hain. Jungle ke jaanwar (lion, tiger, snake) ke liye WHICH. Agar ek saath insaan aur cheez dono hain → THAT. Superlative adjectives (best, worst, tallest) ke baad hamesha THAT — yeh AFCAT mein common hai.",
     correct: [
       "All THAT glitters is not gold. ✅",
       "This is the same girl THAT met me yesterday. ✅",
       "He is the best student THAT I have seen. ✅",
+    ],
+    correctWhy: [
+      "'All' is one of the words that always requires 'that' as the relative pronoun — 'which' or 'who' cannot follow 'all'.",
+      "'The same' always takes 'that' as its relative pronoun — 'which' or 'who' would be incorrect here.",
+      "'Best' is a superlative adjective, and superlatives always require 'that' as the relative pronoun — not 'who' or 'which'.",
     ],
     star: false,
   },
@@ -649,13 +876,22 @@ export const rules: Rule[] = [
     title: "Each Other vs One Another",
     rule: "'Each other' → for EXACTLY TWO people. 'One another' → for MORE THAN TWO people.",
     hindiTip: "2 लोग = each other | 3 या उससे ज़्यादा = one another। बहुत simple rule है, exam में ज़रूर आता है!",
+    hinglishTip: "Rule simple hai: 2 log → each other. 3 ya zyada → one another. 'Ram aur Shyam love each other' ✅. 'All five friends helped one another' ✅. Exam mein context se pehle count karo kitne log hain — phir decide karo.",
     correct: [
       "Both boys love EACH OTHER. ✅ (two)",
       "All students help ONE ANOTHER. ✅ (more than two)",
     ],
+    correctWhy: [
+      "'Both' tells us there are exactly two boys — when exactly two people interact, 'each other' is the correct reciprocal pronoun.",
+      "'All students' means more than two — when three or more people interact, 'one another' is the correct reciprocal pronoun.",
+    ],
     wrong: [
       "Both boys love one another. ❌",
       "All students help each other. ❌",
+    ],
+    wrongWhy: [
+      "'Both boys' means exactly two people — 'one another' is only for groups of three or more, so it is wrong here.",
+      "'All students' implies more than two — 'each other' is only for pairs of two, so it is incorrect when referring to a larger group.",
     ],
     star: true,
   },
@@ -667,12 +903,22 @@ export const rules: Rule[] = [
     title: "Possessive Case Restriction",
     rule: "These words DON'T take possessive before them: Separation, Excuse, Mention, Favour, Pardon, Leave, Report, Sight. Use 'of + pronoun' instead.",
     hindiTip: "SEMFLRS = Separation, Excuse, Mention, Favour, Leave, Report, Sight — इनसे पहले 'his/her/your' नहीं आता। 'of him' / 'of you' लिखो।",
+    hinglishTip: "Yeh words special hain — inse pehle possessive adjective (his, her, your) nahi aata. Iske baad 'of + pronoun' use karna padta hai. 'In favour of you' ✅, 'In your favour' ❌. Memory trick: SEMFLRS — Separation, Excuse, Mention, Favour, Leave, Report, Sight. Exam mein agar 'his mention' ya 'your favour' dikh jaaye — error hai.",
     correct: [
       "I want a favour FROM you. ✅ (NOT your favour)",
       "Mention OF him was made. ✅ (NOT his mention)",
       "Sight OF him made me happy. ✅",
     ],
+    correctWhy: [
+      "'Favour' is one of the restricted words that doesn't allow a possessive adjective before it — the phrase 'from you' using a preposition is the correct construction.",
+      "'Mention' is a restricted word that takes 'of + pronoun' instead of a possessive — 'of him' is correct, not 'his mention'.",
+      "'Sight' is a restricted word, so the correct form is 'sight of him' using a preposition — not 'his sight'.",
+    ],
     wrong: ["I want YOUR favour. ❌", "HIS mention was made. ❌"],
+    wrongWhy: [
+      "'Favour' is in the restricted list of words that cannot take a possessive adjective like 'your' — use 'a favour from you' instead.",
+      "'Mention' does not allow a possessive adjective like 'his' before it — the correct form is 'mention of him'.",
+    ],
     star: false,
   },
   {
@@ -683,9 +929,14 @@ export const rules: Rule[] = [
     title: "Person Order Rule",
     rule: "Positive sentences: 2nd → 3rd → 1st (You, he/she, I). Negative sentences: 1st → 2nd → 3rd (I, you, he/she).",
     hindiTip: "Positive = 2-3-1 (दूसरे को पहले, खुद को आखिर में — politeness) | Negative = 1-2-3 (गलती अपने ऊपर लो पहले!)",
+    hinglishTip: "Positive sentences mein politeness ke liye pehle doosre ko mention karte hain: 2nd person (you) → 3rd person (he/she/they) → 1st person (I). Negative sentences mein khud ki galti pehle lete hain: 1st → 2nd → 3rd. Yaad karo: Positive = 231, Negative = 123.",
     correct: [
       "You, Ram, and I went to the market. ✅ (positive: 2-3-1)",
       "I, you, and Ram are responsible. ✅ (negative: 1-2-3)",
+    ],
+    correctWhy: [
+      "In a positive sentence, politeness requires mentioning others first — 'you' (2nd person) comes before 'Ram' (3rd person) before 'I' (1st person), following the 2-3-1 order.",
+      "In a negative sentence (accepting blame), the speaker takes responsibility first — 'I' (1st person) comes before 'you' (2nd person) before 'Ram' (3rd person), following the 1-2-3 order.",
     ],
     star: false,
   },
@@ -704,6 +955,11 @@ export const rules: Rule[] = [
       "He enjoys reading. ✅ (Gerund — पढ़ना enjoy करता है)",
       "To err is human. ✅ (Infinitive — गलती करना = noun/subject)",
     ],
+    correctWhy: [
+      "'Studying' here is a present participle acting as an adjective — it describes what 'her' was doing when she was seen, not a noun or verb.",
+      "'Reading' here is a gerund (a verb used as a noun) — it names the activity that he enjoys, functioning as the object of 'enjoys'.",
+      "'To err' is an infinitive used as a noun — it acts as the subject of the sentence, meaning 'making mistakes is human'.",
+    ],
     star: true,
   },
   {
@@ -721,9 +977,19 @@ export const rules: Rule[] = [
       "I can't help LAUGHING. ✅",
       "After KNOWING the truth, I spoke. ✅",
     ],
+    correctWhy: [
+      "In 'looking forward to', the word 'to' is a preposition (not part of an infinitive), so it must be followed by a gerund — 'meeting' is correct.",
+      "In 'used to' (meaning accustomed to), 'to' is a preposition, so the gerund 'smoking' is correct — not the base form 'smoke'.",
+      "'Can't help' is a fixed phrase that always takes a gerund — 'laughing' is correct because you cannot choose to stop.",
+      "'After' is a preposition, and prepositions always take gerunds — 'knowing' is the correct form here.",
+    ],
     wrong: [
       "I am looking forward to MEET you. ❌",
       "He is used to SMOKE. ❌",
+    ],
+    wrongWhy: [
+      "Students mistake 'to' in 'looking forward to' for part of an infinitive, but it is actually a preposition — prepositions take gerunds, not base verb forms, so 'meet' is wrong.",
+      "In 'is used to' (accustomed to), 'to' is a preposition — so the base form 'smoke' is wrong; the gerund 'smoking' is needed.",
     ],
     star: true,
   },
@@ -735,11 +1001,19 @@ export const rules: Rule[] = [
     title: "Gerund Takes Possessive Adjective",
     rule: "When a gerund is used as subject/object, the pronoun before it must be POSSESSIVE ADJECTIVE (his, her, my, their) — NOT objective pronoun (him, her, me).",
     hindiTip: "'I don't mind HIM studying' ❌ — gerund से पहले possessive adjective: 'I don't mind HIS studying' ✅। Gerund noun की तरह है इसलिए possessive आता है।",
+    hinglishTip: "Gerund ek noun ki tarah kaam karta hai. Noun se pehle possessive adjective aata hai — 'his book', 'her singing'. Isliye gerund se pehle bhi possessive adjective chahiye. 'I don't mind HIS studying' ✅, 'I don't mind HIM studying' ❌. Him/her objective pronouns hain — noun ke pehle nahi aate.",
     correct: [
       "I don't mind HIS studying late. ✅",
       "YOUR singing is beautiful. ✅",
     ],
+    correctWhy: [
+      "The gerund 'studying' acts as a noun (the thing being minded) — and just like any noun, it takes a possessive adjective before it, so 'his' is correct, not 'him'.",
+      "'Singing' is a gerund acting as the subject of the sentence — it takes the possessive adjective 'your' before it, just as a noun would.",
+    ],
     wrong: ["I don't mind HIM studying late. ❌"],
+    wrongWhy: [
+      "'Him' is an objective pronoun used for people, not for modifying nouns — but 'studying' here is a gerund (a noun), so it needs the possessive adjective 'his', not the objective 'him'.",
+    ],
     star: false,
   },
   {
@@ -750,11 +1024,19 @@ export const rules: Rule[] = [
     title: "Infinitive — Never Split!",
     rule: "Infinitive = to + V1. NEVER split 'to' from V1 by putting an adverb in between.",
     hindiTip: "'to' और V1 के बीच कोई word नहीं आएगा। 'to not go' ❌ — 'not to go' ✅।",
+    hinglishTip: "Infinitive = 'to + V1'. Dono ke beech koi bhi word nahi aana chahiye — yeh split infinitive hai jo galat hai. 'not to go' ✅ (not bahar hai), 'to not go' ❌ (not beech mein hai — split). AFCAT mein 'to boldly go' jaisi structures galat hoti hain.",
     correct: [
       "Divya planned NOT TO go home. ✅",
       "He decided not to come. ✅",
     ],
+    correctWhy: [
+      "'Not' is placed before 'to go', keeping the infinitive 'to go' intact — this is the correct way to negate an infinitive.",
+      "'Not to come' keeps 'to' and 'come' together without splitting them — the negation 'not' correctly sits outside the infinitive.",
+    ],
     wrong: ["Divya planned TO NOT go home. ❌ (split infinitive)"],
+    wrongWhy: [
+      "Placing 'not' between 'to' and 'go' splits the infinitive — 'to' and the verb 'go' must always stay together, so 'not' must move to before 'to'.",
+    ],
     star: false,
   },
   {
@@ -765,6 +1047,7 @@ export const rules: Rule[] = [
     title: "Bare Infinitive — V1 Without 'To'",
     rule: "These verbs take BARE INFINITIVE (V1 without 'to'): bid, see, watch, hear, make, let, help, would rather. Help takes BOTH (to do / do — both OK).",
     hindiTip: "BID SEE WATCH HEAR MAKE LET HELP — ये देखो तो याद रखो बाद में 'to' नहीं आएगा। 'I bade him DO' ✅ — 'I bade him TO DO' ❌।",
+    hinglishTip: "Bare infinitive mein 'to' nahi lagta. Mnemonic: 'BiSWaH MaLe HeWouR' — Bid, See, Watch, Hear, Make, Let, Help, Would Rather. Inke baad V1 seedha aata hai bina 'to' ke. 'I heard her SING' ✅, 'I heard her TO SING' ❌. Help exception hai — dono forms chalti hain: 'helped me do' ya 'helped me to do' dono ✅.",
     correct: [
       "I bade him DO the work. ✅",
       "I watched him DO the work. ✅",
@@ -772,9 +1055,20 @@ export const rules: Rule[] = [
       "He let me GO. ✅",
       "He would rather DIE than beg. ✅",
     ],
+    correctWhy: [
+      "'Bade' (the past of 'bid') takes a bare infinitive — the verb 'do' comes directly after 'him' without 'to'.",
+      "'Watched' is a perception verb that takes a bare infinitive — 'do' follows directly without 'to', which is the correct form after sense verbs like watch.",
+      "'Heard' is a perception verb requiring a bare infinitive — 'sing' comes directly without 'to' after 'her'.",
+      "'Let' always takes a bare infinitive — 'go' follows 'me' directly without 'to'.",
+      "'Would rather' takes a bare infinitive — 'die' appears without 'to', which is correct after 'would rather'.",
+    ],
     wrong: [
       "I bade him TO DO the work. ❌",
       "He let me TO GO. ❌",
+    ],
+    wrongWhy: [
+      "'Bid' (bade) takes a bare infinitive — adding 'to' before 'do' is incorrect; 'to' must be removed.",
+      "'Let' always takes a bare infinitive — adding 'to' before 'go' is a mistake; 'to' is never used after 'let'.",
     ],
     extras: ["'Used to + V1' = past habit | 'Is/was used to + V-ing' = accustomed to"],
     star: true,
@@ -787,6 +1081,7 @@ export const rules: Rule[] = [
     title: "Modal Verbs — All Take V1",
     rule: "All modal verbs (can, could, may, might, shall, will, should, would, must, ought to, need, dare, used to, had better) take V1 (base form). NO -s, NO -ed, NO -ing after a modal.",
     hindiTip: "Modal के बाद हमेशा V1। 'Should have + V3' = past modal। 'Had better + V1' (NOT V3) — 'I had better HELP him' ✅, 'I had better HELPED' ❌।",
+    hinglishTip: "Modal verbs ke baad hamesha V1 (base form) aata hai — koi -s, -ed, ya -ing nahi. 'Should have + V3' past ke liye. 'Had better + V1' strong advice ke liye — V3 nahi lagana. 'Could' informal request ke liye, 'would' formal ke liye. Modals inversion bhi lete hain — 'Should he come...' ✅.",
     table: {
       headers: ["Modal", "Main Use"],
       rows: [
@@ -804,7 +1099,15 @@ export const rules: Rule[] = [
       "Should he come, I will go. ✅ (inversion with should)",
       "May you live long. ✅ (blessing)",
     ],
+    correctWhy: [
+      "'Had better' is a modal expression that always takes a bare infinitive (base form) — 'help' in its base form is correct, not 'helped'.",
+      "When 'should' moves to the start of the sentence, the subject and helping verb swap — 'should he come' is an inverted conditional equivalent to 'if he should come'.",
+      "'May' here expresses a wish or blessing — 'may you live long' is the correct structure for expressing a blessing, not a command or permission.",
+    ],
     wrong: ["I had better HELPED him. ❌"],
+    wrongWhy: [
+      "'Had better' requires the base form of the verb (bare infinitive) — using the simple past 'helped' is wrong because 'had' here is part of the fixed modal expression, not a standalone helping verb.",
+    ],
     star: true,
   },
   {
@@ -815,11 +1118,20 @@ export const rules: Rule[] = [
     title: "Compound Nouns — Plural & Apostrophe",
     rule: "For hyphenated nouns like father-in-law: Plural → add S to the MAIN word. Apostrophe → add to the LAST word.",
     hindiTip: "Father-in-law → plural: fathers-in-law (main word 'father' में S) | Apostrophe: father-in-law's (आखिरी word में)।",
+    hinglishTip: "Compound nouns jaise father-in-law mein main word 'father' hai. Plural banate waqt 's' main word pe lagate hain: fathers-in-law ✅, father-in-laws ❌. Apostrophe ke liye last word pe lagate hain: father-in-law's house ✅. Commanders-in-chief (plural), commander-in-chief's order (possessive).",
     correct: [
       "Plural: fathers-in-law, daughters-in-law, commanders-in-chief ✅",
       "Apostrophe: daughter-in-law's house ✅",
     ],
+    correctWhy: [
+      "In compound nouns like 'father-in-law', the main word is 'father' — the plural 's' attaches to the main word, giving 'fathers-in-law', not 'father-in-laws'.",
+      "For possession, the apostrophe goes at the end of the entire compound — 'daughter-in-law's' correctly places it on the last element.",
+    ],
     wrong: ["father-in-laws ❌", "fathers-in-laws ❌"],
+    wrongWhy: [
+      "Adding 's' to 'law' at the end is wrong — 'law' is not the main word; the plural must be formed on the main word 'father', giving 'fathers-in-law'.",
+      "Adding 's' to both 'fathers' and 'laws' double-pluralizes the compound — only the main noun 'father' should take the plural 's'.",
+    ],
     star: false,
   },
   {
@@ -830,11 +1142,18 @@ export const rules: Rule[] = [
     title: "Collective Nouns (Jury/Committee)",
     rule: "Acting together as a unit → SINGULAR verb. Divided / acting individually → PLURAL verb.",
     hindiTip: "Jury एक साथ decision ले रही है → singular | Jury में मतभेद है → plural। Context से decide करो!",
+    hinglishTip: "Collective noun ka verb decide karne ke liye context dekho: Kya group ek saath kaam kar raha hai? → Singular verb + 'it' tag. Kya group mein alag-alag log hain? → Plural verb + 'they' tag. 'The jury WAS called' (unit) vs 'The jury WERE divided' (individuals). Dono correct hain — context pe depend karta hai.",
     correct: [
       "The jury WAS called. ✅ (unit)",
       "The jury WERE divided in opinion. ✅ (individuals)",
       "The jury gave a unanimous verdict, didn't IT? ✅",
       "The jury gave a divided verdict, didn't THEY? ✅",
+    ],
+    correctWhy: [
+      "The jury is acting as a single unit (all called together), so the singular verb 'was' is correct.",
+      "'Divided in opinion' shows the jury members are acting individually with different views, so the plural verb 'were' is correct.",
+      "'Unanimous verdict' means the jury acted as one body — the tag uses 'it' (singular unit) to match.",
+      "'Divided verdict' shows the jury members disagreed individually — the tag uses 'they' (plural individuals) to match.",
     ],
     star: false,
   },
@@ -845,12 +1164,23 @@ export const rules: Rule[] = [
     sectionColor: "#eab308",
     title: "Two Same Nouns + Preposition = Singular",
     rule: "When the same noun is repeated with a preposition between them → singular verb, singular noun (no -s).",
+    hindiTip: "Same noun repeat हुआ बीच में preposition के साथ → singular verb, no 's'। 'Day by day' (not 'days by days')। यह pattern → एकवचन!",
+    hinglishTip: "Jab ek hi noun do baar aaye with a preposition beech mein, toh yeh ek unit ban jaata hai — singular. 'Day by day' ✅ (not 'days by days'). 'Page after page' ✅. 'Woman after woman' ✅. Aur verb bhi singular: 'Day by day he IS becoming weaker' ✅.",
     correct: [
       "Day BY day he IS becoming weaker. ✅",
       "Page AFTER page WAS filled. ✅",
       "Woman AFTER woman WAS there. ✅",
     ],
+    correctWhy: [
+      "'Day by day' repeats the same noun with a preposition — this pattern creates a singular unit, so the verb 'is' is singular and 'day' has no 's'.",
+      "'Page after page' follows the same repeated-noun pattern — singular verb 'was' and singular noun 'page' are both correct.",
+      "'Woman after woman' is another repeated-noun pattern — singular verb 'was' and singular noun 'woman' are correct.",
+    ],
     wrong: ["Days by days ❌", "Pages after pages ❌"],
+    wrongWhy: [
+      "When the same noun repeats with a preposition, both nouns stay singular — 'days by days' incorrectly pluralizes the noun.",
+      "Similarly, 'pages after pages' incorrectly pluralizes the noun — the pattern requires both instances to remain singular.",
+    ],
     star: false,
   },
   {
@@ -861,9 +1191,14 @@ export const rules: Rule[] = [
     title: "Proper Noun → Common Noun via 'THE'",
     rule: "Adding 'THE' before a proper noun turns it into a common noun representing a category or quality.",
     hindiTip: "'Rahul is the Virat Kohli of our class.' — THE लगाकर proper noun को category में बदल दिया।",
+    hinglishTip: "'The' lagaane se proper noun ek category ya quality ka symbol ban jaata hai. 'Rahul is the Virat Kohli of our class' mein hum keh rahe hain Rahul usi tarah khelता hai jaise Virat Kohli. Toh 'the Virat Kohli' = 'ek aisa insaan jaise Virat Kohli'. Yeh literary usage hai — AFCAT reading mein aata hai.",
     correct: [
       "Rahul is the Virat Kohli of our class. ✅",
       "She is the Mother Teresa of our school. ✅",
+    ],
+    correctWhy: [
+      "Adding 'the' before 'Virat Kohli' turns this proper noun into a category — it means Rahul has the same qualities or talent as Virat Kohli within the class.",
+      "Adding 'the' before 'Mother Teresa' similarly turns her name into a symbol of compassion — the sentence means she embodies those qualities in the school context.",
     ],
     star: false,
   },
@@ -875,6 +1210,7 @@ export const rules: Rule[] = [
     title: "Few / A Few / The Few — Know the Difference",
     rule: "FEW = almost zero (negative meaning) | A FEW = some (positive, hopeful) | THE FEW = all of the small group (specific). Same logic for Little / A little / The little (for uncountable).",
     hindiTip: "FEW = 'लगभग कोई नहीं' (sad/negative) | A FEW = 'कुछ तो हैं' (positive) | THE FEW = 'जो थोड़े से थे वो सब'",
+    hinglishTip: "Tin forms ka alag matlab hai. FEW = lagbhag koi nahi (negative feeling). A FEW = kuch toh hain (positive hope). THE FEW = jo bhi thode the, unhe specifically refer kar rahe hain. Yaad rakho: 'A' add karo toh positive ho jaata hai. 'The' add karo toh specific ho jaata hai. Yahi 'little/a little/the little' pe bhi apply hota hai.",
     table: {
       headers: ["Form", "Meaning", "Example"],
       rows: [
@@ -886,6 +1222,7 @@ export const rules: Rule[] = [
       ],
     },
     correct: [],
+    correctWhy: [],
     star: true,
   },
   {
@@ -896,15 +1233,26 @@ export const rules: Rule[] = [
     title: "Uncountable Nouns — Always Singular",
     rule: "Equipment, News, Scenery, Machinery, Grocery, Crockery, Furniture, Luggage, Information, Advice, Knowledge, Poetry — NEVER add S, ALWAYS singular verb.",
     hindiTip: "ये सब uncountable हैं। 'News ARE good' ❌, 'Furnitures' ❌। एक ही rule: singular verb, no 's'।",
+    hinglishTip: "Yeh sab uncountable nouns hain — inhe gina nahi ja sakta. Isliye inpe 's' nahi lagate aur verb singular hoti hai. Common mistakes: 'furnitures', 'informations', 'advices', 'equipments' — sab galat hain. 'The news IS', 'the equipment IS', 'all the furniture WAS' — yahi sahi hai.",
     correct: [
       "The news IS good. ✅",
       "This equipment IS broken. ✅",
       "All the furniture WAS damaged. ✅",
     ],
+    correctWhy: [
+      "'News' is an uncountable noun — it cannot be pluralized or counted, so it always takes the singular verb 'is'.",
+      "'Equipment' is uncountable — it has no plural form, so it correctly takes the singular verb 'is'.",
+      "'Furniture' is uncountable — even with 'all the', it takes the singular verb 'was' because you cannot count individual pieces as 'furnitures'.",
+    ],
     wrong: [
       "The news ARE good. ❌",
       "These furnitures are damaged. ❌",
       "These equipments are... ❌",
+    ],
+    wrongWhy: [
+      "'News' is uncountable and always singular — using the plural verb 'are' is incorrect.",
+      "'Furniture' has no plural form — 'furnitures' is not a word; the correct form is always 'furniture' with a singular verb.",
+      "'Equipment' has no plural form — 'equipments' does not exist; always use 'equipment' with a singular verb.",
     ],
     star: true,
   },
@@ -916,10 +1264,16 @@ export const rules: Rule[] = [
     title: "Mathematics / Statistics — Context Matters",
     rule: "As a SUBJECT (study/discipline) → singular. As DATA/CALCULATIONS → plural.",
     hindiTip: "Mathematics एक subject है → singular ('is interesting'). लेकिन जब calculations की बात हो → plural ('Mathematics tell us...')।",
+    hinglishTip: "Mathematics/Statistics jab ek subject (padhai) ki tarah use ho → singular. 'Mathematics IS interesting' ✅. Lekin jab actual data ya calculations ki baat ho → plural. 'The statistics SHOW that crime has increased' ✅. Context se samjho — sirf word mat dekho.",
     correct: [
       "Mathematics IS an interesting subject. ✅",
       "Statistics IS compulsory. ✅ (subject)",
       "Mathematics TELL us he has a lot of money. ✅ (calculations)",
+    ],
+    correctWhy: [
+      "Here 'Mathematics' refers to the academic subject (a discipline), which is treated as a single entity — so the singular verb 'is' is correct.",
+      "Here 'Statistics' refers to the subject of study (one discipline), so the singular verb 'is' is correct.",
+      "Here 'mathematics' refers to calculations or numerical data — it is being used in the plural sense (the numbers tell us something), so the plural verb 'tell' is correct.",
     ],
     star: false,
   },
@@ -931,6 +1285,7 @@ export const rules: Rule[] = [
     title: "Data is Plural — Latin Plurals",
     rule: "Data is plural (singular: datum). Same for: criteria/criterion, phenomena/phenomenon, bacteria/bacterium, alumni/alumnus, strata/stratum, syllabi/syllabus.",
     hindiTip: "Data = plural, datum = singular। Exam में 'data is' ❌ आए तो गलत समझो। 'The data ARE clear.' ✅",
+    hinglishTip: "Latin se aaye yeh words plural hain lekin log singular samajhte hain — yahi trap hai. 'Data ARE' ✅ (datum ek hai, data kaafi). 'Criteria ARE' ✅ (ek criterion). 'The phenomenon IS' ✅ (ek cheez). 'Bacteria ARE' ✅. AFCAT mein 'data is' ya 'criteria is' dikh jaaye — woh error hai.",
     table: {
       headers: ["Plural", "Singular"],
       rows: [
@@ -943,7 +1298,14 @@ export const rules: Rule[] = [
       ],
     },
     correct: ["The data ARE clear. ✅", "This criterion IS met. ✅"],
+    correctWhy: [
+      "'Data' is the plural Latin form of 'datum' — it refers to multiple data points, so the plural verb 'are' is correct.",
+      "'Criterion' is the singular Latin form — referring to one standard or rule, so the singular verb 'is' is correct.",
+    ],
     wrong: ["The data IS clear. ❌"],
+    wrongWhy: [
+      "'Data' is a plural noun (the singular is 'datum') — using the singular verb 'is' treats it as singular, which is grammatically wrong.",
+    ],
     star: false,
   },
   {
@@ -954,14 +1316,24 @@ export const rules: Rule[] = [
     title: "Verbs That Don't Take Prepositions",
     rule: "advise, ask, beg, encourage, invite, tell, order, attack — NO preposition between verb and object.",
     hindiTip: "ये verbs directly object लेते हैं। बीच में preposition मत लगाओ! 'advised TO his friend' ❌ → 'advised his friend' ✅",
+    hinglishTip: "Yeh verbs seedhe object lete hain — beech mein koi preposition nahi aata. Common errors: 'attacked on', 'advised to', 'ordered for', 'invited to' — sab galat. Sirf 'attacked him', 'advised him', 'ordered food', 'invited me' ✅. Exam mein extra preposition dekhna hi error hai.",
     correct: [
       "He advised his friend. ✅",
       "Neha attacked Rahul. ✅",
       "She invited me. ✅",
     ],
+    correctWhy: [
+      "'Advised' is a transitive verb that takes its object directly — 'his friend' follows immediately without any preposition.",
+      "'Attacked' takes its object 'Rahul' directly with no preposition in between — it is a transitive verb.",
+      "'Invited' takes its object 'me' directly — no preposition is needed between the verb and the object.",
+    ],
     wrong: [
       "He advised TO his friend. ❌",
       "Neha attacked ON Rahul. ❌",
+    ],
+    wrongWhy: [
+      "'Advise' does not take the preposition 'to' — adding 'to' between the verb and the object is incorrect for this verb.",
+      "'Attack' does not take the preposition 'on' — adding 'on' between the verb and the object is an unnecessary and incorrect addition.",
     ],
     star: false,
   },
@@ -972,11 +1344,20 @@ export const rules: Rule[] = [
     sectionColor: "#06b6d4",
     title: "Ordinal vs Cardinal Numbers + THE",
     rule: "Ordinal numbers (first, second, third...) → take THE. Cardinal numbers (one, two, three...) → NO THE.",
+    hindiTip: "Ordinal (1st, 2nd, 3rd) = THE लगाओ। Cardinal (1, 2, 3) = THE मत लगाओ। 'He stood THE FIRST' ✅ | 'He stood THE ONE' ❌।",
+    hinglishTip: "Ordinal numbers (first, second, third) position dikhate hain — inke saath THE aata hai. Cardinal numbers (one, two, three) ginti dikhate hain — inke saath THE nahi aata. Exam mein: 'He stood first' ✅, 'He stood the first' ✅ (dono chalte hain) vs 'He stood the one' ❌ (galat).",
     correct: [
       "He stood THE FIRST in class. ✅",
       "He won THE NINTH position. ✅",
     ],
+    correctWhy: [
+      "'First' is an ordinal number showing rank or position — ordinal numbers take 'the' before them.",
+      "'Ninth' is an ordinal number showing position — 'the ninth position' correctly uses 'the' before the ordinal.",
+    ],
     wrong: ["He stood THE ONE in class. ❌ (cardinal, no 'the')"],
+    wrongWhy: [
+      "'One' is a cardinal number (used for counting), not an ordinal number (used for ranking) — cardinal numbers do not take 'the', so 'the one' is incorrect here.",
+    ],
     star: false,
   },
   {
@@ -986,10 +1367,17 @@ export const rules: Rule[] = [
     sectionColor: "#06b6d4",
     title: "Possessive Adjective vs Possessive Pronoun",
     rule: "Possessive Adjective (my, our, your, his, her, its, their) → goes BEFORE a noun. Possessive Pronoun (mine, ours, yours, his, hers, theirs) → REPLACES a noun (stands alone).",
+    hindiTip: "Possessive Adjective (my, his, her) = noun से पहले | Possessive Pronoun (mine, his, hers) = noun को replace करता है। Gerund से पहले = Possessive Adjective।",
+    hinglishTip: "Easy distinction: Possessive Adjective noun ke saath aata hai ('my book', 'his car'). Possessive Pronoun noun ki jagah akela khada hota hai ('This book is mine', 'That car is his'). Note: 'his' dono mein same rehta hai. Gerund se pehle possessive adjective use karo — 'his studying', 'my singing'.",
     correct: [
       "This is MY book. ✅ (adjective — before noun)",
       "This book is MINE. ✅ (pronoun — stands alone)",
       "I don't mind HIS studying. ✅ (gerund takes possessive adjective)",
+    ],
+    correctWhy: [
+      "'My' is a possessive adjective — it comes before the noun 'book' to show ownership, which is the correct position for a possessive adjective.",
+      "'Mine' is a possessive pronoun — it stands alone after 'is' and replaces the full noun phrase 'my book', which is the correct use for a possessive pronoun.",
+      "'Studying' is a gerund (a verbal noun), so the pronoun before it must be a possessive adjective — 'his' correctly modifies the gerund 'studying'.",
     ],
     star: false,
   },
@@ -1006,6 +1394,10 @@ export const rules: Rule[] = [
     correct: [
       "He walked SLOWLY HOME YESTERDAY. ✅ (Manner → Place → Time)",
       "She REALLY sang BEAUTIFULLY IN THE HALL YESTERDAY. ✅",
+    ],
+    correctWhy: [
+      "'Slowly' (manner) comes before 'home' (place), which comes before 'yesterday' (time) — this follows the correct EMPT order.",
+      "'Really' (emphasis) comes near the verb, followed by 'beautifully' (manner), then 'in the hall' (place), then 'yesterday' (time) — correctly following Emphasis → Manner → Place → Time.",
     ],
     star: false,
   },
@@ -1032,6 +1424,7 @@ export const rules: Rule[] = [
       ],
     },
     correct: [],
+    correctWhy: [],
     star: true,
   },
   {
@@ -1042,11 +1435,18 @@ export const rules: Rule[] = [
     title: "Article THE — Primary Purpose Visits",
     rule: "Going somewhere for its PRIMARY purpose → NO 'the'. Going for ANY OTHER purpose → use 'the'.",
     hindiTip: "School पढ़ने जाओ → 'went to school' (no the) | किसी से मिलने जाओ → 'went to THE school' (the लगेगा)। यही rule temple, prison, hospital, bed के लिए भी।",
+    hinglishTip: "Primary purpose = koi article nahi. Doosra koi kaam = 'the' lagao. School mein padhne gaye → 'went to school'. School mein kisi se milne gaye → 'went to the school'. Hospital mein patient ho → 'went to hospital'. Hospital mein kisi ko dekhne gaye → 'went to the hospital'. Bed pe sone gaye → 'went to bed'. Bed utha ke kuch kiya → 'went to the bed'.",
     correct: [
       "He went to SCHOOL. ✅ (to study — primary purpose)",
       "He went to THE SCHOOL to meet someone. ✅ (other purpose)",
       "She went to HOSPITAL. ✅ (as patient)",
       "He went to THE HOSPITAL to visit a friend. ✅",
+    ],
+    correctWhy: [
+      "Going to school to study is the primary purpose of school — no article is used when visiting a place for its intended purpose.",
+      "Meeting someone is not the primary purpose of school — because the visit is for another reason, 'the' is required to specify the building.",
+      "Going to hospital as a patient is the primary purpose of hospital — no article is used when fulfilling the institution's main function.",
+      "Visiting a friend is not the primary purpose of hospital — the visit is for another reason, so 'the' is required.",
     ],
     star: false,
   },
@@ -1058,12 +1458,21 @@ export const rules: Rule[] = [
     title: "No Article Before Languages | THE + Adjective",
     rule: "Languages don't take 'THE'. But 'THE English' = the people of England. THE + adjective = whole community.",
     hindiTip: "Languages के पहले 'the' नहीं: 'She studied THE English' ❌ → 'She studied English' ✅। लेकिन 'The English' = English लोग (whole community)। THE poor = सभी गरीब लोग।",
+    hinglishTip: "Language sirf naam hai — 'the' ki zaroorat nahi. 'She studied English' ✅. Lekin 'The English' ka matlab hai England ke log — yahan 'English' adjective hai, language nahi. Yahi rule THE + adjective pe bhi apply hoti hai: 'The poor need help' = sab gareeb log milke ek community hain. 'The rich', 'the blind', 'the deaf' — sab plural meaning dete hain bina -s ke.",
     correct: [
       "She studied English. ✅",
       "The English are known for their politeness. ✅ (= people of England)",
       "The poor NEED our help. ✅ (THE + adj = community)",
     ],
+    correctWhy: [
+      "'English' here is a language name — languages never take the article 'the', so 'she studied English' is correct with no article.",
+      "Here 'The English' uses 'English' as an adjective to mean 'the people of England' as a whole community — 'the' before an adjective creates a collective noun.",
+      "'The poor' uses 'the' before an adjective to refer to the entire community of poor people — this is the same pattern, and the verb 'need' is plural because the community is plural.",
+    ],
     wrong: ["She studied THE English. ❌"],
+    wrongWhy: [
+      "When 'English' refers to the language, it is a proper noun and takes no article — 'the English' would mean the people of England, not the language.",
+    ],
     star: false,
   },
   {
@@ -1074,14 +1483,24 @@ export const rules: Rule[] = [
     title: "-IOR Words + PREFER → Use TO (Not Than)",
     rule: "Words ending in -ior (superior, inferior, junior, senior, prior, anterior, posterior) and the verb 'prefer' → use TO, not than.",
     hindiTip: "ये words Latin से आए हैं जहाँ 'to' use होता था। 'Superior THAN' ❌ — हमेशा 'Superior TO'। Prefer भी TO लेता है।",
+    hinglishTip: "Yeh Rule 59 ka hi recap hai. Superior, inferior, senior, junior, prior, prefer — sab 'to' lete hain comparison ke liye, 'than' nahi. Yeh Latin se aaye hain jahan 'to' hi use hota tha. Exam mein agar 'superior than' ya 'prefer...than' dikh jaaye — woh galat hai.",
     correct: [
       "He prefers coffee TO tea. ✅",
       "I am senior TO him. ✅",
       "This is inferior TO that. ✅",
     ],
+    correctWhy: [
+      "'Prefer' is one of the words that takes 'to' for comparison — 'prefers coffee to tea' is the correct construction.",
+      "'Senior' ends in '-ior' (from Latin), so it takes 'to' for comparison — 'senior to him' is correct.",
+      "'Inferior' ends in '-ior', so it takes 'to' for comparison — 'inferior to that' is correct.",
+    ],
     wrong: [
       "He prefers coffee THAN tea. ❌",
       "I am senior THAN him. ❌",
+    ],
+    wrongWhy: [
+      "'Than' is used for comparative adjectives (better, worse, taller), but 'prefer' takes 'to' — using 'than' after 'prefers' is incorrect.",
+      "'Senior' is a Latin-origin word that requires 'to', not 'than' — 'senior than' is an incorrect pairing.",
     ],
     star: true,
   },
@@ -1101,7 +1520,17 @@ export const rules: Rule[] = [
       "I have been here FOR a week. ✅",
       "I have been here SINCE Monday. ✅",
     ],
+    correctWhy: [
+      "'Two hours' is a period of duration — 'for' is correct because it tells us how long the studying lasted.",
+      "'Morning' is a point in time where something started — 'since' is correct because it tells us the starting point of the studying.",
+      "'A week' is a duration of time — 'for' correctly shows how long the person has been here.",
+      "'Monday' is a specific point in time — 'since' correctly shows when the person's stay began.",
+    ],
     wrong: ["I have been here SINCE two hours. ❌", "I have been here FOR Monday. ❌"],
+    wrongWhy: [
+      "'Two hours' is a duration, not a starting point — 'since' is for points in time, so 'for two hours' is the correct form.",
+      "'Monday' is a point in time (a starting point), not a duration — 'for' is for durations, so 'since Monday' is the correct form.",
+    ],
     star: true,
   },
   {
@@ -1112,6 +1541,7 @@ export const rules: Rule[] = [
     title: "Died of / in / from / by / with",
     rule: "Different prepositions for different causes of death!",
     visual: "died-grid",
+    hindiTip: "मृत्यु के कारण के अनुसार preposition: बीमारी/भूख → OF | दुर्घटना → IN | घाव/चोट → FROM | हिंसा/तलवार → BY | गुस्सा/दुःख → WITH। याद रखो: 'DIFBW' — Disease, In accident, From wound, By sword, With grief।",
     hinglishTip: "Har cause of death ka alag preposition hai. Disease/Hunger → OF (died of cancer). Accident → IN (died in accident). Injury → FROM (died from wounds). Violence → BY (died by sword). Anger/Grief → WITH (died with grief). Exam mein yeh sab aate hain!",
     table: {
       headers: ["Cause of Death", "Preposition"],
@@ -1129,6 +1559,12 @@ export const rules: Rule[] = [
       "He died FROM his wounds. ✅",
       "He died BY the sword. ✅",
     ],
+    correctWhy: [
+      "'Cancer' is a disease — the correct preposition for death caused by disease is 'of'.",
+      "'An accident' is an event or situation — the correct preposition for death in an event is 'in'.",
+      "'His wounds' are injuries sustained before death — the correct preposition for death resulting from injuries is 'from'.",
+      "'The sword' represents a weapon or method of violence — the correct preposition for death by violence or a weapon is 'by'.",
+    ],
     star: true,
   },
   {
@@ -1139,13 +1575,24 @@ export const rules: Rule[] = [
     title: "Transportation Prepositions",
     rule: "ON foot (walking). BY car/train/bus (general transport). IN + specific vehicle (in his car, in Vande Bharat). ON bicycle (NOT by bicycle).",
     hindiTip: "पैदल = ON foot | सामान्य वाहन = BY | कोई specific vehicle = IN। Bicycle exception: ON bicycle (not by)।",
+    hinglishTip: "Transportation prepositions: ON foot (walking). BY car/train/bus (vehicles in general). IN a specific vehicle (IN his car, IN Vande Bharat). Bicycle exception: ON bicycle, not BY. Exam mein agar 'by foot' ya 'by bicycle' dikhe — woh error hai.",
     correct: [
       "He came ON foot. ✅",
       "He travelled BY train. ✅",
       "He travelled IN Vande Bharat. ✅ (specific vehicle)",
       "He went ON bicycle. ✅",
     ],
+    correctWhy: [
+      "Walking uses 'on foot' — 'on' is the correct preposition for travel on your own body.",
+      "'Train' is a general mode of transport — 'by' is used with general transportation methods.",
+      "'Vande Bharat' is a specific named vehicle — when a vehicle is named specifically, 'in' is used instead of 'by'.",
+      "Bicycle is an exception to the 'by' rule — even though it is a vehicle, the correct preposition is 'on bicycle', not 'by bicycle'.",
+    ],
     wrong: ["He came BY foot. ❌", "He went BY bicycle. ❌"],
+    wrongWhy: [
+      "'Foot' is not a vehicle — the preposition for walking is 'on foot', not 'by foot'.",
+      "Bicycle is an exception — unlike other vehicles, bicycle takes 'on', not 'by', so 'by bicycle' is incorrect.",
+    ],
     star: false,
   },
   {
@@ -1155,11 +1602,20 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "'Order' as Verb — No Preposition",
     rule: "When 'order' is a VERB → no 'for' after it. When 'order' is a NOUN → 'for' is allowed.",
+    hindiTip: "'Order' verb के रूप में = कोई preposition नहीं। 'Order' noun के रूप में = 'for' लग सकता है। 'She ordered coffee' ✅ | 'She ordered FOR coffee' ❌।",
+    hinglishTip: "Jab 'order' verb hai (koi kuch maangta hai) toh preposition nahi aata — seedha object. 'Neha ordered coffee' ✅. Lekin jab 'order' noun hai (ek hukam/maang) toh 'for' aa sakta hai — 'She gave an order FOR coffee' ✅. Verb ya noun — yahi decide karta hai.",
     correct: [
       "Neha ordered coffee. ✅ (verb — no for)",
       "Neha gave an order FOR coffee. ✅ (noun — for OK)",
     ],
+    correctWhy: [
+      "When 'ordered' is a verb, it takes a direct object — 'coffee' follows without any preposition.",
+      "When 'order' is a noun ('an order'), it can be followed by 'for' — 'an order for coffee' is the correct noun phrase.",
+    ],
     wrong: ["Neha ordered FOR coffee. ❌"],
+    wrongWhy: [
+      "When 'ordered' is used as a verb, it does not take the preposition 'for' — the object 'coffee' must follow directly without any preposition.",
+    ],
     star: false,
   },
   {
@@ -1170,12 +1626,21 @@ export const rules: Rule[] = [
     title: "In vs Into — Static vs Moving Inside",
     rule: "IN → static location OR movement within same medium. INTO → movement from OUTSIDE to INSIDE (medium change).",
     hindiTip: "'Into' = बाहर से अंदर। 'In' = पहले से अंदर। Translation में 'into': 'Translate INTO Hindi' ✅। THROUGH वाले sentences में 'in' आता है (Rule 94)।",
+    hinglishTip: "IN vs INTO: IN = already inside ya same medium mein movement. INTO = bahar se andar aana (change of place/medium). 'He jumped INTO the well' — pehle bahar tha, ab andar gaya. 'Translate INTO Hindi' — ek language se doosri mein. 'THROUGH' ke saath IN aata hai INTO nahi (Rule 94).",
     correct: [
       "He jumped INTO the well. ✅ (was outside → now inside)",
       "The water was IN the bottle. ✅ (static)",
       "Translate the passage INTO Hindi. ✅ (language change)",
     ],
+    correctWhy: [
+      "He was outside the well before jumping — there is movement from outside to inside, so 'into' (not 'in') is correct.",
+      "The water is already inside the bottle with no movement — this is a static location, so 'in' is correct.",
+      "Translation involves a change from one language to another — a change of medium — so 'into Hindi' is correct.",
+    ],
     wrong: ["He jumped IN the well. ❌ (movement from outside)"],
+    wrongWhy: [
+      "'In' suggests being already inside or staying within — but since the person was outside and moved inside, 'into' is needed to show that transition.",
+    ],
     extras: ["From English TO Hindi (NOT into): Translate FROM English TO Hindi."],
     star: false,
   },
@@ -1186,10 +1651,17 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "Upon vs Onto",
     rule: "ON → resting on top. UPON → falling FROM ABOVE downward. ONTO → moving FROM BELOW upward.",
+    hindiTip: "ON = ऊपर आराम से बैठा है | UPON = ऊपर से नीचे गिरा | ONTO = नीचे से ऊपर चढ़ा। Direction देखो!",
+    hinglishTip: "Teen prepositions, teen directions: ON = kuch cheez upar ruk rahi hai (cat sat on the mat). UPON = kuch upar se niche gira (rain fell upon the ground). ONTO = kuch niche se upar gaya (he climbed onto the roof). Direction se yaad karo!",
     correct: [
       "The cat sat ON the mat. ✅ (resting)",
       "The rain fell UPON the ground. ✅ (from above down)",
       "He climbed ONTO the roof. ✅ (from below up)",
+    ],
+    correctWhy: [
+      "The cat is resting on a surface with no directional movement — 'on' is correct for static position on top of something.",
+      "The rain moved downward from above to land on the ground — 'upon' is correct when something falls from above down onto a surface.",
+      "He moved upward from ground level to reach the roof — 'onto' is correct when someone moves from below up onto a surface.",
     ],
     star: false,
   },
@@ -1201,12 +1673,22 @@ export const rules: Rule[] = [
     title: "So vs Such — Adverb vs Adjective",
     rule: "SO → adverb → qualifies ADJECTIVE or ADVERB. SUCH → adjective → qualifies NOUN.",
     hindiTip: "SO = adverb (adjective/adverb को qualify करता है) | SUCH = adjective (noun को qualify करता है)। 'He is SO intelligent' (adj) | 'He is SUCH an idiot' (noun)।",
+    hinglishTip: "SO aur SUCH ka difference: SO adjective/adverb ke saath aata hai — 'so intelligent', 'so clearly'. SUCH noun/noun phrase ke saath aata hai — 'such an idiot', 'such a big house'. Common mistake: 'such intelligent' ❌ (intelligent adjective hai, noun nahi) — 'so intelligent' ✅.",
     correct: [
       "He is SO intelligent. ✅ (adjective)",
       "He spoke SO clearly. ✅ (adverb)",
       "He is SUCH an idiot. ✅ (noun)",
     ],
+    correctWhy: [
+      "'Intelligent' is an adjective — 'so' is an adverb that correctly qualifies the adjective 'intelligent'.",
+      "'Clearly' is an adverb — 'so' is correctly used here to intensify the adverb 'clearly'.",
+      "'Idiot' is a noun — 'such' is the correct word to use before a noun phrase ('such an idiot').",
+    ],
     wrong: ["He is SUCH intelligent. ❌", "He is SO an idiot. ❌"],
+    wrongWhy: [
+      "'Such' qualifies nouns, not adjectives — 'intelligent' is an adjective, so 'such' cannot be used before it; 'so' is needed.",
+      "'So' qualifies adjectives and adverbs, not nouns — 'an idiot' is a noun phrase, so 'so' cannot be used before it; 'such' is needed.",
+    ],
     star: false,
   },
   {
@@ -1217,13 +1699,22 @@ export const rules: Rule[] = [
     title: "Too Much vs Much Too",
     rule: "TOO MUCH → adjective → qualifies NOUN. MUCH TOO → adverb → qualifies ADJECTIVE.",
     hindiTip: "'Too much' noun से पहले | 'Much too' adjective से पहले। 'Too much snow' (snow = noun) | 'Much too difficult' (difficult = adj)।",
+    hinglishTip: "TOO MUCH noun ke saath aata hai — 'too much noise', 'too much rain'. MUCH TOO adjective ke saath aata hai — 'much too difficult', 'much too expensive'. Yeh ulte mat lagao: 'much too noise' ❌, 'too much difficult' ❌. Pehle decide karo — noun hai ya adjective — phir choose karo.",
     correct: [
       "There was TOO MUCH snow. ✅ (snow = noun)",
       "The task was MUCH TOO difficult. ✅ (difficult = adjective)",
     ],
+    correctWhy: [
+      "'Snow' is a noun — 'too much' is the correct phrase to use before a noun to show excessive quantity.",
+      "'Difficult' is an adjective — 'much too' is the correct phrase to use before an adjective to intensify its meaning.",
+    ],
     wrong: [
       "The task was TOO MUCH difficult. ❌",
       "There was MUCH TOO snow. ❌",
+    ],
+    wrongWhy: [
+      "'Difficult' is an adjective — 'too much' qualifies nouns, not adjectives; 'much too difficult' is the correct form.",
+      "'Snow' is a noun — 'much too' qualifies adjectives, not nouns; 'too much snow' is the correct form.",
     ],
     star: false,
   },
@@ -1235,6 +1726,7 @@ export const rules: Rule[] = [
     title: "Time Prepositions: At / In / On",
     rule: "AT → exact time, dawn/noon/midnight/night. ON → day, date, festival. IN → month, year, decade, season, morning/afternoon/evening.",
     visual: "at-in-on",
+    hindiTip: "AT = exact time (7 बजे, midnight) | ON = दिन/तारीख/त्योहार (Monday, Holi) | IN = बड़ा period (महीना, साल, सुबह/शाम)। Trick: AT एक point है, ON एक din है, IN एक box है।",
     hinglishTip: "Simple rule: AT = ek exact point pe (7 baje, midnight). IN = ek bade period mein (mahine mein, saal mein, morning/evening mein). ON = kisi specific din ya date pe (Monday, 5th March, Holi). Special: 'at night' general ke liye, 'in the night' specific occasion ke liye.",
     table: {
       headers: ["Use", "Preposition", "Example"],
@@ -1250,6 +1742,7 @@ export const rules: Rule[] = [
       ],
     },
     correct: [],
+    correctWhy: [],
     star: true,
   },
   {
@@ -1260,9 +1753,14 @@ export const rules: Rule[] = [
     title: "With vs By — Instrument vs Doer",
     rule: "WITH → instrument (non-living thing used). BY → doer (living being who did it). For ink/pen writing → IN.",
     hindiTip: "BY = करने वाला (जीवित) | WITH = जिससे काम हुआ (निर्जीव) | 'He wrote IN ink' (not with/by ink)।",
+    hinglishTip: "BY aur WITH ka fark: BY = kaam karne wala (living agent) — 'killed BY a snake'. WITH = jis cheez se kaam kiya (instrument) — 'killed WITH a stick'. Exception: Ink/pen ke liye IN use hota hai — 'wrote IN ink', not 'with ink'. Ek aur: 'died BY the sword' — sword = method of killing.",
     correct: [
       "He was killed BY a snake WITH a stick. ✅",
       "I wrote the answers IN black ink. ✅ (NOT with/by)",
+    ],
+    correctWhy: [
+      "'A snake' is a living doer of the action — 'by' correctly identifies the living agent; 'a stick' is the instrument used — 'with' correctly identifies the non-living tool.",
+      "'Black ink' is a medium or material used for writing — the correct preposition for writing materials like ink is 'in', not 'with' or 'by'.",
     ],
     star: false,
   },
@@ -1273,9 +1771,15 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "In the Beginning vs At the Beginning",
     rule: "'In the beginning' → long duration (when something started long ago). 'At the beginning' → short duration / specific point.",
+    hindiTip: "'In the beginning' = लंबी historical period | 'At the beginning' = specific short point। Duration vs Point!",
+    hinglishTip: "Dono mein fark duration ka hai. 'In the beginning' bada time period dikhata hai — jaise 'In the beginning, humans were nomads' (yeh era ki baat hai). 'At the beginning' ek specific point hai — jaise 'At the beginning of the film' (exact moment). AT = exact point, IN = broad period.",
     correct: [
       "IN THE BEGINNING, humans didn't know how to cook. ✅ (long historical period)",
       "AT THE BEGINNING of the movie, there is a song. ✅ (specific point)",
+    ],
+    correctWhy: [
+      "This refers to a long historical era (the dawn of human civilization) — 'in the beginning' is correct for extended time periods.",
+      "'The beginning of the movie' is an exact, specific moment — 'at the beginning' is correct for a precise point in time.",
     ],
     star: false,
   },
@@ -1295,6 +1799,12 @@ export const rules: Rule[] = [
       "Curd is made FROM milk. ✅",
       "Flour is made FROM wheat. ✅",
     ],
+    correctWhy: [
+      "Iron is physically shaped into the almirah and could be recovered by melting it — physical/reversible change means 'made of' is correct.",
+      "Wood is chemically transformed into paper through pulping — the wood cannot be recovered, so 'made from' is correct.",
+      "Milk undergoes a chemical change to become curd — you cannot get liquid milk back from curd, so 'made from' is correct.",
+      "Wheat is ground and processed into flour through an irreversible change — you cannot get the whole wheat grains back, so 'made from' is correct.",
+    ],
     star: true,
   },
   {
@@ -1304,6 +1814,8 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "Apostrophe Rules",
     rule: "Singular noun → 's. Plural ending in S → s'. Plural NOT ending in S → 's. Joint possession → ONE apostrophe (last name). Separate → BOTH get 's. Non-living things → 'of' (not 's).",
+    hindiTip: "Singular → 's | Plural (S में खत्म) → s' | Plural (S नहीं) → 's | Joint = एक apostrophe | Separate = दोनों को | Non-living = 'of' use करो।",
+    hinglishTip: "Apostrophe rules: Singular noun → 's lagao (Rahul's car). Plural jo 's' mein khatam hoti hai → sirf apostrophe (boys' hostel). Plural jo 's' mein khatam nahi hoti → 's lagao (children's park). Joint possession mein sirf last name pe apostrophe (Neha and Priya's project). Non-living cheezon ke liye 'of' use karo (leg of the table, not table's leg).",
     table: {
       headers: ["Type", "Example"],
       rows: [
@@ -1316,6 +1828,7 @@ export const rules: Rule[] = [
       ],
     },
     correct: [],
+    correctWhy: [],
     star: false,
   },
   {
@@ -1326,9 +1839,14 @@ export const rules: Rule[] = [
     title: "Beside vs Besides",
     rule: "BESIDE → next to / by the side of. BESIDES → in addition to.",
     hindiTip: "Beside = बगल में | Besides = इसके अलावा। 'Beside' में कोई extra S नहीं = simple 'next to'।",
+    hinglishTip: "BESIDE aur BESIDES bilkul alag hain. BESIDE = next to (barabar mein) — 'sit beside me'. BESIDES = in addition to (iske alawa) — 'besides maths, I like English'. Memory trick: BESIDES mein extra 'S' hai — extra 'S' matlab extra (additional) meaning.",
     correct: [
       "My college is BESIDE the lake. ✅ (next to)",
       "BESIDES maths, I study English. ✅ (in addition to)",
+    ],
+    correctWhy: [
+      "'Beside' means physically next to something — the college is located right next to the lake, so 'beside' is correct.",
+      "'Besides' means in addition to — studying English on top of maths is an addition, so 'besides' (with the extra 's') is correct.",
     ],
     star: false,
   },
@@ -1340,12 +1858,22 @@ export const rules: Rule[] = [
     title: "Between vs Among",
     rule: "BETWEEN → 2 people OR known/specific parties (even 3+ if named). AMONG → 3+ unknown count. Always: Between X AND Y (NOT between X to Y). After preposition → objective case (between you and ME).",
     hindiTip: "Between = 2 या जाने-पहचाने parties | Among = 3+ अनजान। 'Between you and ME' ✅ (preposition के बाद me, not I)।",
+    hinglishTip: "BETWEEN sirf 2 logon ya specific parties ke liye. AMONG 3 ya zyada ke liye jab exact number pata nahi. Important: 'between X AND Y' — 'TO' nahi. Preposition ke baad objective case — 'between you and ME' ✅ (not 'you and I'). 'Between 4 PM AND 5 PM' ✅ (not 'to 5 PM').",
     correct: [
       "Between you and ME. ✅ (objective case after preposition)",
       "Between 4 PM AND 5 PM. ✅",
       "Among the students. ✅ (3+ unknown)",
     ],
+    correctWhy: [
+      "'Between' is a preposition — after a preposition, the objective case is required, so 'me' is correct (not 'I').",
+      "'Between' requires 'and' to connect the two time points — '4 PM and 5 PM' uses the correct conjunction.",
+      "'Students' is a group of unspecified number greater than two — 'among' is correct for three or more people.",
+    ],
     wrong: ["Between you and I. ❌", "Between 4 PM TO 5 PM. ❌"],
+    wrongWhy: [
+      "'I' is a subjective case pronoun — but after the preposition 'between', objective case is required, making 'me' the correct choice.",
+      "'Between' pairs with 'and', not 'to' — using 'to' as the connector between the two times is incorrect.",
+    ],
     star: true,
   },
   {
@@ -1356,12 +1884,20 @@ export const rules: Rule[] = [
     title: "Number + Unit + Noun → Unit is Singular",
     rule: "When forming compound adjectives (number + unit + noun), the unit is always SINGULAR (no S) and hyphenated.",
     hindiTip: "5 inches pencil → 5-inch pencil (no 's' in unit when it comes before noun)। Exam में यही trap है!",
+    hinglishTip: "Jab number + unit milke noun se pehle adjective bante hain, unit singular rehti hai. '5-inch pencil' (not 5-inches), 'five-star hotel' (not five-stars), '5-year-old boy' (not 5-years-old). Hyphen lagta hai aur unit mein 's' nahi aata — yeh compound adjective ka rule hai.",
     correct: [
       "A 5-inch pencil ✅ (NOT 5-inches)",
       "A five-star hotel ✅ (NOT five-stars)",
       "A 5-year-old boy ✅",
       "A 50-foot wall ✅",
       "A 20-page essay ✅",
+    ],
+    correctWhy: [
+      "When 'inch' joins with '5' to become a compound adjective before 'pencil', it stays singular — '5-inch' (no 's') is correct.",
+      "When 'star' joins with 'five' to modify 'hotel', it stays singular — 'five-star' (no 's') is the correct compound adjective form.",
+      "'Year' stays singular in the compound adjective '5-year-old' — the hyphen and singular unit are both correct.",
+      "'Foot' stays singular in the compound adjective '50-foot' — no plural form is used when the unit comes before a noun.",
+      "'Page' stays singular in the compound adjective '20-page' — the unit always remains singular in hyphenated compound adjectives.",
     ],
     star: false,
   },
@@ -1372,11 +1908,21 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "Units of Units — Ascending Order",
     rule: "When showing approximation with nested units → always ASCENDING order (smaller → larger), plural forms.",
+    hindiTip: "Units of units हमेशा ascending order में: Hundreds of thousands ✅ (छोटा पहले, बड़ा बाद में) | Thousands of hundreds ❌।",
+    hinglishTip: "Jab nested units use karte hain approximation ke liye, hamesha chote se bade ki taraf jaate hain. 'Hundreds of thousands' ✅ (hundreds chote hain, thousands bade — ascending). Yahi 'millions of billions' ✅. Ulta karo toh galat: 'thousands of hundreds' ❌.",
     correct: [
       "Hundreds of thousands ✅ (NOT thousands of hundreds)",
       "Millions of billions ✅ (NOT billions of millions)",
     ],
+    correctWhy: [
+      "'Hundreds of thousands' goes from smaller to larger unit (ascending order) — hundreds are smaller than thousands, so this is the correct order.",
+      "'Millions of billions' also goes from smaller to larger (millions come before billions) — this ascending order is correct.",
+    ],
     wrong: ["Thousands of hundreds ❌", "Billions of millions ❌"],
+    wrongWhy: [
+      "'Thousands of hundreds' goes from larger to smaller (descending) — the correct order must be ascending (smaller to larger), so this is wrong.",
+      "'Billions of millions' goes from larger to smaller — billions are bigger than millions, so this descending order is incorrect.",
+    ],
     star: false,
   },
   {
@@ -1386,11 +1932,20 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "Seldom — Correct Pairs",
     rule: "'Seldom or never' (= almost never) ✅ | 'Seldom if ever' (= occasionally) ✅ | 'Seldom or ever' ❌ WRONG.",
+    hindiTip: "'Seldom or never' ✅ | 'Seldom if ever' ✅ | 'Seldom or ever' ❌। बस यही तीनों याद करो!",
+    hinglishTip: "Seldom ke saath sirf do correct combinations hain. 'Seldom or never' matlab almost kabhi nahi. 'Seldom if ever' matlab kabhi-kabhi shayad. 'Seldom or ever' galat hai — yeh combination exist hi nahi karta. Exam mein agar 'seldom or ever' dikhe toh error hai.",
     correct: [
       "I seldom or never go there. ✅",
       "He seldom if ever reads. ✅",
     ],
+    correctWhy: [
+      "'Seldom or never' is a correct fixed pair meaning almost never — 'never' correctly extends the negative meaning of 'seldom'.",
+      "'Seldom if ever' is a correct fixed pair meaning very rarely, if at all — 'if ever' correctly qualifies how rare the occurrence is.",
+    ],
     wrong: ["I seldom or ever go there. ❌"],
+    wrongWhy: [
+      "'Seldom or ever' is not a valid combination — 'ever' is positive and clashes with the negative meaning of 'seldom'; only 'seldom or never' and 'seldom if ever' are correct.",
+    ],
     star: false,
   },
   {
@@ -1401,13 +1956,22 @@ export const rules: Rule[] = [
     title: "BOTH — What It Cannot Take",
     rule: "BOTH does NOT take 'as well as' (use AND instead). BOTH does NOT take 'not' (use NEITHER instead).",
     hindiTip: "'Both...as well as' ❌ | 'Both...and' ✅ | 'Both not' ❌ | 'Neither' ✅।",
+    hinglishTip: "BOTH ke saath do restrictions: (1) 'as well as' kabhi nahi — 'both...AND' use karo. (2) 'both not' kabhi nahi — 'neither' use karo. 'Both Ram AND Shyam came' ✅. 'Both Ram as well as Shyam came' ❌. 'Neither is going' ✅. 'Both are not going' ❌.",
     correct: [
       "Both Ram AND Shyam came. ✅",
       "NEITHER is going. ✅",
     ],
+    correctWhy: [
+      "'Both' pairs only with 'and' — 'both Ram AND Shyam' is the correct construction for joining two people.",
+      "'Neither' is the correct word to express that not one of two people is going — it replaces the incorrect 'both...not' construction.",
+    ],
     wrong: [
       "Both Ram AS WELL AS Shyam came. ❌",
       "Both are NOT going. ❌",
+    ],
+    wrongWhy: [
+      "'Both' cannot pair with 'as well as' — 'as well as' is a separate connector that should be used without 'both'; the correct pair for 'both' is 'and'.",
+      "'Both...not' is an incorrect construction — to express that neither of two is doing something, 'neither' should be used instead.",
     ],
     star: false,
   },
@@ -1418,6 +1982,8 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "Noun vs Verb Spelling (-ce vs -se)",
     rule: "Some words are spelled differently as noun vs verb: NOUN ends in -ce | VERB ends in -se.",
+    hindiTip: "Noun = -ce (advice, practice) | Verb = -se (advise, practise)। Spelling से noun/verb पहचानो!",
+    hinglishTip: "Spelling se hi pata chal jaata hai noun hai ya verb. 'Advice' (noun) vs 'advise' (verb). 'Practice' (noun) vs 'practise' (verb). Exam mein agar 'He adviced me' ya 'He practiced law' dikh jaaye — spelling error hai. Noun: -ce | Verb: -se.",
     table: {
       headers: ["Noun (-ce)", "Verb (-se)"],
       rows: [
@@ -1431,6 +1997,11 @@ export const rules: Rule[] = [
       "He ADVISED me. ✅ (verb)",
       "I PRACTICE daily. ❌ → I PRACTISE daily. ✅ (verb)",
     ],
+    correctWhy: [
+      "'Advice' (ending in -ce) is the noun form — 'gave me advice' correctly uses the noun.",
+      "'Advised' (ending in -se, here as past tense) is the verb form — correctly used here since he is performing the action of advising.",
+      "'Practice' (-ce) is the noun; 'practise' (-se) is the verb — since this sentence uses it as an action (doing something daily), the verb form 'practise' is correct.",
+    ],
     star: false,
   },
   {
@@ -1440,10 +2011,17 @@ export const rules: Rule[] = [
     sectionColor: "#22c55e",
     title: "Enough — Adverb AND Adjective",
     rule: "'Enough' works as BOTH adverb and adjective. Before noun → adjective. After adjective/adverb → adverb.",
+    hindiTip: "'Enough' noun के पहले = adjective | adjective/adverb के बाद = adverb। Position से decide होता है।",
+    hinglishTip: "Enough ka position flexible hai lekin meaning change hoti hai. Noun se pehle lagao → adjective ban jaata hai ('enough money'). Adjective/adverb ke baad lagao → adverb ban jaata hai ('smart enough', 'fast enough'). Note: 'Enough' HAMESHA adjective/adverb ke BAAD aata hai — pehle nahi. 'Enough smart' ❌ → 'smart enough' ✅.",
     correct: [
       "I have ENOUGH money. ✅ (adjective — before noun)",
       "He is smart ENOUGH. ✅ (adverb — after adjective)",
       "She ran fast ENOUGH. ✅ (adverb — after adverb)",
+    ],
+    correctWhy: [
+      "'Enough' comes before the noun 'money' to show a sufficient quantity — this is its adjective use.",
+      "'Enough' comes after the adjective 'smart' to show a sufficient degree — when it modifies an adjective, 'enough' always follows, not precedes.",
+      "'Enough' comes after the adverb 'fast' to show the speed was sufficient — when it modifies an adverb, 'enough' correctly follows it.",
     ],
     star: false,
   },
@@ -1462,9 +2040,18 @@ export const rules: Rule[] = [
       "Hardly HAD I FALLEN asleep WHEN the phone rang. ✅",
       "Scarcely HAD SHE LEFT WHEN it started raining. ✅",
     ],
+    correctWhy: [
+      "'No sooner' triggers inversion — 'had he entered' correctly places the helping verb before the subject; 'than' is the correct connector (not 'then').",
+      "'Hardly' at the start triggers inversion — 'had I fallen' correctly places the helping verb before 'I'; 'when' is the correct connector to link the two clauses.",
+      "'Scarcely' triggers inversion — 'had she left' correctly places the helping verb before 'she'; 'when' is the correct connector.",
+    ],
     wrong: [
       "No sooner had he entered THEN... ❌ (must be THAN)",
       "Hardly had I fallen asleep THEN... ❌ (must be WHEN)",
+    ],
+    wrongWhy: [
+      "'No sooner' must always pair with 'than', not 'then' — 'then' is an adverb of time, not a correlative conjunction.",
+      "'Hardly' must pair with 'when', not 'then' — 'then' is incorrect here; only 'when' is the accepted connector with 'hardly'.",
     ],
     star: true,
   },
@@ -1475,9 +2062,15 @@ export const rules: Rule[] = [
     sectionColor: "#f43f5e",
     title: "Seldom Also Takes Inversion",
     rule: "When 'Seldom' starts a sentence → inversion (auxiliary + subject) follows.",
+    hindiTip: "'Seldom' sentence की शुरुआत में → inversion। Normal word order उलट जाता है। 'Seldom DOES HE speak' ✅।",
+    hinglishTip: "Jab 'seldom' sentence ke start mein aaye toh subject aur auxiliary swap ho jaate hain. Normal: 'He seldom speaks' → Inverted: 'Seldom DOES HE speak'. Yahi Rule 81 ke No sooner/Hardly waale inversions jaisa hai. Seldom ke baad auxiliary pehle, phir subject.",
     correct: [
       "Seldom HAD I SEEN such a beautiful sight. ✅",
       "Seldom DOES HE SPEAK the truth. ✅",
+    ],
+    correctWhy: [
+      "'Seldom' at the start triggers inversion — 'had I seen' correctly places the helping verb 'had' before the subject 'I'.",
+      "'Seldom' at the start triggers inversion — 'does he speak' correctly places the helping verb 'does' before the subject 'he'.",
     ],
     star: false,
   },
@@ -1489,12 +2082,21 @@ export const rules: Rule[] = [
     title: "As…as vs So…as",
     rule: "'As…as' → used in BOTH positive AND negative comparisons. 'So…as' → used ONLY in NEGATIVE comparisons.",
     hindiTip: "'So...as' ONLY negative के लिए। Positive में 'so...as' ❌ गलत है।",
+    hinglishTip: "'As...as' dono positive aur negative sentences mein use hota hai. 'So...as' SIRF negative sentences mein. 'He is as good as Rahul' ✅ (positive). 'He is not as good as Rahul' ✅ (negative — as...as). 'He is not so good as Rahul' ✅ (negative — so...as bhi chal jaata hai). Lekin 'He is so good as Rahul' ❌ (positive mein so...as galat hai).",
     correct: [
       "He is AS good AS Rahul. ✅ (positive)",
       "He is NOT AS good AS Rahul. ✅ (negative)",
       "He is NOT SO good AS Rahul. ✅ (negative — so...as OK)",
     ],
+    correctWhy: [
+      "This is a positive comparison (no 'not') — 'as…as' is correct for positive equality comparisons.",
+      "This is a negative comparison with 'not' — 'not as…as' is one correct way to show that one thing is less than another.",
+      "This is also a negative comparison with 'not' — 'not so…as' is an equally acceptable alternative to 'not as…as' in negative sentences.",
+    ],
     wrong: ["He is SO good AS Rahul. ❌ (positive — so...as WRONG)"],
+    wrongWhy: [
+      "This is a positive sentence (no 'not') — 'so…as' is only allowed in negative sentences; in a positive comparison, only 'as…as' is correct.",
+    ],
     star: true,
   },
   {
@@ -1505,12 +2107,20 @@ export const rules: Rule[] = [
     title: "Like-to-Like Comparison — That of / Those of",
     rule: "When comparing, you must compare LIKE with LIKE. Use 'that of' (singular) or 'those of' (plural) to refer back.",
     hindiTip: "सेब की तुलना सेब से होती है, संतरे से नहीं! Population की तुलना population से होनी चाहिए।",
+    hinglishTip: "Comparison mein same cheezein compare karni chahiye. 'Population of Delhi is greater than Chandigarh' — yahan population ki tulna city se ho rahi hai — yeh galat hai. 'That of Chandigarh' se population ki tulna population se hogi. Singular ke liye 'that of', plural ke liye 'those of'. Yeh AFCAT mein ek common trap question hai.",
     correct: [
       "The population of Delhi is greater than THAT OF Chandigarh. ✅",
       "The rivers of India are longer than THOSE OF England. ✅",
     ],
+    correctWhy: [
+      "'That of Chandigarh' refers to the population of Chandigarh — this correctly compares population with population (like with like), using 'that of' as a substitute for 'the population of'.",
+      "'Those of England' refers to the rivers of England — this correctly compares rivers with rivers (like with like), using 'those of' as a plural substitute.",
+    ],
     wrong: [
       "The population of Delhi is greater than Chandigarh. ❌ (comparing population with city)",
+    ],
+    wrongWhy: [
+      "This sentence compares 'the population of Delhi' with 'Chandigarh' (a city) — these are not the same kind of thing; the comparison must be between populations, so 'that of Chandigarh' is needed.",
     ],
     star: true,
   },
@@ -1521,12 +2131,22 @@ export const rules: Rule[] = [
     sectionColor: "#a855f7",
     title: "-IOR Words and Prefer → TO (Not Than)",
     rule: "Superior, inferior, senior, junior, prior, prefer — all use TO for comparison, never 'than'.",
+    hindiTip: "-ior words + prefer → TO (Latin grammar rule)। 'Superior TO' ✅ | 'Superior THAN' ❌। Rule 59 का repeat।",
+    hinglishTip: "Yeh Rule 59 ka hi recap hai. Superior, inferior, senior, junior, prior, prefer — sab 'to' lete hain comparison ke liye, 'than' nahi. Yeh Latin se aaye hain jahan 'to' hi use hota tha. Exam mein agar 'superior than' ya 'prefer...than' dikh jaaye — woh galat hai.",
     correct: [
       "He prefers coffee TO tea. ✅",
       "He is senior TO me. ✅",
       "This is superior TO that. ✅",
     ],
+    correctWhy: [
+      "'Prefer' always takes 'to' for comparison — 'prefers coffee to tea' is the grammatically correct form.",
+      "'Senior' is a Latin-origin word that takes 'to' — 'senior to me' is correct.",
+      "'Superior' ends in '-ior' and takes 'to' — 'superior to that' is the correct comparison.",
+    ],
     wrong: ["He prefers coffee THAN tea. ❌"],
+    wrongWhy: [
+      "'Than' is used with comparative adjectives (better, worse), but 'prefer' takes 'to' — 'than' after 'prefers' is incorrect.",
+    ],
     star: false,
   },
   {
@@ -1543,8 +2163,15 @@ export const rules: Rule[] = [
       "I HAVE WATCHED this movie. ✅ (focus on action — no time)",
       "I WATCHED this movie yesterday. ✅ (time marker → simple past)",
     ],
+    correctWhy: [
+      "No time word is present — the sentence focuses on the experience or action itself, so present perfect 'have watched' is correct.",
+      "'Yesterday' is a specific time marker — whenever a past time marker is present, simple past 'watched' must be used, not present perfect.",
+    ],
     wrong: [
       "I HAVE WATCHED this movie yesterday. ❌ (time marker + perfect = wrong)",
+    ],
+    wrongWhy: [
+      "'Yesterday' is a definite time marker — present perfect cannot be used with past time markers; the simple past 'watched' must replace 'have watched'.",
     ],
     star: true,
   },
@@ -1577,6 +2204,7 @@ export const rules: Rule[] = [
       ],
     },
     correct: [],
+    correctWhy: [],
     star: true,
   },
   {
@@ -1586,10 +2214,17 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Quite vs Quiet",
     rule: "QUIET = silent/calm. QUITE = fairly/completely.",
+    hindiTip: "QUIET = चुप/शांत | QUITE = काफी/पूरी तरह। Spelling में 'e' की position अलग है!",
+    hinglishTip: "Dono words same lagte hain lekin alag hain. QUIET = silent/peaceful ('please be quiet'). QUITE = fairly/completely ('quite good', 'quite sure'). Spelling trick: 'Quiet' mein 'u' aur 'i' dono hain — usse yaad karo ki yeh zyada complicated word hai. 'Quite' chota aur seedha hai.",
     correct: [
       "Please be QUIET. ✅ (silent)",
       "It is QUITE good. ✅ (fairly)",
       "I am QUITE sure. ✅ (completely)",
+    ],
+    correctWhy: [
+      "'Quiet' means silent or calm — the instruction to be silent uses 'quiet' correctly.",
+      "'Quite' here means 'fairly' — it is an adverb correctly modifying the adjective 'good' to show degree.",
+      "'Quite' here means 'completely' — it intensifies the adjective 'sure', and 'quite' is the correct spelling for this meaning.",
     ],
     star: false,
   },
@@ -1600,9 +2235,15 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Distributor Rule — Reflexive Ownership",
     rule: "When each person in a group possesses something individually, use plural possessive.",
+    hindiTip: "जब एक group के हर member के पास अपनी-अपनी चीज़ हो → plural possessive। 'We have our books' (हर किसी की अपनी book)।",
+    hinglishTip: "Distributor rule: Jab ek group ke har member ke paas alag-alag cheez hoti hai toh plural possessive use karo. 'Students submitted their papers' — har student ne apna paper submit kiya. 'We have our books' — har kisi ke paas apni book hai. Ek collective cheez nahi — distribution hai.",
     correct: [
       "We have OUR books. ✅ (each person has their own book)",
       "Students submitted THEIR papers. ✅",
+    ],
+    correctWhy: [
+      "Each person in the group has their own individual book — the plural possessive 'our' is correct because the books are distributed among the members.",
+      "Each student submitted their own individual paper — the plural possessive 'their' correctly reflects that each student had their own paper.",
     ],
     star: false,
   },
@@ -1614,14 +2255,24 @@ export const rules: Rule[] = [
     title: "Reflexive Pronouns — Specific Verbs",
     rule: "These verbs MUST take reflexive pronoun (myself/yourself/himself/themselves): absent, avail, reconcile, amuse, pride, exert, enjoy, punish.",
     hindiTip: "AARAPEP = Absent, Avail, Reconcile, Amuse, Pride, Exert, Enjoy, Punish — ये verbs reflexive pronoun माँगते हैं।",
+    hinglishTip: "Yeh specific verbs hamesha reflexive pronoun maangti hain. 'Avail yourself' ✅ — 'avail of this' ❌. 'Enjoyed themselves' ✅ — 'enjoyed very much' ❌. 'Absented himself' ✅. Mnemonic: AARAPEP — Absent, Avail, Reconcile, Amuse, Pride, Exert, Enjoy, Punish.",
     correct: [
       "You should avail YOURSELF of this opportunity. ✅",
       "They enjoyed THEMSELVES. ✅",
       "He absented HIMSELF from the meeting. ✅",
     ],
+    correctWhy: [
+      "'Avail' is one of the specific verbs that must be followed by a reflexive pronoun — 'yourself' correctly completes the construction 'avail yourself of'.",
+      "'Enjoy' is one of the verbs that requires a reflexive pronoun — 'themselves' is the correct reflexive pronoun for the subject 'they'.",
+      "'Absent' used as a verb requires a reflexive pronoun — 'himself' correctly shows that he removed himself from the meeting.",
+    ],
     wrong: [
       "You should avail of this opportunity. ❌",
       "They enjoyed very much. ❌",
+    ],
+    wrongWhy: [
+      "'Avail' must take a reflexive pronoun — omitting 'yourself' leaves the verb incomplete; 'avail of' without the reflexive is incorrect.",
+      "'Enjoy' requires a reflexive pronoun — 'enjoyed very much' omits the required reflexive pronoun 'themselves', making it grammatically incorrect.",
     ],
     star: false,
   },
@@ -1632,12 +2283,21 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "One → One's (Stay Consistent)",
     rule: "When 'one' is used as a pronoun, use 'one's' throughout — do NOT switch to his/her.",
+    hindiTip: "'One' से शुरू किया तो 'one's' use करते रहो — बीच में 'his/her' मत लाओ। Consistency ज़रूरी है।",
+    hinglishTip: "Jab 'one' ko subject ki tarah use karo (general person ke liye), toh poore sentence mein consistency chahiye. 'One' ke liye possessive hamesha 'one's' hoga — 'his/her' nahi. 'One should do one's duty' ✅. 'One should do his duty' ❌ — yeh inconsistency hai. Exam mein is switch ko error ke roop mein identify karo.",
     correct: [
       "One must not boast of ONE'S own success. ✅",
       "One should do ONE'S duty. ✅",
     ],
+    correctWhy: [
+      "When 'one' is used as the general pronoun in a sentence, its possessive must also be 'one's' — 'one's own success' maintains consistent pronoun usage.",
+      "Again, 'one' as subject requires 'one's' as the possessive throughout — 'one's duty' is consistent and correct.",
+    ],
     wrong: [
       "One must not boast of HIS own success. ❌ (mixing one/his)",
+    ],
+    wrongWhy: [
+      "Starting with 'one' and then switching to 'his' creates an inconsistency — the pronoun must stay as 'one's' throughout; mixing 'one' and 'his' in the same sentence is incorrect.",
     ],
     star: false,
   },
@@ -1648,13 +2308,23 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Personal Pronoun Cases — Stay Consistent",
     rule: "When two pronouns are joined by AND/OR, both must be in the SAME case (both subjective or both objective).",
+    hindiTip: "AND/OR से जुड़े दो pronouns same case में होने चाहिए — दोनों subject या दोनों object। Mix मत करो।",
+    hinglishTip: "Jab 2 pronouns 'and' ya 'or' se jode hoon, dono ek hi case mein hone chahiye. 'Ram and I went' — dono subjective case (Ram/I). 'For you and me' — dono objective case (you/me). Common error: 'Ram and me went' ❌ (me objective hai, subject nahi ho sakta) ya 'for you and I' ❌ (I subjective hai, preposition ke baad nahi aata).",
     correct: [
       "RAM AND I went there. ✅ (both subjective)",
       "These books are for YOU AND ME. ✅ (both objective)",
     ],
+    correctWhy: [
+      "'Ram and I' are both the subjects of the verb 'went' — both pronouns are in the subjective case, so 'I' is correct (not 'me').",
+      "'You and me' are both objects of the preposition 'for' — both pronouns are in the objective case, so 'me' is correct (not 'I').",
+    ],
     wrong: [
       "Ram and ME went there. ❌ (mixing cases)",
       "These books are for you and I. ❌",
+    ],
+    wrongWhy: [
+      "'Me' is an objective case pronoun but here it is the subject of 'went' — subjects require the subjective case, so 'I' must replace 'me'.",
+      "'I' is a subjective case pronoun but here it follows the preposition 'for' — after prepositions, the objective case is needed, so 'me' must replace 'I'.",
     ],
     star: false,
   },
@@ -1666,11 +2336,19 @@ export const rules: Rule[] = [
     title: "Be Verb → Nominative (Subjective) Case",
     rule: "After 'be' verb → use subjective/nominative case pronoun (I, he, she, we, they) — NOT objective.",
     hindiTip: "Be verb के बाद = Subject pronoun। Formal English में: 'It is I' ✅, 'It is me' ❌।",
+    hinglishTip: "Be verb ke baad formally subjective pronoun aata hai — 'It is I' ✅. Colloquial English mein 'It is me' bhi chalta hai lekin AFCAT jaisi formal exams mein 'It is I' sahi hai. Trick: Be verb se pehle aur baad mein ek hi person hai — dono ek hi case mein hone chahiye (subjective).",
     correct: [
       "It is I. ✅ (formal English)",
       "Who is it? It is HE. ✅",
     ],
+    correctWhy: [
+      "After the 'be' verb 'is', the pronoun must be in the subjective case — 'I' (subjective) is correct in formal English, not 'me' (objective).",
+      "After the 'be' verb 'is', the pronoun must be in the subjective case — 'he' (subjective) is correct here, not 'him' (objective).",
+    ],
     wrong: ["It is me. ❌ (informal — avoid in exam)"],
+    wrongWhy: [
+      "'Me' is an objective case pronoun — but after a 'be' verb, formal grammar requires the subjective case; in exam English, 'it is I' is the correct form.",
+    ],
     star: false,
   },
   {
@@ -1681,11 +2359,19 @@ export const rules: Rule[] = [
     title: "Through → Always Use IN (Not Into)",
     rule: "When 'through' is in the sentence → use IN (not into), because 'through' already implies movement.",
     hindiTip: "'Through' पहले से movement बता रहा है → 'in' use करो। 'He threw it IN the river' ✅, 'INTO the river' ❌।",
+    hinglishTip: "'Through' already movement imply karta hai — kisi cheez ke beech se guzarna. Isliye 'into' lagana redundant ho jaata hai. 'He threw the ball IN the river' ✅ — 'through' ki wajah se movement already implied hai. Agar 'through' context nahi hai, toh 'into' bhi chal sakta hai: 'He jumped INTO the well' ✅.",
     correct: [
       "He threw the ball IN the river. ✅ (through implied)",
       "He passed a thread IN the needle. ✅",
     ],
+    correctWhy: [
+      "The ball travels through the air and into the water — 'through' movement is already implied, so 'in' is correct; 'into' would be redundant.",
+      "The thread passes through the eye of the needle — the 'through' action is implied, so 'in' is the correct preposition here.",
+    ],
     wrong: ["He threw the ball INTO the river. ❌ (when through context is there)"],
+    wrongWhy: [
+      "When 'through' movement is already understood from the context, using 'into' is redundant — 'in' alone is sufficient and 'into' should not be used.",
+    ],
     star: false,
   },
   {
@@ -1695,13 +2381,23 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Who and Which Combined → Use THAT",
     rule: "When you need to refer to BOTH a person and a thing together, use THAT (not who/which).",
+    hindiTip: "Person + Thing एक साथ → THAT (who या which नहीं)। 'The man and his dog THAT came' ✅।",
+    hinglishTip: "Jab ek clause mein ek saath insaan aur cheez dono refer ho rahe hoon, toh THAT use karo. WHO sirf insanon ke liye, WHICH sirf cheezon ke liye. Dono ek saath hoon toh THAT hi sahi option hai. 'I saw the girl and the bicycle THAT you mentioned' ✅.",
     correct: [
       "I saw the girl and the bicycle THAT you mentioned. ✅",
       "The man and his dog THAT came yesterday are here. ✅",
     ],
+    correctWhy: [
+      "'The girl' (person) and 'the bicycle' (thing) are mentioned together — when both a person and a thing are referred to, 'that' is the only correct relative pronoun.",
+      "'The man' (person) and 'his dog' (animal/thing) are mentioned together — again, combining a person and non-person requires 'that' as the relative pronoun.",
+    ],
     wrong: [
       "I saw the girl and the bicycle WHO you mentioned. ❌",
       "I saw the girl and the bicycle WHICH you mentioned. ❌",
+    ],
+    wrongWhy: [
+      "'Who' is used only for people — since the clause also refers to a bicycle (non-person), 'who' cannot be used; 'that' is needed when both people and things are included.",
+      "'Which' is used only for things — since the clause also refers to a girl (person), 'which' cannot be used; 'that' is the only pronoun that covers both.",
     ],
     star: false,
   },
@@ -1713,9 +2409,14 @@ export const rules: Rule[] = [
     title: "Either of / Neither of → Singular Verb",
     rule: "(Half Girlfriend Rule — already covered in Rule 19). Quick recap: Either of + plural noun + singular verb.",
     hindiTip: "Rule 19 का recap: Either of / Neither of → plural noun + singular verb।",
+    hinglishTip: "Half Girlfriend Rule ka short recap: 'Either of / Neither of' ke baad noun plural hoga lekin verb singular. 'Either of the students IS here' ✅. 'Neither of them IS wrong' ✅. Yeh Rule 19 ka hi part hai — agar aapne woh padha hai toh yeh automatically yaad rahega.",
     correct: [
       "Either of the students IS here. ✅",
       "Neither of them IS wrong. ✅",
+    ],
+    correctWhy: [
+      "'Either of the students' — 'either' is singular, so the verb 'is' is correct even though 'students' is plural.",
+      "'Neither of them' — 'neither' is singular, so the verb 'is' is correct even though 'them' is plural.",
     ],
     star: false,
   },
@@ -1727,9 +2428,14 @@ export const rules: Rule[] = [
     title: "A/AN Before Numbers — Sound Rule",
     rule: "A one-eyed man → A (because 'one' sounds like 'wun' — consonant sound). An 18-year-old → AN (because '18' sounds like 'eighteen' — vowel E sound).",
     hindiTip: "Numbers के साथ भी sound rule लागू होती है। 'One' = wun (consonant) → A | '8' = eight (vowel) → AN।",
+    hinglishTip: "Article choose karte waqt number ka pronunciation dekho, spelling nahi. 'One' bolne mein 'wun' — consonant sound → A one-eyed man ✅. '8' bolne mein 'eight' — E vowel sound → AN 8-hour shift ✅. '11' bolne mein 'eleven' — vowel E sound → AN 11-member team ✅. Rule yahi hai: sound se decide karo.",
     correct: [
       "A one-eyed man. ✅ ('wun' = consonant sound)",
       "An 18-year-old girl. ✅ ('eighteen' starts with vowel sound)",
+    ],
+    correctWhy: [
+      "'One' is pronounced 'wun' — this starts with a consonant sound ('w'), so the article 'a' (not 'an') is correct.",
+      "'18' is read as 'eighteen' — this starts with the vowel sound 'e', so the article 'an' (not 'a') is correct.",
     ],
     star: false,
   },
@@ -1740,11 +2446,20 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Seldom — Correct Combinations (Recap)",
     rule: "Seldom or never ✅ | Seldom if ever ✅ | Seldom or ever ❌. (See Rule 77 for details.)",
+    hindiTip: "'Seldom or never' ✅ | 'Seldom if ever' ✅ | 'Seldom or ever' ❌ — Rule 77 का same recap।",
+    hinglishTip: "Rule 77 ka hi dobarah summary. Seldom ke saath sirf do pairs valid hain: 'seldom or never' (almost never) aur 'seldom if ever' (very rarely). Teesra option 'seldom or ever' completely wrong hai. Exam mein agar yeh dikhe — toh woh hi error hai.",
     correct: [
       "He seldom or never tells the truth. ✅",
       "She seldom if ever goes out. ✅",
     ],
+    correctWhy: [
+      "'Seldom or never' is a valid fixed pair — 'never' correctly reinforces the negative sense of 'seldom' to mean almost never.",
+      "'Seldom if ever' is a valid fixed pair — 'if ever' adds an extra qualification meaning it happens very rarely or perhaps not at all.",
+    ],
     wrong: ["He seldom or ever tells the truth. ❌"],
+    wrongWhy: [
+      "'Seldom or ever' is not a valid combination — 'ever' has a positive meaning that conflicts with the negative 'seldom'; only 'seldom or never' and 'seldom if ever' are correct.",
+    ],
     star: false,
   },
   {
@@ -1754,14 +2469,25 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Compound Adjectives — Don't Pluralize",
     rule: "When numbers or units form compound adjectives (before a noun), DON'T add -s to the unit.",
+    hindiTip: "Compound adjective में unit singular रहती है — 's' नहीं। 'Five-star hotel' ✅ | 'Five-stars hotel' ❌। Rule 75 का recap।",
+    hinglishTip: "Jab number + unit + noun milke ek adjective banate hain, unit ka plural nahi hota. 'A five-star hotel' (not five-stars), 'a ten-rupee note' (not ten-rupees), 'a two-hour exam' (not two-hours). Yeh compound adjective hai — hyphen lagta hai aur unit singular rehti hai. Rule 75 ka hi repeat hai.",
     correct: [
       "A five-star hotel. ✅",
       "A ten-rupee note. ✅",
       "A two-hour exam. ✅",
     ],
+    correctWhy: [
+      "'Five-star' is a compound adjective before 'hotel' — the unit 'star' stays singular in compound adjectives, so no 's' is added.",
+      "'Ten-rupee' is a compound adjective before 'note' — 'rupee' stays singular in the hyphenated compound adjective.",
+      "'Two-hour' is a compound adjective before 'exam' — 'hour' stays singular in the compound adjective.",
+    ],
     wrong: [
       "A five-stars hotel. ❌",
       "A ten-rupees note. ❌",
+    ],
+    wrongWhy: [
+      "When a number and unit form a compound adjective before a noun, the unit never takes a plural 's' — 'five-stars hotel' incorrectly pluralizes 'star'.",
+      "Similarly, 'ten-rupees note' incorrectly pluralizes 'rupee' — compound adjective units must stay singular.",
     ],
     star: false,
   },
@@ -1772,12 +2498,22 @@ export const rules: Rule[] = [
     sectionColor: "#64748b",
     title: "Between vs Among — Final Recap",
     rule: "BETWEEN → 2 people OR known/specific parties. AMONG → 3+ unknown count. After preposition → objective case (me, him, her, us, them).",
+    hindiTip: "Between = 2 लोग या known parties | Among = 3+ अनजान। Preposition के बाद = objective case (me, him, her)।",
+    hinglishTip: "Final recap: Between 2 logon ya specific parties ke liye. Among 3+ unknown count ke liye. After preposition → objective pronouns: 'between you and ME' ✅ (not 'you and I'). 'Among the students' ✅. Exam mein 'between you and I' ❌ ya 'among both of them' ❌ error hai.",
     correct: [
       "Between the two of us. ✅",
       "Among the crowd. ✅",
       "Between you and ME. ✅ (NOT 'you and I')",
     ],
+    correctWhy: [
+      "'Between the two of us' — 'between' is used for two specific people, and 'us' is the correct objective case after the preposition.",
+      "'Among the crowd' — 'crowd' is a large group of unspecified size, so 'among' (three or more) is the correct preposition.",
+      "'You and me' are both objects of the preposition 'between' — objective case pronouns are required after prepositions, so 'me' is correct (not 'I').",
+    ],
     wrong: ["Between you and I. ❌"],
+    wrongWhy: [
+      "'I' is a subjective case pronoun — but after the preposition 'between', only objective case pronouns are allowed; 'me' must replace 'I'.",
+    ],
     star: false,
   },
 ];

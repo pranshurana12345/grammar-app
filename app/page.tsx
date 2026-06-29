@@ -24,7 +24,7 @@ export default function Home() {
       {/* ════════════════════════════════════
           MOBILE layout (< md)
       ════════════════════════════════════ */}
-      <div className="md:hidden min-h-screen pb-6" style={{ background: "#f0f4ff" }}>
+      <div className="lg:hidden min-h-screen pb-6" style={{ background: "#f0f4ff" }}>
         {/* Hero */}
         <div className="relative overflow-hidden" style={{
           background: "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%)",
@@ -133,7 +133,7 @@ export default function Home() {
       {/* ════════════════════════════════════
           DESKTOP layout (≥ md)
       ════════════════════════════════════ */}
-      <div className="hidden md:block min-h-screen p-8" style={{ background: "#f0f4ff" }}>
+      <div className="hidden lg:block min-h-screen p-8" style={{ background: "#f0f4ff" }}>
 
         {/* Page header */}
         <div className="mb-8">

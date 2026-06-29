@@ -5,6 +5,9 @@ import Link from "next/link";
 import { rules, Rule } from "@/data/rules";
 import { getProgress, setRuleStatus, RuleStatus } from "@/lib/storage";
 import RuleCard from "@/components/RuleCard";
+import RulePoints from "@/components/RulePoints";
+import AltTrick from "@/components/AltTrick";
+import { ALT_TRICKS } from "@/data/altTricks";
 import { RuleVisual, VisualType } from "@/components/visuals/RuleVisual";
 import { detectConcepts } from "@/data/concepts";
 
@@ -13,8 +16,6 @@ export default function FeedPage() {
   const [progress, setProgress] = useState<Record<number, RuleStatus>>({});
   const [filter, setFilter] = useState<"all" | "unseen" | "revise" | "star">("all");
   const [search, setSearch] = useState("");
-  const startY = useRef(0);
-  const isDragging = useRef(false);
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,20 +52,6 @@ export default function FeedPage() {
     return () => window.removeEventListener("keydown", handler);
   }, [currentIndex, goTo, handleStatus]);
 
-  // Mobile touch swipe
-  const handleTouchStart = (e: React.TouchEvent) => { startY.current = e.touches[0].clientY; };
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const delta = startY.current - e.changedTouches[0].clientY;
-    if (Math.abs(delta) > 50) goTo(currentIndex + (delta > 0 ? 1 : -1));
-  };
-  const handleMouseDown = (e: React.MouseEvent) => { isDragging.current = true; startY.current = e.clientY; };
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isDragging.current) return;
-    isDragging.current = false;
-    const delta = startY.current - e.clientY;
-    if (Math.abs(delta) > 60) goTo(currentIndex + (delta > 0 ? 1 : -1));
-  };
-
   const rule = rules[currentIndex];
   const status = progress[rule.id] ?? "unseen";
   const doneCount = Object.values(progress).filter((v) => v === "confident").length;
@@ -84,7 +71,7 @@ export default function FeedPage() {
       {/* ════════════════════════════════════
           MOBILE feed (< md)
       ════════════════════════════════════ */}
-      <div className="md:hidden fixed inset-0 flex flex-col" style={{ background: "#f0f4ff", paddingBottom: "64px" }}>
+      <div className="lg:hidden fixed inset-0 flex flex-col" style={{ background: "#f0f4ff", paddingBottom: "64px" }}>
         {/* Top bar */}
         <div className="flex-shrink-0 bg-white border-b border-slate-100 px-4 py-3" style={{ boxShadow: "0 1px 0 rgba(15,23,42,0.04)" }}>
           <div className="flex items-center gap-3">
@@ -107,10 +94,8 @@ export default function FeedPage() {
           </div>
         </div>
 
-        {/* Card */}
-        <div className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing"
-          onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}
-          onMouseDown={handleMouseDown} onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+        {/* Card container — native scrolling; use the arrow buttons to change rule */}
+        <div className="flex-1 relative overflow-hidden">
           <RuleCard rule={rule} status={status}
             onMarkSeen={() => { handleStatus(rule.id, "seen"); setTimeout(() => goTo(currentIndex + 1), 350); }}
             onRevise={() => handleStatus(rule.id, "revise")} />
@@ -131,7 +116,7 @@ export default function FeedPage() {
         </div>
         {currentIndex === 0 && (
           <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-black/50 text-white text-[10px] font-bold px-3 py-1.5 rounded-full pointer-events-none">
-            Swipe up/down to navigate
+            Use the arrows → to change rule
           </div>
         )}
       </div>
@@ -139,7 +124,7 @@ export default function FeedPage() {
       {/* ════════════════════════════════════
           DESKTOP feed (≥ md) — split pane
       ════════════════════════════════════ */}
-      <div className="hidden md:flex h-screen overflow-hidden" style={{ background: "#f0f4ff" }}>
+      <div className="hidden lg:flex h-screen overflow-hidden" style={{ background: "#f0f4ff" }}>
 
         {/* ── Left: Rule List Panel ── */}
         <div className="w-[300px] flex-shrink-0 flex flex-col bg-white border-r border-slate-100 h-full" style={{ boxShadow: "2px 0 8px -4px rgba(15,23,42,0.08)" }}>
@@ -299,8 +284,9 @@ function DesktopRuleDetail({
         <div className="flex gap-3">
           <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 text-white"
             style={{ background: c }}>📌</div>
-          <p className="text-[15px] font-medium text-slate-800 leading-relaxed flex-1">{rule.rule}</p>
+          <div className="flex-1"><RulePoints text={rule.rule} color={c} size="sm" /></div>
         </div>
+        {ALT_TRICKS[rule.ruleNumber] && <AltTrick trick={ALT_TRICKS[rule.ruleNumber]} />}
       </div>
 
       {/* Concept chips */}
@@ -376,7 +362,7 @@ function DesktopRuleDetail({
                     <span className="text-xl">🇮🇳</span>
                     <span className="text-xs font-black text-orange-600 uppercase tracking-wide">हिंदी</span>
                   </div>
-                  <p className="text-sm text-orange-900 leading-relaxed font-medium">{rule.hindiTip}</p>
+                  <RulePoints text={rule.hindiTip} color="#f97316" size="sm" lang="hi" />
                 </div>
               )}
               {rule.hinglishTip && (
@@ -385,7 +371,7 @@ function DesktopRuleDetail({
                     <span className="text-xl">🗣</span>
                     <span className="text-xs font-black text-amber-600 uppercase tracking-wide">Hinglish</span>
                   </div>
-                  <p className="text-sm text-amber-900 leading-relaxed font-medium">{rule.hinglishTip}</p>
+                  <RulePoints text={rule.hinglishTip} color="#d97706" size="sm" lang="hi" />
                 </div>
               )}
             </div>
@@ -397,26 +383,26 @@ function DesktopRuleDetail({
       <div className={`mb-8 ${rule.correct.length > 0 && rule.wrong && rule.wrong.length > 0 ? "grid grid-cols-2 gap-4" : ""}`}>
         {rule.correct.length > 0 && (
           <div>
-            <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-3">✅ Correct</p>
+            <div className="flex items-center gap-2 mb-3">
+              <p className="text-xs font-black text-emerald-600 uppercase tracking-widest">✅ Correct</p>
+              {rule.correctWhy && <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Click to explain</span>}
+            </div>
             <div className="space-y-2">
               {rule.correct.map((ex, i) => (
-                <div key={i} className="flex items-start gap-3 bg-emerald-50 border border-emerald-100 rounded-2xl px-5 py-3.5">
-                  <span className="text-emerald-400 text-sm mt-0.5 flex-shrink-0">✓</span>
-                  <p className="text-sm text-emerald-900 font-semibold font-mono-ex">{ex}</p>
-                </div>
+                <DesktopExample key={i} text={ex} why={rule.correctWhy?.[i]} variant="correct" />
               ))}
             </div>
           </div>
         )}
         {rule.wrong && rule.wrong.length > 0 && (
           <div>
-            <p className="text-xs font-black text-rose-500 uppercase tracking-widest mb-3">❌ Wrong</p>
+            <div className="flex items-center gap-2 mb-3">
+              <p className="text-xs font-black text-rose-500 uppercase tracking-widest">❌ Wrong</p>
+              {rule.wrongWhy && <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Click to explain</span>}
+            </div>
             <div className="space-y-2">
               {rule.wrong.map((ex, i) => (
-                <div key={i} className="flex items-start gap-3 bg-rose-50 border border-rose-100 rounded-2xl px-5 py-3.5">
-                  <span className="text-rose-400 text-sm mt-0.5 flex-shrink-0">✕</span>
-                  <p className="text-sm text-rose-900 font-semibold font-mono-ex line-through decoration-rose-300">{ex}</p>
-                </div>
+                <DesktopExample key={i} text={ex} why={rule.wrongWhy?.[i]} variant="wrong" />
               ))}
             </div>
           </div>
@@ -474,6 +460,51 @@ function DesktopRuleDetail({
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Desktop example — click to reveal explanation
+───────────────────────────────────────────── */
+function DesktopExample({
+  text, why, variant,
+}: { text: string; why?: string; variant: "correct" | "wrong" }) {
+  const [open, setOpen] = useState(false);
+  const correct = variant === "correct";
+  const accent = correct ? "#10b981" : "#f43f5e";
+
+  return (
+    <div
+      onClick={() => why && setOpen((o) => !o)}
+      className={`rounded-2xl border overflow-hidden select-none ${
+        correct ? "bg-emerald-50 border-emerald-100" : "bg-rose-50 border-rose-100"
+      } ${why ? "cursor-pointer" : ""}`}
+    >
+      <div className="flex items-start gap-3 px-5 py-3.5">
+        <span className={`text-sm mt-0.5 flex-shrink-0 ${correct ? "text-emerald-400" : "text-rose-400"}`}>
+          {correct ? "✓" : "✕"}
+        </span>
+        <p className={`text-sm font-semibold font-mono-ex flex-1 ${
+          correct ? "text-emerald-900" : "text-rose-900 line-through decoration-rose-300"
+        }`}>
+          {text}
+        </p>
+        {why && (
+          <span className="flex-shrink-0 self-center text-[10px] font-black px-2 py-0.5 rounded-md"
+            style={{ background: `${accent}18`, color: accent }}>
+            {open ? "HIDE" : "WHY?"}
+          </span>
+        )}
+      </div>
+      {open && why && (
+        <div className="mx-3 mb-3 rounded-xl px-4 py-3"
+          style={{ background: `${accent}12`, border: `1px solid ${accent}25` }}>
+          <p className="text-[13px] font-semibold leading-relaxed" style={{ color: correct ? "#065f46" : "#9f1239" }}>
+            💡 {why}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

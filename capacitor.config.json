@@ -1,0 +1,8 @@
+{
+  "appId": "com.grammarfeed.afcat",
+  "appName": "Grammy",
+  "webDir": "out",
+  "server": {
+    "androidScheme": "https"
+  }
+}

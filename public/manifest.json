@@ -1,16 +1,37 @@
 {
-  "name": "GrammarFeed — AFCAT English",
-  "short_name": "GrammarFeed",
-  "description": "Learn all 100 English grammar rules for AFCAT",
+  "name": "Grammy",
+  "short_name": "Grammy",
+  "description": "Master 100 English grammar rules for AFCAT. Study concepts, take quizzes, track progress.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#f9fafb",
-  "theme_color": "#2563eb",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "categories": ["education"],
   "icons": [
     {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
+  ],
+  "shortcuts": [
+    { "name": "Learn Rules", "url": "/feed", "description": "Study grammar rules one by one" },
+    { "name": "Concepts", "url": "/concepts", "description": "Browse grammar concepts" },
+    { "name": "Revise", "url": "/revise", "description": "Review rules marked for revision" }
   ]
 }

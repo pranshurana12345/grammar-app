@@ -37,8 +37,8 @@ html, body {
 .press:active { transform: scale(0.97); opacity: 0.9; }
 .press { transition: transform 0.12s ease, opacity 0.12s ease; }
 
-/* Collapsible sidebar — controlled by data-sidebar attribute on <html> */
-@media (min-width: 768px) {
+/* Collapsible sidebar — only on desktop (1024px+); tablets use bottom nav */
+@media (min-width: 1024px) {
   .sidebar-offset {
     margin-left: 252px;
     transition: margin-left 0.25s ease;
@@ -54,4 +54,32 @@ html, body {
   html[data-sidebar="collapsed"] .page-fixed {
     left: 64px !important;
   }
+}
+
+/* ── Print / "Download PDF" — clean printable output ───────────────────────── */
+@media print {
+  @page { margin: 14mm; }
+
+  html, body { background: #ffffff !important; }
+
+  /* Hide app chrome and anything interactive */
+  nav, aside, .no-print { display: none !important; }
+
+  /* Content should use the full page width (drop the sidebar offset) */
+  .sidebar-offset { margin-left: 0 !important; }
+
+  /* Print background colours and highlights, not just black text */
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  /* Sticky headers become normal flow so they don't repeat/overlap */
+  .print-static { position: static !important; }
+
+  /* Let scroll containers expand fully instead of clipping */
+  .print-full { overflow: visible !important; max-height: none !important; height: auto !important; }
+
+  /* Keep a card from being split across two pages */
+  .print-avoid-break { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Drop heavy shadows for a flatter, ink-friendly look */
+  .print-flat { box-shadow: none !important; }
 }

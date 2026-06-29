@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { CONFUSABLE_CATEGORIES } from "@/data/confusables";
 import Link from "next/link";
+import PrintButton from "@/components/PrintButton";
 
 export default function ConfusablesPage() {
   const [activeCategory, setActiveCategory] = useState("all");
@@ -30,13 +31,13 @@ export default function ConfusablesPage() {
   const totalPairs = CONFUSABLE_CATEGORIES.reduce((s, c) => s + c.pairs.length, 0);
 
   return (
-    <div className="min-h-screen sidebar-offset pb-20" style={{ background: "#f0f4ff" }}>
+    <div className="min-h-screen pb-20" style={{ background: "#f0f4ff" }}>
       {/* Header */}
-      <div className="bg-white border-b border-slate-100 sticky top-0 z-20" style={{ boxShadow: "0 1px 0 rgba(15,23,42,0.04)" }}>
+      <div className="bg-white border-b border-slate-100 sticky top-0 z-20 print-static" style={{ boxShadow: "0 1px 0 rgba(15,23,42,0.04)" }}>
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center gap-3">
-            <Link href="/reference" className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-sm press md:hidden">←</Link>
-            <div className="hidden md:flex items-center gap-2">
+            <Link href="/reference" className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-sm press lg:hidden">←</Link>
+            <div className="hidden lg:flex items-center gap-2">
               <Link href="/reference" className="text-slate-400 text-sm hover:text-slate-600 press">Reference</Link>
               <span className="text-slate-300">/</span>
             </div>
@@ -44,10 +45,11 @@ export default function ConfusablesPage() {
               <h1 className="text-lg font-black text-slate-800">Confusable Words</h1>
               <p className="text-[11px] text-slate-400 font-semibold">{totalPairs} pairs · sound-alikes · spelling traps</p>
             </div>
+            <div className="ml-auto"><PrintButton label="PDF" /></div>
           </div>
 
           {/* Search */}
-          <div className="mt-3">
+          <div className="no-print mt-3">
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -57,7 +59,7 @@ export default function ConfusablesPage() {
           </div>
 
           {/* Category filters */}
-          <div className="flex gap-2 mt-2 flex-wrap">
+          <div className="no-print flex gap-2 mt-2 flex-wrap">
             <button
               onClick={() => setActiveCategory("all")}
               className="px-3 py-1.5 rounded-xl text-xs font-bold press"

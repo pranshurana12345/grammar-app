@@ -1,77 +1,71 @@
 "use client";
 
-import { pushRuleStatus, pushQuizScore } from "./cloudSync";
-
-const PROGRESS_KEY = "grammar_progress";
-const QUIZ_KEY = "grammar_quiz_scores";
-
 export type RuleStatus = "unseen" | "seen" | "confident" | "revise";
 
 type Progress = Record<number, RuleStatus>;
-type QuizScores = Record<number, number>; // best score 0-100
+type QuizScores = Record<number, number>;
 
-// ─── Progress ───────────────────────────────────────────────────────────────
+// ── Per-student key helpers ───────────────────────────────────────────────────
+
+function getCurrentStudentId(): string {
+  if (typeof window === "undefined") return "guest";
+  try {
+    const raw = localStorage.getItem("grammar_current_student");
+    if (raw) return (JSON.parse(raw) as { id: string }).id;
+  } catch { /* ignore */ }
+  return "guest";
+}
+
+function progressKey() { return `grammar_progress_${getCurrentStudentId()}`; }
+function quizKey()     { return `grammar_quiz_${getCurrentStudentId()}`; }
+
+// ── Progress ──────────────────────────────────────────────────────────────────
 
 export function getProgress(): Progress {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(PROGRESS_KEY);
+    const raw = localStorage.getItem(progressKey());
     return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+  } catch { return {}; }
 }
 
 export function setRuleStatus(id: number, status: RuleStatus) {
   const progress = getProgress();
   progress[id] = status;
-  localStorage.setItem(PROGRESS_KEY, JSON.stringify(progress));
-  pushRuleStatus(id, status); // fire-and-forget cloud sync
+  localStorage.setItem(progressKey(), JSON.stringify(progress));
 }
 
 export function getRuleStatus(id: number): RuleStatus {
   return getProgress()[id] ?? "unseen";
 }
 
-/** Auto-mark a rule as "seen" when first viewed (only if currently unseen) */
 export function markSeen(id: number) {
-  const current = getRuleStatus(id);
-  if (current === "unseen") setRuleStatus(id, "seen");
+  if (getRuleStatus(id) === "unseen") setRuleStatus(id, "seen");
 }
 
-// ─── Quiz Scores ─────────────────────────────────────────────────────────────
+// ── Quiz Scores ───────────────────────────────────────────────────────────────
 
 export function getQuizScores(): QuizScores {
   if (typeof window === "undefined") return {};
   try {
-    const raw = localStorage.getItem(QUIZ_KEY);
+    const raw = localStorage.getItem(quizKey());
     return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+  } catch { return {}; }
 }
 
 export function getQuizScore(id: number): number {
   return getQuizScores()[id] ?? 0;
 }
 
-/**
- * Save a quiz score. If score >= 75, mark rule as "confident"
- * (overrides unseen/seen/revise but never downgrades from confident)
- */
 export function saveQuizScore(id: number, score: number) {
   const scores = getQuizScores();
   const prev = scores[id] ?? 0;
   scores[id] = Math.max(prev, score);
-  localStorage.setItem(QUIZ_KEY, JSON.stringify(scores));
-
-  if (score >= 80) {
-    setRuleStatus(id, "confident");
-  }
-  pushQuizScore(id, score, score >= 80); // fire-and-forget cloud sync
+  localStorage.setItem(quizKey(), JSON.stringify(scores));
+  if (score >= 80) setRuleStatus(id, "confident");
 }
 
-// ─── Stats ───────────────────────────────────────────────────────────────────
+// ── Stats ─────────────────────────────────────────────────────────────────────
 
 export function getStats(totalRules: number) {
   const progress = getProgress();

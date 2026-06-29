@@ -101,7 +101,7 @@ export default function DesktopSidebar() {
 
   return (
     <aside
-      className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 z-40 transition-all duration-250"
+      className="hidden lg:flex flex-col fixed left-0 top-0 bottom-0 z-40 transition-all duration-250"
       style={{
         width: collapsed ? "64px" : "252px",
         background: "#0f172a",
@@ -118,7 +118,7 @@ export default function DesktopSidebar() {
               <span className="text-white text-sm font-black">G</span>
             </div>
             <div className="min-w-0">
-              <p className="text-white font-black text-sm leading-none truncate">GrammarFeed</p>
+              <p className="text-white font-black text-sm leading-none truncate">Grammy</p>
               <p className="text-slate-500 text-[10px] mt-0.5 font-semibold truncate">AFCAT English Prep</p>
             </div>
           </div>
@@ -253,17 +253,17 @@ export default function DesktopSidebar() {
       {!collapsed && user && (
         <div className="px-4 py-3 flex-shrink-0 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-black text-white"
-              style={{ background: "linear-gradient(135deg, #2563eb, #4f46e5)" }}>
-              {user.email?.[0]?.toUpperCase() ?? "?"}
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-[11px] font-black text-white"
+              style={{ background: user.color ?? "#2563eb" }}>
+              {user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-[11px] text-slate-300 font-semibold truncate">{user.email}</p>
-              <p className="text-[10px] text-slate-600">Synced</p>
+              <p className="text-[12px] text-slate-200 font-semibold truncate">{user.name}</p>
+              <p className="text-[10px] text-slate-600">Tap to switch</p>
             </div>
             <button
               onClick={async () => { await signOut(); router.replace("/login"); }}
-              title="Sign out"
+              title="Switch student"
               className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-400 hover:bg-white/5 transition-all flex-shrink-0"
             >
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">

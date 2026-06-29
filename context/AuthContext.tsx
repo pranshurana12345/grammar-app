@@ -1,103 +1,69 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import type { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
-import { getSupabase } from "@/lib/supabase";
-import { pullProgress, pushAllProgress } from "@/lib/cloudSync";
+import { createContext, useContext, useEffect, useState } from "react";
+import { STUDENTS, type Student } from "@/data/students";
 
-const PROGRESS_KEY = "grammar_progress";
+const SESSION_KEY = "grammar_current_student";
 
 type AuthState = {
-  user: User | null;
+  student: Student | null;
   loading: boolean;
-  error: string | null;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  login: (id: string, pin: string) => boolean;
+  logout: () => void;
+  // Legacy aliases used in sidebar / other components
+  user: Student | null;
   signOut: () => Promise<void>;
-  clearError: () => void;
 };
 
 const AuthContext = createContext<AuthState>({
-  user: null,
+  student: null,
   loading: true,
-  error: null,
-  signIn: async () => {},
-  signUp: async () => {},
+  login: () => false,
+  logout: () => {},
+  user: null,
   signOut: async () => {},
-  clearError: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [student, setStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // On first login, merge cloud data with localStorage
-  const handleUserLogin = useCallback(async (loggedInUser: User) => {
-    const localRaw = typeof window !== "undefined"
-      ? localStorage.getItem(PROGRESS_KEY)
-      : null;
-    const localProgress = localRaw ? JSON.parse(localRaw) : {};
-
-    // Pull cloud data
-    const cloudProgress = await pullProgress();
-
-    if (cloudProgress && Object.keys(cloudProgress).length > 0) {
-      // Merge: cloud wins for conflicting keys (cloud is more recent)
-      const merged = { ...localProgress, ...cloudProgress };
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(merged));
-    } else if (Object.keys(localProgress).length > 0) {
-      // Push local data up to the cloud for new users
-      await pushAllProgress(localProgress);
-    }
-  }, []);
 
   useEffect(() => {
-    const supabase = getSupabase();
-
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-      if (session?.user) {
-        handleUserLogin(session.user);
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as { id: string };
+        const found = STUDENTS.find((s) => s.id === saved.id) ?? null;
+        setStudent(found);
       }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        handleUserLogin(session.user);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [handleUserLogin]);
-
-  const signIn = async (email: string, password: string) => {
-    setError(null);
-    const supabase = getSupabase();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
-  };
-
-  const signUp = async (email: string, password: string) => {
-    setError(null);
-    const supabase = getSupabase();
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) {
-      setError(error.message);
-    } else {
-      setError("Check your email to confirm your account, then log in.");
+    } catch {
+      // ignore
     }
-  };
+    setLoading(false);
+  }, []);
 
-  const signOut = async () => {
-    const supabase = getSupabase();
-    await supabase.auth.signOut();
-  };
+  function login(id: string, pin: string): boolean {
+    const found = STUDENTS.find((s) => s.id === id);
+    if (!found || found.pin !== pin) return false;
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ id: found.id }));
+    setStudent(found);
+    return true;
+  }
+
+  function logout() {
+    localStorage.removeItem(SESSION_KEY);
+    setStudent(null);
+  }
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, signIn, signUp, signOut, clearError: () => setError(null) }}>
+    <AuthContext.Provider value={{
+      student,
+      loading,
+      login,
+      logout,
+      user: student,
+      signOut: async () => logout(),
+    }}>
       {children}
     </AuthContext.Provider>
   );
