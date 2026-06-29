@@ -114,7 +114,7 @@ export default function DesktopSidebar() {
         {!collapsed && (
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
-              style={{ background: "linear-gradient(135deg, #2563eb, #4f46e5)" }}>
+              style={{ background: "linear-gradient(135deg, #2d7ff9, #4f46e5)" }}>
               <span className="text-white text-sm font-black">G</span>
             </div>
             <div className="min-w-0">
@@ -125,7 +125,7 @@ export default function DesktopSidebar() {
         )}
         {collapsed && (
           <div className="w-8 h-8 rounded-xl flex items-center justify-center mx-auto"
-            style={{ background: "linear-gradient(135deg, #2563eb, #4f46e5)" }}>
+            style={{ background: "linear-gradient(135deg, #2d7ff9, #4f46e5)" }}>
             <span className="text-white text-sm font-black">G</span>
           </div>
         )}
@@ -171,7 +171,7 @@ export default function DesktopSidebar() {
         <div className="mx-auto mb-3 relative w-10 h-10 flex-shrink-0">
           <svg width="40" height="40" viewBox="0 0 40 40" className="-rotate-90">
             <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
-            <circle cx="20" cy="20" r="16" fill="none" stroke="#3b82f6" strokeWidth="3"
+            <circle cx="20" cy="20" r="16" fill="none" stroke="#5aa0ff" strokeWidth="3"
               strokeDasharray={`${2 * Math.PI * 16}`}
               strokeDashoffset={`${2 * Math.PI * 16 * (1 - pct / 100)}`}
               strokeLinecap="round" />
@@ -254,7 +254,7 @@ export default function DesktopSidebar() {
         <div className="px-4 py-3 flex-shrink-0 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-[11px] font-black text-white"
-              style={{ background: user.color ?? "#2563eb" }}>
+              style={{ background: user.color ?? "#2d7ff9" }}>
               {user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">

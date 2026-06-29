@@ -153,7 +153,7 @@ function NavItem({ label, active, color, onClick }: { label: string; active: boo
   return (
     <button onClick={onClick} className="w-full text-left px-3 py-2 rounded-lg text-[13px] font-medium transition-all press"
       style={active
-        ? { background: color ? `${color}15` : "#eff6ff", color: color || "#2563eb", fontWeight: 600 }
+        ? { background: color ? `${color}15` : "#eff6ff", color: color || "#2d7ff9", fontWeight: 600 }
         : { color: "#64748b" }}>
       {label}
     </button>
@@ -237,7 +237,7 @@ export default function VerbFormsPage() {
             )}
             {tab === "verbs" && (
               <button onClick={() => setPracticeOpen(true)} className="no-print flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold press text-white flex-shrink-0"
-                style={{ background: "linear-gradient(135deg,#7c3aed,#2563eb)" }}>
+                style={{ background: "linear-gradient(135deg,#7c3aed,#2d7ff9)" }}>
                 Practice test
               </button>
             )}
@@ -296,11 +296,11 @@ export default function VerbFormsPage() {
             <div className="no-print lg:hidden sticky top-0 bg-white border-b border-slate-100 z-10">
               <div className="flex gap-1.5 px-4 py-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
                 <button onClick={() => setTab("verbs")} className="px-3 py-1.5 rounded-lg text-xs font-semibold press flex-shrink-0"
-                  style={tab === "verbs" ? { background: "#2563eb", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>Verb Forms</button>
+                  style={tab === "verbs" ? { background: "#2d7ff9", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>Verb Forms</button>
                 <button onClick={() => setTab("invariant")} className="px-3 py-1.5 rounded-lg text-xs font-semibold press flex-shrink-0"
-                  style={tab === "invariant" ? { background: "#2563eb", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>Same S/P</button>
+                  style={tab === "invariant" ? { background: "#2d7ff9", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>Same S/P</button>
                 <button onClick={() => setTab("irregular")} className="px-3 py-1.5 rounded-lg text-xs font-semibold press flex-shrink-0"
-                  style={tab === "irregular" ? { background: "#2563eb", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>Irregular Nouns</button>
+                  style={tab === "irregular" ? { background: "#2d7ff9", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>Irregular Nouns</button>
               </div>
               {tab === "verbs" && (
                 <div className="flex gap-1.5 px-4 pb-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>

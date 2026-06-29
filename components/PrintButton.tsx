@@ -10,7 +10,7 @@ export default function PrintButton({ label = "Download PDF" }: { label?: string
       onClick={() => window.print()}
       title="Opens the print dialog — choose “Save as PDF” to download"
       className="no-print inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-[13px] font-bold text-white press flex-shrink-0"
-      style={{ background: "linear-gradient(135deg,#2563eb,#4f46e5)", boxShadow: "0 4px 14px rgba(37,99,235,0.3)" }}
+      style={{ background: "linear-gradient(135deg,#2d7ff9,#4f46e5)", boxShadow: "0 4px 14px rgba(37,99,235,0.3)" }}
     >
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
         <path d="M8 1.5V9.5M8 9.5L5.2 6.7M8 9.5L10.8 6.7" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />

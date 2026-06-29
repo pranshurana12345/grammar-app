@@ -61,7 +61,7 @@ export default function LearnTensesPage() {
 
         {/* Intro — the big idea */}
         <div className="rounded-3xl p-5 lg:p-6 text-white print-avoid-break"
-          style={{ background: "linear-gradient(135deg,#1e3a8a,#4f46e5)", boxShadow: "0 10px 30px -10px rgba(37,99,235,0.5)" }}>
+          style={{ background: "linear-gradient(135deg,#0b3e9e,#4f46e5)", boxShadow: "0 10px 30px -10px rgba(37,99,235,0.5)" }}>
           <h2 className="text-[17px] lg:text-xl font-black mb-2">Every tense = <span className="text-blue-200">Time</span> × <span className="text-violet-200">Aspect</span></h2>
           <p className="text-[13px] lg:text-[14px] text-blue-100 leading-relaxed mb-4">
             Pick <b className="text-white">when</b> (past · present · future) and <b className="text-white">how</b> (simple · continuous · perfect · perfect continuous).

@@ -10,8 +10,8 @@ const items = [
     icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
         <path d="M3 9.5L11 3L19 9.5V19C19 19.6 18.6 20 18 20H14V15H8V20H4C3.4 20 3 19.6 3 19V9.5Z"
-          fill={active ? "#2563eb" : "none"}
-          stroke={active ? "#2563eb" : "#94a3b8"}
+          fill={active ? "#2d7ff9" : "none"}
+          stroke={active ? "#2d7ff9" : "#94a3b8"}
           strokeWidth="1.8" strokeLinejoin="round" />
       </svg>
     ),
@@ -22,8 +22,8 @@ const items = [
     icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
         <rect x="3" y="3" width="16" height="16" rx="4"
-          fill={active ? "#2563eb" : "none"}
-          stroke={active ? "#2563eb" : "#94a3b8"}
+          fill={active ? "#2d7ff9" : "none"}
+          stroke={active ? "#2d7ff9" : "#94a3b8"}
           strokeWidth="1.8" />
         <path d="M7 8H15M7 12H13M7 16H11"
           stroke={active ? "white" : "#94a3b8"}
@@ -50,10 +50,10 @@ const items = [
     icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
         <path d="M4 11C4 7.1 7.1 4 11 4C14.9 4 18 7.1 18 11C18 14.9 14.9 18 11 18C9.1 18 7.4 17.2 6.2 16"
-          stroke={active ? "#2563eb" : "#94a3b8"}
+          stroke={active ? "#2d7ff9" : "#94a3b8"}
           strokeWidth="1.8" strokeLinecap="round" />
         <path d="M4 16V11M4 16H9"
-          stroke={active ? "#2563eb" : "#94a3b8"}
+          stroke={active ? "#2d7ff9" : "#94a3b8"}
           strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
@@ -88,7 +88,7 @@ const items = [
   },
 ];
 
-const DEFAULT_COLOR = "#2563eb";
+const DEFAULT_COLOR = "#2d7ff9";
 
 function itemColor(item: (typeof items)[number]) {
   if ("color" in item && item.color) return item.color;

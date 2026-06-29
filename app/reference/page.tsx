@@ -22,8 +22,8 @@ const SECTIONS: {
     title: "Verb Forms",
     overview: "V1 · V2 · V3 for 130+ irregular verbs.",
     count: "130+ verbs",
-    color: "#2563eb",
-    gradient: "linear-gradient(135deg,#1d4ed8 0%,#3b82f6 100%)",
+    color: "#2d7ff9",
+    gradient: "linear-gradient(135deg,#1257d6 0%,#5aa0ff 100%)",
     motif: "verbs",
   },
   {
@@ -77,7 +77,7 @@ function BannerArt({ motif }: { motif: Motif }) {
         {["V1", "V2", "V3"].map((t, i) => (
           <g key={t} transform={`translate(${8 + i * 48}, 16)`}>
             <rect width="42" height="40" rx="9" fill="white" fillOpacity={0.94 - i * 0.13} />
-            <text x="21" y="26" fill="#1d4ed8" fontSize="16" fontWeight="900" textAnchor="middle">{t}</text>
+            <text x="21" y="26" fill="#1257d6" fontSize="16" fontWeight="900" textAnchor="middle">{t}</text>
           </g>
         ))}
       </svg>

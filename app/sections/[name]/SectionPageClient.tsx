@@ -18,7 +18,7 @@ export default function SectionPageClient({ name }: { name: string }) {
   const sectionRules = rules.filter((r) => r.section === sectionName);
   const rule = sectionRules[currentIndex];
   const status = progress[rule?.id] ?? "unseen";
-  const color = rule?.sectionColor ?? "#2563eb";
+  const color = rule?.sectionColor ?? "#2d7ff9";
   const done = sectionRules.filter((r) => progress[r.id] === "confident").length;
 
   const handleStatus = (id: number, s: RuleStatus) => {

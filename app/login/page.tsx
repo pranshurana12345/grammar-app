@@ -53,7 +53,7 @@ export default function LoginPage() {
       {/* Logo */}
       <div className="mb-10 text-center">
         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3"
-          style={{ background: "linear-gradient(135deg, #2563eb, #4f46e5)" }}>
+          style={{ background: "linear-gradient(135deg, #2d7ff9, #4f46e5)" }}>
           <span className="text-white text-2xl font-black">G</span>
         </div>
         <h1 className="text-xl font-black text-white">Grammy</h1>

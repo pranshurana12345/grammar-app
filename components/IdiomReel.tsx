@@ -5,7 +5,7 @@ import type { Idiom } from "@/data/idioms";
 
 const GRADIENTS = [
   "linear-gradient(160deg,#6d28d9 0%,#4f46e5 100%)",
-  "linear-gradient(160deg,#0ea5e9 0%,#2563eb 100%)",
+  "linear-gradient(160deg,#0ea5e9 0%,#2d7ff9 100%)",
   "linear-gradient(160deg,#f59e0b 0%,#d97706 100%)",
   "linear-gradient(160deg,#ec4899 0%,#be185d 100%)",
   "linear-gradient(160deg,#10b981 0%,#0d9488 100%)",

@@ -28,7 +28,7 @@ export default function Home() {
       <div className="lg:hidden min-h-screen pb-6" style={{ background: "#f0f4ff" }}>
         {/* Hero */}
         <div className="relative overflow-hidden" style={{
-          background: "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%)",
+          background: "linear-gradient(135deg, #0b3e9e 0%, #1257d6 50%, #2d7ff9 100%)",
           borderRadius: "0 0 36px 36px",
         }}>
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10" style={{ background: "radial-gradient(circle, white, transparent)", transform: "translate(30%,-30%)" }} />
@@ -77,7 +77,7 @@ export default function Home() {
         <div className="px-4 mt-5 space-y-3">
           <Link href="/feed" className="block press">
             <div className="rounded-3xl p-5 flex items-center justify-between overflow-hidden relative"
-              style={{ background: "linear-gradient(135deg, #2563eb, #4f46e5)", boxShadow: "0 8px 32px -4px rgba(37,99,235,0.4)" }}>
+              style={{ background: "linear-gradient(135deg, #2d7ff9, #4f46e5)", boxShadow: "0 8px 32px -4px rgba(37,99,235,0.4)" }}>
               <div className="absolute right-0 top-0 w-32 h-32 rounded-full opacity-20" style={{ background: "radial-gradient(circle, white, transparent)", transform: "translate(30%,-30%)" }} />
               <div className="relative">
                 <p className="text-[11px] font-bold text-blue-200 uppercase tracking-widest mb-0.5">Continue learning</p>
@@ -152,7 +152,7 @@ export default function Home() {
               { label: "Confident", value: stats.confident, sub: `of ${stats.total}`, color: "#10b981", bg: "#d1fae5", icon: "⭐" },
               { label: "To Revise", value: stats.revise, sub: "flagged", color: "#f59e0b", bg: "#fef3c7", icon: "🔄" },
               { label: "Not Seen Yet", value: stats.unseen, sub: "remaining", color: "#6366f1", bg: "#ede9fe", icon: "○" },
-              { label: "Progress", value: `${pct}%`, sub: "overall", color: "#2563eb", bg: "#dbeafe", icon: "↗" },
+              { label: "Progress", value: `${pct}%`, sub: "overall", color: "#2d7ff9", bg: "#dbeafe", icon: "↗" },
             ].map((card) => (
               <div key={card.label} className="bg-white rounded-3xl p-6" style={{ boxShadow: "0 2px 12px -4px rgba(15,23,42,0.08)" }}>
                 <div className="flex items-start justify-between mb-4">
@@ -218,7 +218,7 @@ export default function Home() {
             {/* Continue card */}
             <Link href="/feed">
               <div className="rounded-3xl p-6 cursor-pointer press overflow-hidden relative"
-                style={{ background: "linear-gradient(135deg, #1e3a8a, #2563eb)", boxShadow: "0 8px 32px -4px rgba(37,99,235,0.4)" }}>
+                style={{ background: "linear-gradient(135deg, #0b3e9e, #2d7ff9)", boxShadow: "0 8px 32px -4px rgba(37,99,235,0.4)" }}>
                 <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20" style={{ background: "radial-gradient(circle, white, transparent)", transform: "translate(30%,-30%)" }} />
                 <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-2 relative">Next Up</p>
                 <p className="text-white font-black text-2xl mb-1 relative" style={{ letterSpacing: "-0.03em" }}>

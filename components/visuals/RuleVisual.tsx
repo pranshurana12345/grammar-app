@@ -226,7 +226,7 @@ export function NonFiniteComparison({ color }: { color: string }) {
       sub: "पढ़ना enjoy करता है",
       bg: "#dbeafe",
       border: "#93c5fd",
-      text: "#1d4ed8",
+      text: "#1257d6",
     },
     {
       name: "INFINITIVE",
@@ -416,7 +416,7 @@ export function ForSinceTimeline({ color }: { color: string }) {
 export function DiedGrid({ color }: { color: string }) {
   const items = [
     { prep: "OF", causes: "Disease, Hunger, Starvation", ex: "died of cancer", color: "#dc2626", bg: "#fee2e2" },
-    { prep: "IN", causes: "Accident, Battle, War", ex: "died in an accident", color: "#2563eb", bg: "#dbeafe" },
+    { prep: "IN", causes: "Accident, Battle, War", ex: "died in an accident", color: "#2d7ff9", bg: "#dbeafe" },
     { prep: "FROM", causes: "Injury, Wounds", ex: "died from his wounds", color: "#7c3aed", bg: "#ede9fe" },
     { prep: "BY", causes: "Violence, Sword, Hanging", ex: "died by the sword", color: "#b45309", bg: "#fef3c7" },
     { prep: "WITH", causes: "Anger, Grief, Cold", ex: "died with anger", color: "#0891b2", bg: "#cffafe" },

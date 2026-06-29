@@ -50,7 +50,7 @@ export default function SectionTestPageClient({ sectionName }: { sectionName: st
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [done, setDone] = useState(false);
 
-  const sectionColor = rules.find((r) => r.section === section)?.sectionColor ?? "#2563eb";
+  const sectionColor = rules.find((r) => r.section === section)?.sectionColor ?? "#2d7ff9";
 
   if (questions.length === 0) {
     return (
@@ -230,8 +230,8 @@ export default function SectionTestPageClient({ sectionName }: { sectionName: st
               >
                 <span className="w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center text-xs font-black"
                   style={{
-                    borderColor: confirmed && idx === q.answer ? "#16a34a" : confirmed && idx === selected && idx !== q.answer ? "#e11d48" : selected === idx ? "#2563eb" : "#cbd5e1",
-                    background: confirmed && idx === q.answer ? "#16a34a" : confirmed && idx === selected && idx !== q.answer ? "#e11d48" : selected === idx ? "#2563eb" : "transparent",
+                    borderColor: confirmed && idx === q.answer ? "#16a34a" : confirmed && idx === selected && idx !== q.answer ? "#e11d48" : selected === idx ? "#2d7ff9" : "#cbd5e1",
+                    background: confirmed && idx === q.answer ? "#16a34a" : confirmed && idx === selected && idx !== q.answer ? "#e11d48" : selected === idx ? "#2d7ff9" : "transparent",
                     color: (confirmed && (idx === q.answer || idx === selected)) || selected === idx ? "white" : "#94a3b8",
                   }}>
                   {confirmed && idx === q.answer ? "✓" : confirmed && idx === selected && idx !== q.answer ? "✕" : ["A","B","C","D"][idx]}
