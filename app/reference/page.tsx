@@ -138,7 +138,34 @@ export default function StudyHubPage() {
 
       {/* ── Tool cards: ~75% banner image, ~25% white strip ── */}
       <div className="px-4 lg:px-10 pt-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-5 max-w-4xl">
+        {/* Mobile: compact 2-col square tiles */}
+        <div className="grid grid-cols-2 gap-3 lg:hidden">
+          {SECTIONS.map((s) => {
+            const tile = (
+              <div className="relative aspect-square rounded-2xl overflow-hidden" style={{ background: s.gradient, boxShadow: "0 2px 8px rgba(15,23,42,0.08)" }}>
+                <div className="absolute inset-0 opacity-90" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,0.16) 1px, transparent 1px)", backgroundSize: "11px 11px" }} />
+                <div className="absolute -top-8 -right-6 w-28 h-28 rounded-full opacity-25" style={{ background: "radial-gradient(circle, white, transparent)" }} />
+                <div className="absolute inset-x-0 top-2 bottom-11 flex items-center justify-center">
+                  <div style={{ transform: "scale(0.7)" }}><BannerArt motif={s.motif} /></div>
+                </div>
+                <span className="absolute top-2.5 right-2.5 text-[8.5px] font-black px-1.5 py-0.5 rounded text-white" style={{ background: s.soon ? "rgba(255,255,255,0.25)" : "rgba(0,0,0,0.18)" }}>
+                  {s.soon ? "SOON" : s.count}
+                </span>
+                <h2 className="absolute left-3 right-3 bottom-3 text-white text-[15px] font-black leading-tight tracking-tight" style={{ textShadow: "0 1px 8px rgba(0,0,0,0.30)" }}>
+                  {s.title}
+                </h2>
+              </div>
+            );
+            return s.soon ? (
+              <div key={s.href} className="cursor-default select-none">{tile}</div>
+            ) : (
+              <Link key={s.href} href={s.href} className="press block">{tile}</Link>
+            );
+          })}
+        </div>
+
+        {/* Desktop: banner cards */}
+        <div className="hidden lg:grid grid-cols-2 gap-5 max-w-4xl">
           {SECTIONS.map((s) => {
             const card = (
               <div className={`bg-white rounded-2xl overflow-hidden border border-slate-100 flex flex-col h-[256px] transition-shadow ${s.soon ? "" : "group-hover:shadow-lg"}`}
