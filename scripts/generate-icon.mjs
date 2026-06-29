@@ -1,7 +1,8 @@
 /**
  * Generates public/icon.png (512x512) using only Node.js built-ins.
- * "Liquid glass" look: iridescent colour blobs glowing through a glass tile,
- * with a glossy diagonal sheen and bevelled edges. Keep public/icon.svg in sync.
+ * Original "liquid glass" icon inspired by the iOS glass style: a teal→blue→
+ * purple gradient with layered frosted-glass shapes (a rounded panel + a circle),
+ * glossy rim-light, a diagonal sheen, and a soft glass "A". Keep icon.svg in sync.
  */
 import { deflateSync } from "zlib";
 import { writeFileSync } from "fs";
@@ -18,62 +19,99 @@ function crc32(buf) { let c = 0xffffffff; for (let i = 0; i < buf.length; i++) c
 function u32(n) { const b = Buffer.alloc(4); b.writeUInt32BE(n >>> 0, 0); return b; }
 function pngChunk(type, data) { const tb = Buffer.from(type, "ascii"); const crc = crc32(Buffer.concat([tb, data])); return Buffer.concat([u32(data.length), tb, data, u32(crc)]); }
 
-function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
-function smoothstep(a, b, x) { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); }
+const clamp01 = (x) => (x < 0 ? 0 : x > 1 ? 1 : x);
+const smoothstep = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+const mix = (a, b, t) => a + (b - a) * t;
+function rrectSDF(px, py, hw, hh, cr) {
+  const qx = Math.abs(px) - (hw - cr), qy = Math.abs(py) - (hh - cr);
+  return Math.hypot(Math.max(qx, 0), Math.max(qy, 0)) + Math.min(Math.max(qx, qy), 0) - cr;
+}
+function capDist(fx, fy, ax, ay, bx, by) {
+  const pax = fx - ax, pay = fy - ay, bax = bx - ax, bay = by - ay;
+  const h = clamp01((pax * bax + pay * bay) / (bax * bax + bay * bay));
+  return Math.hypot(pax - bax * h, pay - bay * h);
+}
 
-// colour blobs (centre x,y, [r,g,b] 0..1, radius, intensity)
-const BLOBS = [
-  { x: 0.28, y: 0.30, c: [0x3b / 255, 0x82 / 255, 0xf6 / 255], r: 0.62, i: 1.0 },  // blue
-  { x: 0.76, y: 0.24, c: [0x8b / 255, 0x5c / 255, 0xf6 / 255], r: 0.55, i: 0.95 }, // violet
-  { x: 0.66, y: 0.80, c: [0x22 / 255, 0xd3 / 255, 0xee / 255], r: 0.55, i: 0.9 },  // cyan
-  { x: 0.26, y: 0.82, c: [0xf4 / 255, 0x72 / 255, 0xb6 / 255], r: 0.45, i: 0.6 },  // pink
-];
-const BASE = [0x10 / 255, 0x1c / 255, 0x4e / 255]; // deep navy
+// gradient stops (teal → blue → purple)
+const TEAL = [0x10, 0x9f, 0xb4], BLUE = [0x1f, 0x4c, 0xb6], PURP = [0x33, 0x1a, 0x66];
+function bgColor(fx, fy) {
+  const t = clamp01(fx * 0.32 + fy * 0.68);
+  let c;
+  if (t < 0.5) { const u = t / 0.5; c = [mix(TEAL[0], BLUE[0], u), mix(TEAL[1], BLUE[1], u), mix(TEAL[2], BLUE[2], u)]; }
+  else { const u = (t - 0.5) / 0.5; c = [mix(BLUE[0], PURP[0], u), mix(BLUE[1], PURP[1], u), mix(BLUE[2], PURP[2], u)]; }
+  return c;
+}
+
+// "A" geometry
+const APEX = [0.5, 0.345], LF = [0.40, 0.64], RF = [0.60, 0.64], BAR = [[0.445, 0.55], [0.555, 0.55]];
+const A_R = 0.026, BAR_R = 0.02;
+function letterDist(fx, fy) {
+  return Math.min(capDist(fx, fy, APEX[0], APEX[1], LF[0], LF[1]),
+                  capDist(fx, fy, APEX[0], APEX[1], RF[0], RF[1]),
+                  capDist(fx, fy, BAR[0][0], BAR[0][1], BAR[1][0], BAR[1][1]) + (0.026 - BAR_R));
+}
 
 const pixels = new Uint8Array(SIZE * SIZE * 4);
 for (let y = 0; y < SIZE; y++) {
   for (let x = 0; x < SIZE; x++) {
     const fx = (x + 0.5) / SIZE, fy = (y + 0.5) / SIZE;
+    let c = bgColor(fx, fy);
+    let r = c[0], g = c[1], b = c[2];
 
-    // start from deep base, screen-blend the glowing colour blobs
-    let r = BASE[0], g = BASE[1], b = BASE[2];
-    for (const bl of BLOBS) {
-      const d = Math.hypot(fx - bl.x, fy - bl.y);
-      const w = Math.pow(Math.max(0, 1 - d / bl.r), 2) * bl.i;
-      if (w <= 0) continue;
-      r = 1 - (1 - r) * (1 - bl.c[0] * w);
-      g = 1 - (1 - g) * (1 - bl.c[1] * w);
-      b = 1 - (1 - b) * (1 - bl.c[2] * w);
+    // ── frosted glass CIRCLE (behind, lower-left) ──
+    {
+      const d = Math.hypot(fx - 0.40, fy - 0.585) - 0.255;
+      const inside = 1 - smoothstep(0, 0.006, d);
+      if (inside > 0) { r = mix(r, mix(r, 255, 0.16), inside); g = mix(g, mix(g, 255, 0.16), inside); b = mix(b, mix(b, 255, 0.16), inside); }
+      const rim = Math.exp(-Math.pow((d + 0.006) / 0.006, 2)) * 0.5;
+      r = mix(r, 255, rim); g = mix(g, 255, rim); b = mix(b, 255, rim);
     }
 
-    // soft corner glow (upper-left)
-    const sheen = Math.pow(clamp01(1 - (fx * 0.7 + fy) / 0.95), 1.8) * 0.32;
-    r += (1 - r) * sheen; g += (1 - g) * sheen; b += (1 - b) * sheen;
+    // ── frosted glass PANEL (rounded square, upper-right of centre) ──
+    {
+      const d = rrectSDF(fx - 0.555, fy - 0.45, 0.235, 0.235, 0.085);
+      const inside = 1 - smoothstep(0, 0.006, d);
+      if (inside > 0) {
+        const lift = 0.20 + smoothstep(0.7, 0.2, fy) * 0.06; // brighter toward top
+        r = mix(r, mix(r, 255, lift), inside); g = mix(g, mix(g, 255, lift), inside); b = mix(b, mix(b, 255, lift), inside);
+      }
+      // bright inner rim (glass edge)
+      const rim = Math.exp(-Math.pow((d + 0.007) / 0.007, 2));
+      const topBias = 0.45 + 0.55 * smoothstep(0.62, 0.30, fy); // stronger on top edge
+      const rl = rim * topBias * 0.85;
+      r = mix(r, 255, rl); g = mix(g, 255, rl); b = mix(b, 255, rl);
+      // soft outer shadow (float)
+      const sh = smoothstep(0.0, 0.05, d) * (1 - smoothstep(0.05, 0.12, d)) * 0.18;
+      r *= 1 - sh; g *= 1 - sh; b *= 1 - sh;
+    }
 
-    // bright glossy reflection STREAK running diagonally (the glass surface)
-    const diag = fx + fy;
-    const streak = Math.exp(-Math.pow((diag - 0.62) / 0.10, 2)) * 0.5
-                 + Math.exp(-Math.pow((diag - 0.42) / 0.05, 2)) * 0.25;
-    r += (1 - r) * streak; g += (1 - g) * streak; b += (1 - b) * streak;
+    // ── glass "A" hero ──
+    {
+      const d = letterDist(fx, fy);
+      const inside = 1 - smoothstep(A_R, A_R + 0.006, d);
+      if (inside > 0) {
+        // translucent white-cyan glass with vertical gradient
+        const top = smoothstep(0.66, 0.32, fy);
+        const gr = mix(225, 255, top), gg = mix(245, 255, top), gb = 255;
+        r = mix(r, gr, inside * 0.92); g = mix(g, gg, inside * 0.92); b = mix(b, gb, inside * 0.92);
+      }
+      // rim light on the A
+      const rim = Math.exp(-Math.pow((d - (A_R - 0.006)) / 0.006, 2)) * smoothstep(0.66, 0.30, fy) * 0.6;
+      r = mix(r, 255, rim); g = mix(g, 255, rim); b = mix(b, 255, rim);
+    }
 
-    // soft round specular hotspot, upper-left
-    const hs = Math.pow(Math.max(0, 1 - Math.hypot(fx - 0.33, fy - 0.26) / 0.40), 2.4) * 0.4;
-    r += (1 - r) * hs; g += (1 - g) * hs; b += (1 - b) * hs;
+    // ── global diagonal gloss sheen ──
+    const streak = Math.exp(-Math.pow((fx + fy - 0.5) / 0.13, 2)) * 0.22;
+    r = mix(r, 255, streak); g = mix(g, 255, streak); b = mix(b, 255, streak);
 
-    // bevel: bright top edge, darker bottom edge (glass thickness)
-    const topLit = smoothstep(0.05, 0.0, fy) * 0.35;
-    r += (1 - r) * topLit; g += (1 - g) * topLit; b += (1 - b) * topLit;
-    const botDark = smoothstep(0.95, 1.0, fy) * 0.28;
-    r *= 1 - botDark; g *= 1 - botDark; b *= 1 - botDark;
-
-    // gentle vignette for depth
-    const vig = 1 - Math.pow(Math.max(0, Math.hypot(fx - 0.5, fy - 0.5) - 0.35) / 0.4, 2) * 0.22;
-    r *= vig; g *= vig; b *= vig;
+    // top bevel + bottom depth
+    r = mix(r, 255, smoothstep(0.04, 0, fy) * 0.25); g = mix(g, 255, smoothstep(0.04, 0, fy) * 0.25); b = mix(b, 255, smoothstep(0.04, 0, fy) * 0.25);
+    const bd = smoothstep(0.96, 1, fy) * 0.25; r *= 1 - bd; g *= 1 - bd; b *= 1 - bd;
 
     const idx = (y * SIZE + x) * 4;
-    pixels[idx] = Math.round(clamp01(r) * 255);
-    pixels[idx + 1] = Math.round(clamp01(g) * 255);
-    pixels[idx + 2] = Math.round(clamp01(b) * 255);
+    pixels[idx] = Math.round(clamp01(r / 255) * 255);
+    pixels[idx + 1] = Math.round(clamp01(g / 255) * 255);
+    pixels[idx + 2] = Math.round(clamp01(b / 255) * 255);
     pixels[idx + 3] = 255;
   }
 }
@@ -82,17 +120,12 @@ for (let y = 0; y < SIZE; y++) {
 const rawRows = [];
 for (let y = 0; y < SIZE; y++) {
   const row = Buffer.alloc(1 + SIZE * 4); row[0] = 0;
-  for (let x = 0; x < SIZE; x++) {
-    const src = (y * SIZE + x) * 4;
-    row[1 + x * 4] = pixels[src]; row[2 + x * 4] = pixels[src + 1]; row[3 + x * 4] = pixels[src + 2]; row[4 + x * 4] = pixels[src + 3];
-  }
+  for (let x = 0; x < SIZE; x++) { const s = (y * SIZE + x) * 4; row[1 + x * 4] = pixels[s]; row[2 + x * 4] = pixels[s + 1]; row[3 + x * 4] = pixels[s + 2]; row[4 + x * 4] = pixels[s + 3]; }
   rawRows.push(row);
 }
 const compressed = deflateSync(Buffer.concat(rawRows), { level: 6 });
 const ihdr = Buffer.alloc(13);
 ihdr.writeUInt32BE(SIZE, 0); ihdr.writeUInt32BE(SIZE, 4); ihdr[8] = 8; ihdr[9] = 6; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
 const png = Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), pngChunk("IHDR", ihdr), pngChunk("IDAT", compressed), pngChunk("IEND", Buffer.alloc(0))]);
-
-const outPath = join(__dirname, "..", "public", "icon.png");
-writeFileSync(outPath, png);
-console.log(`✓ Generated ${outPath} (${(png.length / 1024).toFixed(1)} KB)`);
+writeFileSync(join(__dirname, "..", "public", "icon.png"), png);
+console.log(`✓ Generated public/icon.png (${(png.length / 1024).toFixed(1)} KB)`);
