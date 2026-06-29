@@ -1,7 +1,7 @@
 /**
  * Generates public/icon.png (512x512) using only Node.js built-ins.
- * A clean Freeform-blue rounded canvas with a white "A" (alphabet / language /
- * grammar) and a small playful accent dot. Keep public/icon.svg in sync.
+ * "Liquid glass" look: iridescent colour blobs glowing through a glass tile,
+ * with a glossy diagonal sheen and bevelled edges. Keep public/icon.svg in sync.
  */
 import { deflateSync } from "zlib";
 import { writeFileSync } from "fs";
@@ -10,7 +10,6 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SIZE = 512;
-const AA = 0.0026;
 
 // ── PNG plumbing ──────────────────────────────────────────────────────────────
 const CRC_TABLE = new Uint32Array(256);
@@ -19,54 +18,63 @@ function crc32(buf) { let c = 0xffffffff; for (let i = 0; i < buf.length; i++) c
 function u32(n) { const b = Buffer.alloc(4); b.writeUInt32BE(n >>> 0, 0); return b; }
 function pngChunk(type, data) { const tb = Buffer.from(type, "ascii"); const crc = crc32(Buffer.concat([tb, data])); return Buffer.concat([u32(data.length), tb, data, u32(crc)]); }
 
-// ── shape helpers (fractions 0..1) ─────────────────────────────────────────────
-function smoothstep(a, b, x) { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
-function circleCov(fx, fy, cx, cy, r) { return 1 - smoothstep(r - AA, r + AA, Math.hypot(fx - cx, fy - cy)); }
-function capsuleCov(fx, fy, ax, ay, bx, by, r) {
-  const pax = fx - ax, pay = fy - ay, bax = bx - ax, bay = by - ay;
-  const h = Math.min(1, Math.max(0, (pax * bax + pay * bay) / (bax * bax + bay * bay)));
-  return 1 - smoothstep(r - AA, r + AA, Math.hypot(pax - bax * h, pay - bay * h));
-}
+function clamp01(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+function smoothstep(a, b, x) { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); }
 
-// "A" geometry
-const APEX = [0.5, 0.28], LFOOT = [0.30, 0.74], RFOOT = [0.70, 0.74];
-const LEG_R = 0.058, BAR_R = 0.042;
-const BAR_A = [0.40, 0.585], BAR_B = [0.60, 0.585];
-const DOT = [0.70, 0.31, 0.045];
-const AMBER = [0xf5, 0x9e, 0x0b];
+// colour blobs (centre x,y, [r,g,b] 0..1, radius, intensity)
+const BLOBS = [
+  { x: 0.28, y: 0.30, c: [0x3b / 255, 0x82 / 255, 0xf6 / 255], r: 0.62, i: 1.0 },  // blue
+  { x: 0.76, y: 0.24, c: [0x8b / 255, 0x5c / 255, 0xf6 / 255], r: 0.55, i: 0.95 }, // violet
+  { x: 0.66, y: 0.80, c: [0x22 / 255, 0xd3 / 255, 0xee / 255], r: 0.55, i: 0.9 },  // cyan
+  { x: 0.26, y: 0.82, c: [0xf4 / 255, 0x72 / 255, 0xb6 / 255], r: 0.45, i: 0.6 },  // pink
+];
+const BASE = [0x10 / 255, 0x1c / 255, 0x4e / 255]; // deep navy
 
-function letterCov(fx, fy) {
-  return Math.max(
-    capsuleCov(fx, fy, APEX[0], APEX[1], LFOOT[0], LFOOT[1], LEG_R),
-    capsuleCov(fx, fy, APEX[0], APEX[1], RFOOT[0], RFOOT[1], LEG_R),
-    capsuleCov(fx, fy, BAR_A[0], BAR_A[1], BAR_B[0], BAR_B[1], BAR_R)
-  );
-}
-
-// ── render ─────────────────────────────────────────────────────────────────────
 const pixels = new Uint8Array(SIZE * SIZE * 4);
 for (let y = 0; y < SIZE; y++) {
   for (let x = 0; x < SIZE; x++) {
     const fx = (x + 0.5) / SIZE, fy = (y + 0.5) / SIZE;
 
-    // Freeform-blue background gradient (#2d7ff9 → #1257d6) + soft top gloss
-    const t = fx * 0.35 + fy * 0.65;
-    let r = 0x2d + (0x12 - 0x2d) * t;
-    let g = 0x7f + (0x57 - 0x7f) * t;
-    let b = 0xf9 + (0xd6 - 0xf9) * t;
-    const gloss = Math.max(0, 1 - (fx + fy) / 0.85) * 0.16;
-    r += (255 - r) * gloss; g += (255 - g) * gloss; b += (255 - b) * gloss;
+    // start from deep base, screen-blend the glowing colour blobs
+    let r = BASE[0], g = BASE[1], b = BASE[2];
+    for (const bl of BLOBS) {
+      const d = Math.hypot(fx - bl.x, fy - bl.y);
+      const w = Math.pow(Math.max(0, 1 - d / bl.r), 2) * bl.i;
+      if (w <= 0) continue;
+      r = 1 - (1 - r) * (1 - bl.c[0] * w);
+      g = 1 - (1 - g) * (1 - bl.c[1] * w);
+      b = 1 - (1 - b) * (1 - bl.c[2] * w);
+    }
 
-    // amber accent dot
-    const dc = circleCov(fx, fy, DOT[0], DOT[1], DOT[2]);
-    if (dc > 0) { r = r * (1 - dc) + AMBER[0] * dc; g = g * (1 - dc) + AMBER[1] * dc; b = b * (1 - dc) + AMBER[2] * dc; }
+    // soft corner glow (upper-left)
+    const sheen = Math.pow(clamp01(1 - (fx * 0.7 + fy) / 0.95), 1.8) * 0.32;
+    r += (1 - r) * sheen; g += (1 - g) * sheen; b += (1 - b) * sheen;
 
-    // white "A"
-    const lc = letterCov(fx, fy);
-    if (lc > 0) { r = r * (1 - lc) + 255 * lc; g = g * (1 - lc) + 255 * lc; b = b * (1 - lc) + 255 * lc; }
+    // bright glossy reflection STREAK running diagonally (the glass surface)
+    const diag = fx + fy;
+    const streak = Math.exp(-Math.pow((diag - 0.62) / 0.10, 2)) * 0.5
+                 + Math.exp(-Math.pow((diag - 0.42) / 0.05, 2)) * 0.25;
+    r += (1 - r) * streak; g += (1 - g) * streak; b += (1 - b) * streak;
+
+    // soft round specular hotspot, upper-left
+    const hs = Math.pow(Math.max(0, 1 - Math.hypot(fx - 0.33, fy - 0.26) / 0.40), 2.4) * 0.4;
+    r += (1 - r) * hs; g += (1 - g) * hs; b += (1 - b) * hs;
+
+    // bevel: bright top edge, darker bottom edge (glass thickness)
+    const topLit = smoothstep(0.05, 0.0, fy) * 0.35;
+    r += (1 - r) * topLit; g += (1 - g) * topLit; b += (1 - b) * topLit;
+    const botDark = smoothstep(0.95, 1.0, fy) * 0.28;
+    r *= 1 - botDark; g *= 1 - botDark; b *= 1 - botDark;
+
+    // gentle vignette for depth
+    const vig = 1 - Math.pow(Math.max(0, Math.hypot(fx - 0.5, fy - 0.5) - 0.35) / 0.4, 2) * 0.22;
+    r *= vig; g *= vig; b *= vig;
 
     const idx = (y * SIZE + x) * 4;
-    pixels[idx] = Math.round(r); pixels[idx + 1] = Math.round(g); pixels[idx + 2] = Math.round(b); pixels[idx + 3] = 255;
+    pixels[idx] = Math.round(clamp01(r) * 255);
+    pixels[idx + 1] = Math.round(clamp01(g) * 255);
+    pixels[idx + 2] = Math.round(clamp01(b) * 255);
+    pixels[idx + 3] = 255;
   }
 }
 
