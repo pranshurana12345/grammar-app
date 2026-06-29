@@ -15,13 +15,12 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
       { url: "/icon.png", type: "image/png", sizes: "512x512" },
     ],
     apple: [
       { url: "/icon.png", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: "/icon.svg",
+    shortcut: "/icon.png",
   },
   openGraph: {
     title: "Grammy",
@@ -50,7 +49,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full antialiased">
       <head>
-        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="icon" href="/icon.png" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/icon.png" sizes="512x512" />
       </head>
