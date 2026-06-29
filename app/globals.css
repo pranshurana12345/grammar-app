@@ -37,6 +37,15 @@ html, body {
 .press:active { transform: scale(0.97); opacity: 0.9; }
 .press { transition: transform 0.12s ease, opacity 0.12s ease; }
 
+/* Idiom reel (mobile full-screen) */
+@keyframes idiomFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.idiom-float { animation: idiomFloat 3.2s ease-in-out infinite; }
+@keyframes idiomRise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+.idiom-rise { animation: idiomRise 0.45s ease both; }
+.reel-scroll { scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.reel-scroll::-webkit-scrollbar { display: none; }
+.reel-page { scroll-snap-align: start; scroll-snap-stop: always; }
+
 /* Collapsible sidebar — only on desktop (1024px+); tablets use bottom nav */
 @media (min-width: 1024px) {
   .sidebar-offset {

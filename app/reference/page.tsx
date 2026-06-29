@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-type Motif = "tenses" | "verbs" | "confusables" | "vocab";
+type Motif = "tenses" | "verbs" | "confusables" | "idioms" | "vocab";
 
 const SECTIONS: {
   href: string; title: string; overview: string; count: string;
@@ -34,6 +34,15 @@ const SECTIONS: {
     color: "#dc2626",
     gradient: "linear-gradient(135deg,#e11d48 0%,#fb7185 100%)",
     motif: "confusables",
+  },
+  {
+    href: "/reference/idioms",
+    title: "Idioms & Phrases",
+    overview: "Picture-based idioms that stick.",
+    count: "30 idioms",
+    color: "#d97706",
+    gradient: "linear-gradient(135deg,#d97706 0%,#f59e0b 100%)",
+    motif: "idioms",
   },
   {
     href: "/reference/vocabulary",
@@ -80,6 +89,14 @@ function BannerArt({ motif }: { motif: Motif }) {
         <text x="104" y="56" fill="white" fillOpacity="0.85" fontSize="28" fontWeight="900" textAnchor="middle">B</text>
         <path d="M44 28h36M73 21l9 7-9 7" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M86 50H50M57 43l-9 7 9 7" stroke="white" strokeOpacity="0.8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  if (motif === "idioms")
+    return (
+      <svg width="124" height="80" viewBox="0 0 124 80" fill="none">
+        <rect x="20" y="12" width="84" height="46" rx="13" fill="white" fillOpacity="0.92" />
+        <path d="M38 56 L31 72 L54 56 Z" fill="white" fillOpacity="0.92" />
+        <text x="62" y="46" fill="#b45309" fontSize="30" fontWeight="900" textAnchor="middle">“ ”</text>
       </svg>
     );
   // vocab — big "Aa" with dictionary lines
