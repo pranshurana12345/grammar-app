@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { rules, SECTIONS } from "@/data/rules";
 import { getStats, getProgress, RuleStatus } from "@/lib/storage";
 import Link from "next/link";
+import RefreshButton from "@/components/RefreshButton";
 
 export default function Home() {
   const [stats, setStats] = useState({ confident: 0, seen: 0, revise: 0, unseen: rules.length, total: rules.length });
@@ -40,20 +41,23 @@ export default function Home() {
                 </div>
                 <h1 className="text-3xl font-black text-white leading-none" style={{ letterSpacing: "-0.04em" }}>Grammar<br /><span className="text-blue-300">Feed</span></h1>
               </div>
-              {mounted && (
-                <div className="relative w-24 h-24 flex-shrink-0">
-                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 88 88">
-                    <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="7" />
-                    <circle cx="44" cy="44" r="38" fill="none" stroke="white" strokeWidth="7"
-                      strokeDasharray={circumference} strokeDashoffset={circumference * (1 - pct / 100)}
-                      strokeLinecap="round" style={{ transition: "stroke-dashoffset 1s ease" }} />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-2xl font-black text-white leading-none">{pct}%</span>
-                    <span className="text-[9px] text-blue-200 font-bold mt-0.5">DONE</span>
+              <div className="flex flex-col items-end gap-2.5 flex-shrink-0">
+                <RefreshButton />
+                {mounted && (
+                  <div className="relative w-24 h-24">
+                    <svg className="w-24 h-24 -rotate-90" viewBox="0 0 88 88">
+                      <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="7" />
+                      <circle cx="44" cy="44" r="38" fill="none" stroke="white" strokeWidth="7"
+                        strokeDasharray={circumference} strokeDashoffset={circumference * (1 - pct / 100)}
+                        strokeLinecap="round" style={{ transition: "stroke-dashoffset 1s ease" }} />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-black text-white leading-none">{pct}%</span>
+                      <span className="text-[9px] text-blue-200 font-bold mt-0.5">DONE</span>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {[
