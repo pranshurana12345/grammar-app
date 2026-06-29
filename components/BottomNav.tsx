@@ -32,31 +32,21 @@ const items = [
     ),
   },
   {
-    href: "/starred",
-    label: "Priority",
+    href: "/reels",
+    label: "Reels",
     icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
-        <path d="M11 2L13.5 8H20L14.5 11.8L16.7 18L11 14.3L5.3 18L7.5 11.8L2 8H8.5L11 2Z"
-          fill={active ? "#f59e0b" : "none"}
-          stroke={active ? "#f59e0b" : "#94a3b8"}
-          strokeWidth="1.8" strokeLinejoin="round" />
+        <rect x="3" y="3" width="16" height="16" rx="5"
+          fill={active ? "#e11d48" : "none"}
+          stroke={active ? "#e11d48" : "#94a3b8"}
+          strokeWidth="1.8" />
+        <path d="M9 7.5L14.5 11L9 14.5V7.5Z"
+          fill={active ? "white" : "#94a3b8"}
+          stroke={active ? "white" : "#94a3b8"}
+          strokeWidth="1.2" strokeLinejoin="round" />
       </svg>
     ),
-    color: "#f59e0b",
-  },
-  {
-    href: "/revise",
-    label: "Revise",
-    icon: (active: boolean) => (
-      <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
-        <path d="M4 11C4 7.1 7.1 4 11 4C14.9 4 18 7.1 18 11C18 14.9 14.9 18 11 18C9.1 18 7.4 17.2 6.2 16"
-          stroke={active ? "#2d7ff9" : "#94a3b8"}
-          strokeWidth="1.8" strokeLinecap="round" />
-        <path d="M4 16V11M4 16H9"
-          stroke={active ? "#2d7ff9" : "#94a3b8"}
-          strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
+    color: "#e11d48",
   },
   {
     href: "/concepts",

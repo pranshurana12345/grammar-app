@@ -29,18 +29,12 @@ function loadKnown(): Set<string> {
   catch { return new Set(); }
 }
 
-export default function IdiomReel({
-  idioms, startIndex, onClose,
-}: { idioms: Idiom[]; startIndex: number; onClose: () => void }) {
+// Full-screen swipeable reel of idioms (mobile). Used by the Reels tab.
+export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const appendingRef = useRef(false);
 
-  // Randomised order, tapped idiom first.
-  const [order, setOrder] = useState<Idiom[]>(() => {
-    const tapped = idioms[startIndex];
-    const rest = idioms.filter((_, i) => i !== startIndex);
-    return tapped ? [tapped, ...shuffle(rest)] : shuffle(idioms);
-  });
+  const [order, setOrder] = useState<Idiom[]>(() => shuffle(idioms));
   const [known, setKnown] = useState<Set<string>>(() => (typeof window !== "undefined" ? loadKnown() : new Set()));
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
   const [practice, setPractice] = useState(false);
@@ -59,13 +53,8 @@ export default function IdiomReel({
       return n;
     });
   }, []);
-
   const toggleReveal = useCallback((p: string) => {
-    setRevealed((prev) => {
-      const n = new Set(prev);
-      if (n.has(p)) n.delete(p); else n.add(p);
-      return n;
-    });
+    setRevealed((prev) => { const n = new Set(prev); if (n.has(p)) n.delete(p); else n.add(p); return n; });
   }, []);
 
   function reshuffle() {
@@ -73,7 +62,6 @@ export default function IdiomReel({
     setOrder(shuffle(idioms));
     scrollRef.current?.scrollTo({ top: 0 });
   }
-
   function speak(idi: Idiom) {
     try {
       const synth = window.speechSynthesis;
@@ -84,8 +72,6 @@ export default function IdiomReel({
       synth.speak(u);
     } catch { /* ignore */ }
   }
-
-  // Infinite reel: append a fresh shuffled batch as you near the end.
   function onScroll() {
     const el = scrollRef.current;
     if (!el || appendingRef.current) return;
@@ -97,27 +83,7 @@ export default function IdiomReel({
   }
 
   return (
-    <div className="fixed inset-0 z-[60] lg:hidden bg-black">
-      {/* Top controls */}
-      <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 pt-4">
-        <button onClick={onClose} aria-label="Close"
-          className="w-10 h-10 rounded-full flex items-center justify-center text-white press"
-          style={{ background: "rgba(0,0,0,0.32)", backdropFilter: "blur(6px)" }}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="white" strokeWidth="2" strokeLinecap="round" /></svg>
-        </button>
-
-        <button onClick={() => setPractice((p) => !p)}
-          className="flex items-center gap-1.5 h-10 px-3.5 rounded-full text-[12px] font-bold press"
-          style={{
-            background: practice ? "#ffffff" : "rgba(0,0,0,0.32)",
-            color: practice ? "#0f172a" : "#fff",
-            backdropFilter: "blur(6px)",
-          }}>
-          {practice ? <EyeOff /> : <Eye />}
-          {practice ? "Practice ON" : "Practice"}
-        </button>
-      </div>
-
+    <div className="fixed inset-0 z-40 lg:hidden bg-black">
       <div ref={scrollRef} onScroll={onScroll} className="reel-scroll h-full overflow-y-scroll">
         {order.map((idi, i) => {
           const show = !practice || revealed.has(idi.phrase);
@@ -127,12 +93,10 @@ export default function IdiomReel({
               className="reel-page relative flex flex-col items-center justify-center text-center pl-9 pr-20"
               style={{ height: "100dvh", background: GRADIENTS[i % GRADIENTS.length] }}>
 
-              {/* picture */}
               <div className="text-[112px] leading-none mb-6 idiom-float" style={{ filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.25))" }}>
                 {idi.pic}
               </div>
 
-              {/* phrase + meaning */}
               <div className="idiom-rise max-w-sm">
                 <h2 className="text-white text-[29px] font-black tracking-tight leading-tight mb-3" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.25)" }}>
                   {idi.phrase}
@@ -154,8 +118,8 @@ export default function IdiomReel({
                 )}
               </div>
 
-              {/* Right action rail (Instagram-style) */}
-              <div className="absolute right-2.5 bottom-24 flex flex-col items-center gap-4">
+              {/* Right action rail */}
+              <div className="absolute right-2.5 bottom-28 flex flex-col items-center gap-4">
                 <RailBtn onClick={() => toggleKnown(idi.phrase)} active={isKnown} label={isKnown ? "Known" : "Know"}>
                   <Heart filled={isKnown} />
                 </RailBtn>
@@ -166,9 +130,9 @@ export default function IdiomReel({
                 )}
                 <RailBtn onClick={() => speak(idi)} label="Hear"><Speaker /></RailBtn>
                 <RailBtn onClick={reshuffle} label="Shuffle"><Shuffle /></RailBtn>
+                <RailBtn onClick={() => setPractice((p) => !p)} active={practice} label="Practice"><Target /></RailBtn>
               </div>
 
-              {/* swipe hint on the very first card */}
               {i === 0 && (
                 <div className="absolute bottom-9 left-1/2 -translate-x-1/2 flex flex-col items-center text-white/80 pointer-events-none">
                   <svg width="20" height="20" viewBox="0 0 22 22" fill="none" className="idiom-float">
@@ -185,7 +149,6 @@ export default function IdiomReel({
   );
 }
 
-/* ── Side-rail button ── */
 function RailBtn({ children, label, active, onClick }: {
   children: React.ReactNode; label: string; active?: boolean; onClick: () => void;
 }) {
@@ -200,45 +163,25 @@ function RailBtn({ children, label, active, onClick }: {
   );
 }
 
-/* ── Icons ── */
 function Heart({ filled }: { filled?: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill={filled ? "currentColor" : "none"}>
-      <path d="M10 17s-6.2-4.1-6.2-8.4A3.4 3.4 0 0 1 10 6.2a3.4 3.4 0 0 1 6.2 2.4C16.2 12.9 10 17 10 17z"
-        stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M10 17s-6.2-4.1-6.2-8.4A3.4 3.4 0 0 1 10 6.2a3.4 3.4 0 0 1 6.2 2.4C16.2 12.9 10 17 10 17z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
     </svg>
   );
 }
 function Eye() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="10" cy="10" r="2.3" stroke="currentColor" strokeWidth="1.6" />
-    </svg>
-  );
+  return (<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" stroke="currentColor" strokeWidth="1.6" /><circle cx="10" cy="10" r="2.3" stroke="currentColor" strokeWidth="1.6" /></svg>);
 }
 function EyeOff() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M7.2 7.3A2.3 2.3 0 0 0 10 12.3M3 3l14 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M6.3 6.4C3.7 7.8 2 10 2 10s3 5.5 8 5.5c1.2 0 2.3-.3 3.3-.8M9 4.6c.3 0 .7-.1 1-.1 5 0 8 5.5 8 5.5a15 15 0 0 1-2 2.6"
-        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
+  return (<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.2 7.3A2.3 2.3 0 0 0 10 12.3M3 3l14 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /><path d="M6.3 6.4C3.7 7.8 2 10 2 10s3 5.5 8 5.5c1.2 0 2.3-.3 3.3-.8M9 4.6c.3 0 .7-.1 1-.1 5 0 8 5.5 8 5.5a15 15 0 0 1-2 2.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>);
 }
 function Speaker() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M4 7.5v5h3l4 3v-11l-4 3H4z" fill="currentColor" />
-      <path d="M14 7a4 4 0 0 1 0 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  );
+  return (<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 7.5v5h3l4 3v-11l-4 3H4z" fill="currentColor" /><path d="M14 7a4 4 0 0 1 0 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>);
 }
 function Shuffle() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M3 5h3.5l7 10H17M3 15h3.5l2-3M13 9l1.5-2H17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M15 3l2 2-2 2M15 13l2 2-2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
+  return (<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h3.5l7 10H17M3 15h3.5l2-3M13 9l1.5-2H17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /><path d="M15 3l2 2-2 2M15 13l2 2-2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>);
+}
+function Target() {
+  return (<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.6" /><circle cx="10" cy="10" r="3" stroke="currentColor" strokeWidth="1.6" /><circle cx="10" cy="10" r="0.6" fill="currentColor" /></svg>);
 }

@@ -31,6 +31,16 @@ const NAV = [
     ),
   },
   {
+    href: "/reels",
+    label: "Reels",
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="2" width="12" height="12" rx="3.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M6.5 5.5L10.5 8L6.5 10.5V5.5Z" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
     href: "/starred",
     label: "High Priority",
     icon: (
