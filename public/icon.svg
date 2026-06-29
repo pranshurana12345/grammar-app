@@ -1,81 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Background: deep navy -->
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#1e1b4b"/>
-      <stop offset="100%" stop-color="#04060f"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef1f8"/>
     </linearGradient>
-
-    <!-- Violet ambient blob (top-left) -->
-    <radialGradient id="blob1" cx="15%" cy="10%" r="50%">
-      <stop offset="0%"   stop-color="#7c3aed" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- Cobalt blob (bottom-right) -->
-    <radialGradient id="blob2" cx="88%" cy="88%" r="45%">
-      <stop offset="0%"   stop-color="#1d4ed8" stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
-    </radialGradient>
-
-    <!-- G fill: white → lavender -->
-    <linearGradient id="gFill" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#a5b4fc"/>
-    </linearGradient>
-
-    <!-- Accent underline gradient -->
-    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#7c3aed"/>
-      <stop offset="100%" stop-color="#2563eb"/>
-    </linearGradient>
-
-    <!-- Clip to rounded square -->
-    <clipPath id="sq">
-      <rect width="512" height="512" rx="96"/>
-    </clipPath>
+    <clipPath id="rc"><rect width="512" height="512" rx="112"/></clipPath>
   </defs>
 
-  <g clip-path="url(#sq)">
-    <!-- Background layers -->
-    <rect width="512" height="512" fill="url(#bg)"/>
-    <rect width="512" height="512" fill="url(#blob1)"/>
-    <rect width="512" height="512" fill="url(#blob2)"/>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
 
-    <!-- Diagonal gloss sweep (top-left) -->
-    <polygon points="0,0 340,0 0,340" fill="white" opacity="0.04"/>
-
-    <!-- G letterform — annulus (donut) with right-side opening + crossbar -->
-    <!--
-      Circle centre: (256, 276), outer R=150, inner R=112 (thickness 38)
-      Opening: angles -15° to 90° (top-right gap = the G mouth)
-      Crossbar: horizontal rect from centre to right-inner edge
-    -->
-    <!-- Left/bottom/top arc — the C part of the G -->
-    <path d="
-      M 256,126
-      A 150,150 0 1,0 406,259
-      L 368,259
-      A 112,112 0 0,1 256,164
-      Z
-    " fill="url(#gFill)" opacity="0.97"/>
-
-    <!-- Crossbar (horizontal bar filling right-centre) -->
-    <rect x="256" y="258" width="112" height="38" rx="4" fill="url(#gFill)" opacity="0.97"/>
-
-    <!-- Inner white specular on G (glass highlight) -->
-    <path d="
-      M 256,136
-      A 140,140 0 0,1 378,216
-      L 362,232
-      A 122,122 0 0,0 256,152
-      Z
-    " fill="white" opacity="0.18"/>
-
-    <!-- Accent underline below the G -->
-    <rect x="156" y="385" width="200" height="14" rx="7" fill="url(#accent)" opacity="0.85"/>
-
-    <!-- Top-edge specular line -->
-    <rect x="0" y="0" width="512" height="1" fill="white" opacity="0.35"/>
+  <!-- Freeform-style colourful shapes, blended like the Freeform app icon -->
+  <g clip-path="url(#rc)" style="mix-blend-mode:multiply">
+    <circle cx="174" cy="184" r="97" fill="#2563eb"/>
+    <rect x="248" y="128" width="154" height="154" rx="23" fill="#f59e0b" transform="rotate(13.2 325 205)"/>
+    <circle cx="205" cy="335" r="77" fill="#7c3aed"/>
+    <line x1="287" y1="297" x2="381" y2="361" stroke="#10b981" stroke-width="74" stroke-linecap="round"/>
+    <path d="M87 271 C105 271 125 299 143 299 C162 299 181 271 200 271 C219 271 237 243 256 243 C275 243 293 271 312 271 C331 271 350 299 369 299 C387 299 406 271 425 271"
+      fill="none" stroke="#f43f5e" stroke-width="22" stroke-linecap="round"/>
   </g>
 </svg>
