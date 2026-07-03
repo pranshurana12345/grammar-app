@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { STUDENTS, type Student } from "@/data/students";
 
 export default function LoginPage() {
-  const { login, student, loading } = useAuth();
+  const { login, loginAsGuest, student, loading } = useAuth();
   const router = useRouter();
 
   const [selected, setSelected] = useState<Student | null>(null);
@@ -83,6 +83,24 @@ export default function LoginPage() {
               </button>
             ))}
           </div>
+
+          {/* ── Continue as guest ── */}
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+            <span className="text-slate-600 text-xs font-semibold">or</span>
+            <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+          </div>
+          <button
+            onClick={() => { loginAsGuest(); router.replace("/"); }}
+            className="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-2xl press transition-all"
+            style={{ background: "rgba(255,255,255,0.03)", border: "1px dashed rgba(255,255,255,0.16)" }}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" className="text-slate-400">
+              <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM5 20c0-3.3 3.1-6 7-6s7 2.7 7 6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span className="text-slate-200 font-semibold text-[15px]">Continue as guest</span>
+          </button>
+          <p className="text-slate-600 text-xs text-center mt-3">No account needed. Progress saves on this device.</p>
         </div>
       ) : (
         /* ── PIN entry ── */

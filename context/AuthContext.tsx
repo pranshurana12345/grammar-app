@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { STUDENTS, type Student } from "@/data/students";
+import { STUDENTS, GUEST, type Student } from "@/data/students";
 import { syncDown } from "@/lib/storage";
 
 const SESSION_KEY = "grammar_current_student";
@@ -10,6 +10,7 @@ type AuthState = {
   student: Student | null;
   loading: boolean;
   login: (id: string, pin: string) => boolean;
+  loginAsGuest: () => void;
   logout: () => void;
   // Legacy aliases used in sidebar / other components
   user: Student | null;
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthState>({
   student: null,
   loading: true,
   login: () => false,
+  loginAsGuest: () => {},
   logout: () => {},
   user: null,
   signOut: async () => {},
@@ -35,11 +37,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const raw = localStorage.getItem(SESSION_KEY);
         if (raw) {
           const saved = JSON.parse(raw) as { id: string };
-          const found = STUDENTS.find((s) => s.id === saved.id) ?? null;
+          const found =
+            saved.id === GUEST.id
+              ? GUEST
+              : STUDENTS.find((s) => s.id === saved.id) ?? null;
           setStudent(found);
           // Pull this student's cloud data before showing the app (instant no-op
-          // when Supabase isn't configured).
-          if (found) await syncDown(found.id);
+          // when Supabase isn't configured). Guests are on-device only.
+          if (found && found.id !== GUEST.id) await syncDown(found.id);
         }
       } catch {
         // ignore
@@ -57,6 +62,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return true;
   }
 
+  function loginAsGuest() {
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ id: GUEST.id }));
+    setStudent(GUEST);
+  }
+
   function logout() {
     localStorage.removeItem(SESSION_KEY);
     setStudent(null);
@@ -67,6 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       student,
       loading,
       login,
+      loginAsGuest,
       logout,
       user: student,
       signOut: async () => logout(),

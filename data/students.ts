@@ -17,3 +17,6 @@ export const STUDENTS: Student[] = [
   { id: "s4", name: "Student 3", pin: "4444", color: "#dc2626" },
   { id: "s5", name: "Student 4", pin: "5555", color: "#d97706" },
 ];
+
+// Guest: lets anyone try the app with no account. Progress saves on-device only.
+export const GUEST: Student = { id: "guest", name: "Guest", pin: "", color: "#7c3aed" };
