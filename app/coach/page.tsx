@@ -362,6 +362,12 @@ export default function CoachPage() {
         open={chatOpen}
         onClose={() => setChatOpen(false)}
         title="Grammy AI Coach"
+        suggestions={[
+          "What exactly comes in the AFCAT English section?",
+          "Give me a trick to never confuse 'since' and 'for'",
+          "Which idioms should I revise first?",
+          "Make me a 7-day English study plan",
+        ]}
         contextPreview={`Your practice: ${stats.recent} questions this week at ${stats.recentPct}% accuracy (${stats.total} all-time) · all 101 rules · AFCAT pattern`}
         context={`The student opened the general chat from the AI Coach page. They may ask about any grammar rule, vocabulary, the AFCAT exam, study strategy, or the app. Their recent practice: ${stats.recent} questions in the last 7 days at ${stats.recentPct}% accuracy (${stats.total} all-time).`}
       />
