@@ -3,18 +3,21 @@
 import { useEffect, useState } from "react";
 import { rules, SECTIONS } from "@/data/rules";
 import { getStats, getProgress, RuleStatus } from "@/lib/storage";
+import { sectionReadiness, blendedTopicPct, type SectionReadiness } from "@/lib/practice";
 import Link from "next/link";
 import RefreshButton from "@/components/RefreshButton";
 
 export default function Home() {
   const [stats, setStats] = useState({ confident: 0, seen: 0, revise: 0, unseen: rules.length, total: rules.length });
   const [progress, setProgress] = useState<Record<number, RuleStatus>>({});
+  const [readiness, setReadiness] = useState<SectionReadiness>({});
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setStats(getStats(rules.length));
     setProgress(getProgress());
+    setReadiness(sectionReadiness(7)); // last-7-days AI practice feeds Topics %
   }, []);
 
   const pct = Math.round((stats.confident / stats.total) * 100);
@@ -108,7 +111,9 @@ export default function Home() {
               {SECTIONS.map((sec) => {
                 const sr = rules.filter((r) => r.section === sec.name);
                 const done = sr.filter((r) => progress[r.id] === "confident").length;
-                const p = sr.length > 0 ? (done / sr.length) * 100 : 0;
+                const rulePct = sr.length > 0 ? (done / sr.length) * 100 : 0;
+                const blended = blendedTopicPct(rulePct, sec.name, readiness);
+                const p = blended.pct;
                 return (
                   <Link key={sec.name} href={`/sections/${encodeURIComponent(sec.name)}`} className="press block">
                     <div className="bg-white rounded-3xl px-4 py-3.5 flex items-center gap-4" style={{ boxShadow: "0 2px 8px -2px rgba(15,23,42,0.06)" }}>
@@ -116,7 +121,10 @@ export default function Home() {
                         <span className="text-[11px] font-black" style={{ color: sec.color }}>{done}/{sr.length}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-slate-800 text-[13px] truncate">{sec.name}</p>
+                        <div className="flex items-center gap-1.5">
+                          <p className="font-bold text-slate-800 text-[13px] truncate">{sec.name}</p>
+                          {blended.fromAI && <span className="text-[8.5px] font-black px-1 py-px rounded flex-shrink-0" style={{ background: "#ede9fe", color: "#7c3aed" }}>✨ AI</span>}
+                        </div>
                         <div className="flex items-center gap-2 mt-1.5">
                           <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                             <div className="h-full rounded-full" style={{ width: `${p}%`, background: sec.color }} />
@@ -186,7 +194,8 @@ export default function Home() {
                 const sr = rules.filter((r) => r.section === sec.name);
                 const done = sr.filter((r) => progress[r.id] === "confident").length;
                 const revising = sr.filter((r) => progress[r.id] === "revise").length;
-                const p = sr.length > 0 ? (done / sr.length) * 100 : 0;
+                const rulePctD = sr.length > 0 ? (done / sr.length) * 100 : 0;
+                const p = blendedTopicPct(rulePctD, sec.name, readiness).pct;
                 return (
                   <Link key={sec.name} href={`/sections/${encodeURIComponent(sec.name)}`}>
                     <div className="px-6 py-4 flex items-center gap-5 hover:bg-slate-50 transition-colors cursor-pointer group">

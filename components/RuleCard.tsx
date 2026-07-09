@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from "react";
 import RulePoints from "@/components/RulePoints";
 import AltTrick from "@/components/AltTrick";
 import { ALT_TRICKS } from "@/data/altTricks";
+import AskAISheet from "@/components/AskAISheet";
 
 type Props = {
   rule: Rule;
@@ -72,8 +73,9 @@ function ExplainableExample({
 export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) {
   const c = rule.sectionColor;
   const [langMode, setLangMode] = useState<"closed" | "hindi" | "hinglish">("closed");
+  const [askOpen, setAskOpen] = useState(false);
 
-  useEffect(() => { setLangMode("closed"); }, [rule.id]);
+  useEffect(() => { setLangMode("closed"); setAskOpen(false); }, [rule.id]);
 
   const hasLang = !!(rule.hindiTip || rule.hinglishTip);
   const chips = detectConcepts(rule.title, rule.rule, rule.extras?.join(" ")).slice(0, 5);
@@ -267,6 +269,38 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
             )}
           </div>
         )}
+
+        {/* Ask AI */}
+        <div className="px-5 mb-4">
+          <button onClick={() => setAskOpen(true)}
+            className="w-full flex items-center justify-between px-4 py-3.5 rounded-xl press"
+            style={{ background: "linear-gradient(135deg,#eff6ff,#ede9fe)", border: "1px solid #c7d2fe" }}>
+            <div className="flex items-center gap-2.5">
+              <span className="w-8 h-8 rounded-xl flex items-center justify-center text-[15px] flex-shrink-0"
+                style={{ background: "linear-gradient(135deg,#2d7ff9,#7c3aed)" }}>✨</span>
+              <div className="text-left">
+                <p className="text-[12.5px] font-bold text-indigo-800">Still don&apos;t understand?</p>
+                <p className="text-[10.5px] text-indigo-400 font-semibold">Ask AI to explain this rule your way</p>
+              </div>
+            </div>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="text-indigo-400 flex-shrink-0">
+              <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+
+        <AskAISheet
+          open={askOpen}
+          onClose={() => setAskOpen(false)}
+          title={rule.title}
+          seed="Please explain this rule to me in a simpler way, with an easy example."
+          context={[
+            `Grammar rule the student is reading — Rule ${rule.ruleNumber} (${rule.section}): ${rule.title}`,
+            `Rule text: ${rule.rule}`,
+            rule.correct.length ? `Correct examples: ${rule.correct.slice(0, 3).join(" | ")}` : "",
+            rule.wrong?.length ? `Wrong examples: ${rule.wrong.slice(0, 3).join(" | ")}` : "",
+          ].filter(Boolean).join("\n")}
+        />
       </div>
 
       {/* Action Bar */}

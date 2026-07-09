@@ -2,12 +2,21 @@
 
 import Link from "next/link";
 
-type Motif = "tenses" | "verbs" | "confusables" | "idioms" | "vocab";
+type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab";
 
 const SECTIONS: {
   href: string; title: string; overview: string; count: string;
   color: string; gradient: string; motif: Motif; soon?: boolean;
 }[] = [
+  {
+    href: "/concepts",
+    title: "Concepts",
+    overview: "Visual mind-maps connecting the rules.",
+    count: "Mind maps",
+    color: "#7c3aed",
+    gradient: "linear-gradient(135deg,#5b21b6 0%,#8b5cf6 100%)",
+    motif: "concepts",
+  },
   {
     href: "/reference/tenses",
     title: "Learn Tenses",
@@ -58,6 +67,18 @@ const SECTIONS: {
 
 /* Themed banner artwork drawn with SVG (no image files — works offline). */
 function BannerArt({ motif }: { motif: Motif }) {
+  if (motif === "concepts")
+    return (
+      <svg width="140" height="78" viewBox="0 0 140 78" fill="none">
+        <path d="M70 39L30 18M70 39l40-21M70 39L34 62M70 39l38 22" stroke="white" strokeOpacity="0.5" strokeWidth="2.5" strokeLinecap="round" />
+        <circle cx="70" cy="39" r="13" fill="white" fillOpacity="0.95" />
+        <circle cx="30" cy="18" r="8" fill="white" fillOpacity="0.75" />
+        <circle cx="110" cy="18" r="8" fill="white" fillOpacity="0.75" />
+        <circle cx="34" cy="62" r="8" fill="white" fillOpacity="0.75" />
+        <circle cx="108" cy="61" r="8" fill="white" fillOpacity="0.75" />
+        <text x="70" y="44" fill="#6d28d9" fontSize="13" fontWeight="900" textAnchor="middle">💡</text>
+      </svg>
+    );
   if (motif === "tenses")
     return (
       <svg width="140" height="78" viewBox="0 0 140 78" fill="none">

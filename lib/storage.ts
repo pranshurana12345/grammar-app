@@ -94,8 +94,11 @@ export async function syncDown(studentId: string): Promise<boolean> {
   if (typeof window === "undefined" || !studentId || studentId === "guest") return false;
   let changed = false;
 
-  for (const kind of ["progress", "quiz"] as const) {
-    const key = kind === "progress" ? progressKey(studentId) : quizKey(studentId);
+  for (const kind of ["progress", "quiz", "practice"] as const) {
+    const key =
+      kind === "progress" ? progressKey(studentId) :
+      kind === "quiz" ? quizKey(studentId) :
+      `grammar_practice_${studentId}`;
     const tk = tsKey(kind, studentId);
     const remote = await pullState(studentId, kind);
     const localTs = localStorage.getItem(tk) || "";

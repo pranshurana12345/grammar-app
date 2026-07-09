@@ -49,13 +49,16 @@ const items = [
     color: "#e11d48",
   },
   {
-    href: "/concepts",
-    label: "Concepts",
+    href: "/coach",
+    label: "AI",
     icon: (active: boolean) => (
       <svg width="24" height="24" viewBox="0 0 22 22" fill="none">
-        <circle cx="11" cy="11" r="8" stroke={active ? "#7c3aed" : "#94a3b8"} strokeWidth="1.8" />
-        <circle cx="11" cy="11" r="3" fill={active ? "#7c3aed" : "#94a3b8"} />
-        <path d="M11 3V6M11 16V19M3 11H6M16 11H19" stroke={active ? "#7c3aed" : "#94a3b8"} strokeWidth="1.8" strokeLinecap="round" />
+        <path d="M11 2.5l1.9 4.8 4.8 1.9-4.8 1.9L11 15.9l-1.9-4.8-4.8-1.9 4.8-1.9L11 2.5z"
+          fill={active ? "#7c3aed" : "none"}
+          stroke={active ? "#7c3aed" : "#94a3b8"}
+          strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M17.5 14l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9.9-2.1z"
+          fill={active ? "#7c3aed" : "#94a3b8"} />
       </svg>
     ),
     color: "#7c3aed",

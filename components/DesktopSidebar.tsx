@@ -60,13 +60,12 @@ const NAV = [
     ),
   },
   {
-    href: "/concepts",
-    label: "Concepts",
+    href: "/coach",
+    label: "AI Coach",
     icon: (
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="8" cy="8" r="2" fill="currentColor" />
-        <path d="M8 2V4M8 12V14M2 8H4M12 8H14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M8 1.5l1.4 3.6L13 6.5l-3.6 1.4L8 11.5 6.6 7.9 3 6.5l3.6-1.4L8 1.5z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+        <path d="M12.8 10.5l.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7.7-1.5z" fill="currentColor" />
       </svg>
     ),
   },
