@@ -49,11 +49,6 @@ export function recordPracticeAnswer(rec: PracticeRecord) {
   void pushState(sid, "practice", trimmed); // cloud sync (no-op if unconfigured)
 }
 
-// Question stems answered recently — sent to the API so the AI avoids repeats.
-export function recentQuestionStems(n = 40): string[] {
-  return getPracticeHistory().slice(-n).map((r) => r.q);
-}
-
 // ── Readiness ─────────────────────────────────────────────────────────────────
 // Per-section accuracy over the last `days` days of AI practice.
 

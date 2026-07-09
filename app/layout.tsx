@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import AuthGuard from "@/components/AuthGuard";
 import PWAInit from "@/components/PWAInit";
+import PracticePrefetch from "@/components/PracticePrefetch";
 
 export const metadata: Metadata = {
   title: "Grammy",
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-full" style={{ background: "#f0f4ff" }}>
         <PWAInit />
+        <PracticePrefetch />
         <AuthProvider>
           <AuthGuard>
             {children}

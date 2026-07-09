@@ -2,18 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import AskAISheet from "@/components/AskAISheet";
-import { apiBase, recentQuestionStems, recordPracticeAnswer } from "@/lib/practice";
+import { recordPracticeAnswer } from "@/lib/practice";
+import {
+  fetchQuestions, loadQueue, saveQueue, normalizeStem,
+  type PracticeQuestion,
+} from "@/lib/practiceQueue";
 
-export type PracticeQuestion = {
-  id: string;
-  category: string;
-  section: string;
-  question: string;
-  options: { text: string; why: string }[];
-  correctIndex: number;
-  rule: string;
-  explanation: string;
-};
+export type { PracticeQuestion };
 
 const GRADIENTS = [
   "linear-gradient(165deg,#1e1b4b 0%,#4338ca 100%)",
@@ -38,9 +33,11 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [timerMode, setTimerMode] = useState(false);
+  const [timerMode, setTimerMode] = useState(true); // auto-timer on by default
   const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
   const [askFor, setAskFor] = useState<PracticeQuestion | null>(null);
+  const questionsRef = useRef<PracticeQuestion[]>([]);
+  questionsRef.current = questions;
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -53,28 +50,42 @@ export default function PracticeReel({ focus }: { focus?: string }) {
     fetchingRef.current = true;
     if (initial) { setLoading(true); setError(""); }
     try {
-      const exclude = [
-        ...recentQuestionStems(30),
-        ...questions.slice(-20).map((q) => q.question.slice(0, 120)),
-      ];
-      const res = await fetch(`${apiBase()}/api/practice/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count: 5, exclude, focus: focus || undefined }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Could not load questions");
-      setQuestions((prev) => [...prev, ...data.questions]);
+      const onScreen = questionsRef.current.map((q) => q.question.slice(0, 120));
+      const fresh = await fetchQuestions(5, focus || "", onScreen);
+      if (fresh.length) {
+        setQuestions((prev) => {
+          const known = new Set(prev.map((q) => normalizeStem(q.question)));
+          return [...prev, ...fresh.filter((q) => !known.has(normalizeStem(q.question)))];
+        });
+        // Keep the shared queue topped up for the next session (general mode only).
+        if (!focus) saveQueue([...loadQueue(), ...fresh]);
+      }
     } catch (e) {
-      if (initial) setError(e instanceof Error ? e.message : "Could not load questions");
+      if (initial && questionsRef.current.length === 0) {
+        setError(e instanceof Error ? e.message : "Could not load questions");
+      }
     } finally {
       fetchingRef.current = false;
       if (initial) setLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focus]);
 
-  useEffect(() => { void fetchBatch(true); }, [fetchBatch]);
+  // Start instantly from the prefetched queue; only show the loader when empty.
+  useEffect(() => {
+    const cached = focus ? [] : loadQueue();
+    if (cached.length > 0) {
+      setQuestions(cached);
+      setLoading(false);
+    } else {
+      void fetchBatch(true);
+    }
+  }, [focus, fetchBatch]);
+
+  // Stay 3+ questions ahead of the student — fetch before they can catch up.
+  useEffect(() => {
+    if (loading || questions.length === 0) return;
+    if (questions.length - currentIdx <= 4) void fetchBatch();
+  }, [loading, questions.length, currentIdx, fetchBatch]);
 
   const answer = useCallback((q: PracticeQuestion, idx: number) => {
     setPicked((prev) => {
@@ -116,7 +127,6 @@ export default function PracticeReel({ focus }: { focus?: string }) {
     if (!el) return;
     const idx = Math.round(el.scrollTop / el.clientHeight);
     if (idx !== currentIdx) setCurrentIdx(idx);
-    if (questions.length > 0 && idx >= questions.length - 2) void fetchBatch();
   }
 
   function speak(q: PracticeQuestion) {
@@ -172,18 +182,8 @@ export default function PracticeReel({ focus }: { focus?: string }) {
               className="reel-page relative overflow-hidden flex flex-col"
               style={{ height: "100dvh", background: GRADIENTS[i % GRADIENTS.length] }}>
 
-              <div className="flex-1 overflow-y-auto px-5 pt-16 pb-40">
-                {/* header chips */}
-                <div className="flex items-center gap-2 mb-4 flex-wrap">
-                  <span className="px-2.5 py-1 rounded-full text-[10.5px] font-black text-white uppercase tracking-wider"
-                    style={{ background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.25)" }}>
-                    {q.category}
-                  </span>
-                  <span className="px-2.5 py-1 rounded-full text-[10.5px] font-bold text-white/75"
-                    style={{ background: "rgba(0,0,0,0.25)" }}>
-                    {q.section}
-                  </span>
-                </div>
+              <div className="flex-1 overflow-y-auto px-5 pt-20 pb-40">
+                {/* topic is deliberately hidden until answered — no hints */}
 
                 {/* question */}
                 <h2 className="text-white text-[19px] font-extrabold leading-snug mb-5 whitespace-pre-wrap"
@@ -239,6 +239,9 @@ export default function PracticeReel({ focus }: { focus?: string }) {
                     </p>
                     <p className="text-white text-[13px] font-bold mb-1.5">📘 {q.rule}</p>
                     <p className="text-white/85 text-[13px] leading-relaxed">{q.explanation}</p>
+                    <p className="text-white/45 text-[10.5px] font-black uppercase tracking-wider mt-2.5">
+                      {q.category} · {q.section}
+                    </p>
 
                     {/* Ask AI entry — like a comment box */}
                     <button onClick={() => setAskFor(q)}

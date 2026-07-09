@@ -52,7 +52,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json().catch(() => ({}));
     const count = Math.min(Math.max(Number(body.count) || 5, 1), 8);
-    const exclude: string[] = Array.isArray(body.exclude) ? body.exclude.slice(-60) : [];
+    const exclude: string[] = Array.isArray(body.exclude) ? body.exclude.slice(-100) : [];
     const focus: string = typeof body.focus === "string" ? body.focus : "";
 
     const parts = [
