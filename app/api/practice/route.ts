@@ -27,9 +27,11 @@ const CATEGORIES = [
   "Spelling",
 ];
 
-// The AFCAT exam demonstrably recycles its word bank — these words were asked
-// in real papers (2015–2019). The generator draws on them to stay authentic.
-const AFCAT_WORD_BANK = "affluent, pilfer, debacle, parochial, inquisitive, allegiance, abash, altruism, narcissist, elucidate, mitigate, luscious, allure, naive, cajole, sporadic, intrinsic, adroit, vague, exodus, placidity, incandescent, dwindle, thrifty, salubrious, desolate, barren, infamy, intrepid, apprehend, momentous, preposterous, dissemble, raucous, abrogate, luxuriant, cantankerous, onus, derision, nebulous, debilitate, anathema, penchant, genesis, intransigent, intimidate, mutinous, foe, insipid, hasten, forthright, fallible, beguile, ameliorate, feckless, cacophonous, evanescent, devious, refractory, insolent, acrimonious, sceptic, clemency, malevolent, spurious, pernicious, benign, astute, frugality, audacity, taciturn, fickle";
+// The AFCAT exam demonstrably recycles its word bank. This list is the app's
+// vocabulary data: real previous-year words plus predicted words from the same
+// clusters the exam draws on. Single source of truth: data/vocabulary.ts.
+import { VOCAB } from "@/data/vocabulary";
+const AFCAT_WORD_BANK = VOCAB.map((w) => w.phrase.toLowerCase()).join(", ");
 
 const SYSTEM = `You are an AFCAT (Air Force Common Admission Test) English question setter. You write original MCQs indistinguishable in style and difficulty from real AFCAT papers. You have studied the actual papers (2015–2020) and follow their exact patterns.
 
