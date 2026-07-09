@@ -3,8 +3,12 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { IDIOMS } from "@/data/idioms";
+import { VOCAB } from "@/data/vocabulary";
 import IdiomReel from "@/components/IdiomReel";
 import PracticeReel from "@/components/PracticeReel";
+
+// Reels mix idioms and AFCAT vocabulary words (both shuffled together).
+const REEL_ITEMS = [...IDIOMS, ...VOCAB];
 
 // Reels tab: swipeable idioms + AI practice questions, reel-style.
 export default function ReelsPage() {
@@ -26,7 +30,7 @@ function ReelsInner() {
     <>
       {/* Mobile: full-screen reel with a mode switch on top */}
       <div className="lg:hidden">
-        {tab === "reels" ? <IdiomReel idioms={IDIOMS} /> : <PracticeReel focus={focus} />}
+        {tab === "reels" ? <IdiomReel idioms={REEL_ITEMS} /> : <PracticeReel focus={focus} />}
 
         {/* Reels ⇄ Practice switch */}
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex rounded-full p-1"

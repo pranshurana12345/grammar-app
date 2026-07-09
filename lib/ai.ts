@@ -145,7 +145,7 @@ export const RULE_KB = rules
 export const APP_KB = `About the AFCAT exam (Air Force Common Admission Test, conducted by the Indian Air Force):
 - Online CBT, 100 questions, 300 marks, 2 hours. Marking: +3 for correct, −1 for wrong.
 - Sections: General Awareness, Verbal Ability in English, Numerical Ability, Reasoning & Military Aptitude.
-- The English part tests: comprehension, error detection, sentence completion / fill in the blanks, sentence improvement, synonyms, antonyms, vocabulary, idioms & phrases, and one-word substitution.
+- English is ~25 of the 100 questions. Every paper has synonyms, antonyms, reading comprehension and a cloze passage; most papers add error detection, fill in the blanks and idioms; some sessions ask spelling and one-word substitution instead. The exam recycles its vocabulary bank across years.
 - Held roughly twice a year for Flying and Ground Duty (Technical & Non-Technical) branches.
 
 About this app (called "Grammy" — the student is using it right now):

@@ -100,12 +100,29 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
 
               {/* caption */}
               <div className="text-left idiom-rise">
+                {idi.kind === "word" && (
+                  <p className="text-white/55 text-[10px] font-black tracking-[0.22em] mb-1.5">VOCAB · AFCAT</p>
+                )}
                 <h2 className="text-white text-[31px] font-black tracking-tight leading-[1.08] mb-2.5" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.30)" }}>
                   {idi.phrase}
                 </h2>
                 {show ? (
                   <>
                     <p className="text-white text-[17px] font-semibold leading-snug mb-3">{idi.meaning}</p>
+                    {(idi.synonyms?.length || idi.antonyms?.length) ? (
+                      <div className="flex flex-col gap-1 mb-3">
+                        {idi.synonyms && idi.synonyms.length > 0 && (
+                          <p className="text-white/85 text-[13px] font-semibold">
+                            <span className="text-emerald-300 font-black">Syn</span> {idi.synonyms.join(" · ")}
+                          </p>
+                        )}
+                        {idi.antonyms && idi.antonyms.length > 0 && (
+                          <p className="text-white/85 text-[13px] font-semibold">
+                            <span className="text-rose-300 font-black">Ant</span> {idi.antonyms.join(" · ")}
+                          </p>
+                        )}
+                      </div>
+                    ) : null}
                     <p className="text-white/70 text-[14px] italic leading-snug">“{idi.example}”</p>
                   </>
                 ) : (

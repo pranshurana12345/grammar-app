@@ -48,7 +48,7 @@ const SECTIONS: {
     href: "/reference/idioms",
     title: "Idioms & Phrases",
     overview: "Picture-based idioms that stick.",
-    count: "30 idioms",
+    count: "75+ idioms",
     color: "#d97706",
     gradient: "linear-gradient(135deg,#d97706 0%,#f59e0b 100%)",
     motif: "idioms",
@@ -56,12 +56,11 @@ const SECTIONS: {
   {
     href: "/reference/vocabulary",
     title: "Vocabulary",
-    overview: "High-frequency exam words & meanings.",
-    count: "Soon",
+    overview: "Real AFCAT previous-year words.",
+    count: "70 words",
     color: "#0d9488",
     gradient: "linear-gradient(135deg,#0f766e 0%,#14b8a6 100%)",
     motif: "vocab",
-    soon: true,
   },
 ];
 

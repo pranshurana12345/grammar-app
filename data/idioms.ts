@@ -1,7 +1,7 @@
 // ── Idioms & Phrases ─────────────────────────────────────────────────────────
 // High-frequency exam idioms. Each has a big emoji "picture" to make it stick,
-// the meaning, and a natural example. (The AFCAT source book contains no idioms,
-// so these are the most commonly-asked ones across AFCAT / SSC / bank exams.)
+// the meaning, and a natural example. The second block is sourced from the
+// Arihant AFCAT question bank — idioms actually asked in previous-year papers.
 
 export type Idiom = {
   phrase: string;
@@ -9,6 +9,10 @@ export type Idiom = {
   pic: string;        // emoji picture (1–3 emojis)
   example: string;
   picFilter?: string; // optional CSS filter, e.g. to recolour an emoji
+  // Vocabulary cards reuse this shape in the reel (see data/vocabulary.ts):
+  kind?: "word";      // set for vocab words; idioms leave it unset
+  synonyms?: string[];
+  antonyms?: string[];
 };
 
 export const IDIOMS: Idiom[] = [
@@ -42,6 +46,54 @@ export const IDIOMS: Idiom[] = [
   { phrase: "Pull someone's leg", meaning: "To tease or joke with someone.", pic: "🦵", example: "Relax, I'm only pulling your leg." },
   { phrase: "Get cold feet", meaning: "To become nervous before a big event.", pic: "🥶🦶", example: "He got cold feet just before the interview." },
   { phrase: "On cloud nine", meaning: "Extremely happy.", pic: "☁️", example: "She was on cloud nine after clearing the exam." },
+
+  // ── AFCAT previous-year idioms (from the Arihant question bank) ────────────
+  { phrase: "To smell a rat", meaning: "To be suspicious that something is wrong.", pic: "👃🐀", example: "I smelt a rat in the bargain he made with my brother." },
+  { phrase: "A bolt from the blue", meaning: "A sudden, completely unexpected shock.", pic: "🌩️", example: "The news of his accident came as a bolt from the blue." },
+  { phrase: "Read between the lines", meaning: "To find a hidden meaning beyond the actual words.", pic: "🧐📜", example: "Read between the lines — her letter says more than it seems." },
+  { phrase: "Put one's foot down", meaning: "To assert authority firmly.", pic: "🦶💥", example: "The students wanted a holiday, but the Principal put his foot down." },
+  { phrase: "To take after", meaning: "To resemble a parent or relative.", pic: "👨👦", example: "Ramesh takes after his father." },
+  { phrase: "A close shave", meaning: "A narrow, lucky escape.", pic: "🪒😅", example: "He had a close shave in an accident yesterday." },
+  { phrase: "Follow suit", meaning: "To do the same as someone else has just done.", pic: "🃏👣", example: "When one bank cut rates, the others followed suit." },
+  { phrase: "At the crossroads", meaning: "At a point where an important decision must be made.", pic: "🛣️🤔", example: "After graduation, she stood at the crossroads of her career." },
+  { phrase: "Make one's blood boil", meaning: "To make somebody furious.", pic: "🩸♨️", example: "The referee's unfair decision made his blood boil." },
+  { phrase: "To lose ground", meaning: "To become less powerful or successful.", pic: "📉🏳️", example: "The party is losing ground among young voters." },
+  { phrase: "To fall back on", meaning: "To turn to something for support when needed.", pic: "🛟", example: "If the business fails, she has her teaching degree to fall back on." },
+  { phrase: "A damp squib", meaning: "Something that disappoints after big expectations.", pic: "🎆💧", example: "The much-hyped launch turned out to be a damp squib." },
+  { phrase: "Heads will roll", meaning: "People will be punished or dismissed.", pic: "🚪🧳", example: "After the scandal, heads will roll in the Secretariat." },
+  { phrase: "Give a piece of one's mind", meaning: "To scold or reprimand someone frankly.", pic: "🧠🗯️", example: "If he phones again, I'll give him a piece of my mind." },
+  { phrase: "All agog", meaning: "Full of interest and excitement.", pic: "🤩", example: "The children were all agog to see the magician." },
+  { phrase: "Lose one's marbles", meaning: "To go insane; to lose one's sanity.", pic: "🤪", example: "Talking to walls? Has he lost his marbles?" },
+  { phrase: "See eye to eye", meaning: "To agree completely with someone.", pic: "👁️🤝👁️", example: "He could never see eye to eye with his father." },
+  { phrase: "Kick the bucket", meaning: "To die.", pic: "🦵🪣", example: "Mr. Verma kicked the bucket after a long illness." },
+  { phrase: "A snake in the grass", meaning: "A hidden enemy; a treacherous person.", pic: "🐍🌿", example: "His most trusted friend proved to be a snake in the grass." },
+  { phrase: "Bury the hatchet", meaning: "To end a quarrel and make peace.", pic: "🪓🕊️", example: "The teacher asked us to bury the hatchet and be friends." },
+  { phrase: "Burn one's fingers", meaning: "To suffer for interfering or acting rashly.", pic: "🔥🖐️", example: "He burnt his fingers by meddling in his neighbour's affairs." },
+  { phrase: "Flog a dead horse", meaning: "To waste effort on something that cannot succeed.", pic: "🐴🪦", example: "Reopening that settled debate is flogging a dead horse." },
+  { phrase: "Get into hot water", meaning: "To get into trouble.", pic: "♨️😰", example: "He got into hot water for missing the deadline." },
+  { phrase: "Throw up the sponge", meaning: "To surrender or give up a contest.", pic: "🧽🏳️", example: "Trailing by a huge margin, the team threw up the sponge." },
+  { phrase: "A bull in a china shop", meaning: "A clumsy person in a place needing skill and care.", pic: "🐂🏺", example: "He handled the delicate talks like a bull in a china shop." },
+  { phrase: "The alpha and the omega", meaning: "The beginning and the end.", pic: "🌅🌇", example: "Discipline is the alpha and the omega of military life." },
+  { phrase: "A fool's errand", meaning: "A useless task with no hope of success.", pic: "🃏🏃", example: "Searching for the lost ring on the beach was a fool's errand." },
+  { phrase: "Square pegs in round holes", meaning: "People in jobs that don't suit them.", pic: "🟥⭕", example: "Half the staff are square pegs in round holes." },
+  { phrase: "In a jiffy", meaning: "Very quickly; in a moment.", pic: "⚡⏱️", example: "Wait here — I'll be back in a jiffy." },
+  { phrase: "Up to the hilt", meaning: "Completely; to the maximum.", pic: "🗡️", example: "He is mortgaged up to the hilt." },
+  { phrase: "A man of letters", meaning: "A literary person; a scholar.", pic: "📚✒️", example: "Tagore was a true man of letters." },
+  { phrase: "Sangfroid", meaning: "Composure and calmness in danger.", pic: "🧊😎", example: "The pilot showed remarkable sangfroid during the emergency." },
+  { phrase: "In weal and woe", meaning: "In prosperity and adversity alike.", pic: "🌞⛈️", example: "True friends stand by you in weal and woe." },
+  { phrase: "A globetrotter", meaning: "A person who travels all over the world.", pic: "🌍✈️", example: "The globetrotter has visited forty countries." },
+  { phrase: "A white elephant", meaning: "A costly but useless possession.", pic: "🐘", picFilter: "grayscale(1) brightness(1.55)", example: "The old factory is a white elephant draining our funds." },
+  { phrase: "Leave no stone unturned", meaning: "To try every possible means.", pic: "🪨🔄", example: "She left no stone unturned to clear the AFCAT." },
+  { phrase: "Through thick and thin", meaning: "Under all conditions, good or bad.", pic: "🥾⛰️", example: "They stayed friends through thick and thin." },
+  { phrase: "Born with a silver spoon", meaning: "Born into a wealthy family.", pic: "👶🥄", example: "He never worked hard — born with a silver spoon in his mouth." },
+  { phrase: "Take to one's heels", meaning: "To run away.", pic: "🏃💨", example: "Seeing the police, the thief took to his heels." },
+  { phrase: "An axe to grind", meaning: "A private interest or selfish motive to serve.", pic: "🪓⚙️", example: "He supports the plan only because he has an axe to grind." },
+  { phrase: "At sixes and sevens", meaning: "In complete confusion and disorder.", pic: "6️⃣🌀7️⃣", example: "After the transfer orders, the office was at sixes and sevens." },
+  { phrase: "Part and parcel", meaning: "An essential, inseparable part.", pic: "📦🧩", example: "Discipline is part and parcel of a soldier's life." },
+  { phrase: "Talk through one's hat", meaning: "To talk nonsense.", pic: "🎩💬", example: "Ignore him — he's talking through his hat." },
+  { phrase: "Yeoman's service", meaning: "Excellent, loyal work or help.", pic: "💪🏅", example: "The volunteers did yeoman's service during the floods." },
+  { phrase: "To catch up with", meaning: "To reach the same level as others.", pic: "🏃🏁", example: "I joined late and found it hard to catch up with the class." },
+  { phrase: "The man in the street", meaning: "The ordinary, common person.", pic: "🚶🏙️", example: "How do these reforms affect the man in the street?" },
 ];
 
 // How many emoji "glyphs" are in a pic string (1, 2 or 3). Used to scale the

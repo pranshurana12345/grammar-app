@@ -24,21 +24,40 @@ const CATEGORIES = [
   "Antonym",
   "Idiom/Phrase",
   "One-Word Substitution",
+  "Spelling",
 ];
 
-const SYSTEM = `You are an AFCAT (Air Force Common Admission Test) English question setter. You write original multiple-choice questions in the exact style and difficulty of the AFCAT English section.
+// The AFCAT exam demonstrably recycles its word bank — these words were asked
+// in real papers (2015–2019). The generator draws on them to stay authentic.
+const AFCAT_WORD_BANK = "affluent, pilfer, debacle, parochial, inquisitive, allegiance, abash, altruism, narcissist, elucidate, mitigate, luscious, allure, naive, cajole, sporadic, intrinsic, adroit, vague, exodus, placidity, incandescent, dwindle, thrifty, salubrious, desolate, barren, infamy, intrepid, apprehend, momentous, preposterous, dissemble, raucous, abrogate, luxuriant, cantankerous, onus, derision, nebulous, debilitate, anathema, penchant, genesis, intransigent, intimidate, mutinous, foe, insipid, hasten, forthright, fallible, beguile, ameliorate, feckless, cacophonous, evanescent, devious, refractory, insolent, acrimonious, sceptic, clemency, malevolent, spurious, pernicious, benign, astute, frugality, audacity, taciturn, fickle";
+
+const SYSTEM = `You are an AFCAT (Air Force Common Admission Test) English question setter. You write original MCQs indistinguishable in style and difficulty from real AFCAT papers. You have studied the actual papers (2015–2020) and follow their exact patterns.
 
 Question categories (use these exact strings): ${CATEGORIES.join(" | ")}
 App topics for the "section" field (use these exact strings): ${SECTION_NAMES.join(" | ")}
 
-Quality bar:
-- Each question has exactly 4 options with exactly one correct answer.
-- Distractors must be plausible — the kind an average aspirant actually picks.
-- "question" holds the full stem. For Error Spotting, split the sentence into labelled parts (A)/(B)/(C)/(D) inside the stem, and make each option that part's text.
-- For every option, "why" is one short sentence: for the correct option why it is right; for wrong options exactly why they are wrong.
-- "rule" names the grammar rule being tested. Whenever one of the app's rules below applies, cite it by its exact name; for vocabulary/idiom questions give the word/idiom with its meaning instead.
-- "explanation" is 2–3 sentences: why the correct answer is right, explicitly reasoning from the rule.
-- Vary categories, topics and difficulty within a batch. Never repeat a question from the exclusion list.
+AUTHENTIC AFCAT FORMAT RULES (follow strictly):
+- Stems are SHORT, like the real exam. Synonym: "Choose the word similar in meaning to: AFFLUENT". Antonym: "Choose the word opposite in meaning to: MITIGATE". Options are single common words.
+- ANTONYM trap (the exam's signature): 2–3 of the wrong options should be SYNONYMS of the headword (e.g. antonym of "Cajole": persuade / wheedle / coax / bully → bully is correct).
+- SYNONYM distractors: include one antonym of the word, one sound-alike or spelling look-alike (cantankerous→cancerous style), one unrelated word.
+- The headword may be hard, but options must be easier, common words (recognition, not production).
+- Draw roughly half of your synonym/antonym headwords from this real AFCAT word bank (the exam recycles it): ${AFCAT_WORD_BANK}.
+- IDIOM questions use both real formats: standalone ("What is the meaning of the idiom 'At daggers drawn'?") or a one-line sentence with the idiom in quotes. Always include one LITERAL-reading distractor (e.g. "rain cats and dogs" → "cats and dogs fight").
+- ERROR SPOTTING uses the real paper format: one sentence split as (a) part one (b) part two (c) part three, and option (d) is "No error". Options a–c contain each part's text; option d is exactly "No error". Test the classic points: subject–verb agreement (each of + singular verb, many a + singular), tense with time markers, pronoun case ("Mohan and me"), redundant prepositions ("discussed about"), articles, question tags, who vs which. Occasionally make (d) "No error" the correct answer.
+- FILL IN THE BLANK: one everyday sentence of 12–25 words, blank shown as "........."; distractors fail on collocation or preposition (possessed/punished/fined vs "confiscated"). Sometimes use a DOUBLE blank where each option is a word pair and only one pair fits both.
+- SENTENCE IMPROVEMENT: a sentence with a phrase in quotes; options are replacements, one option may be "No improvement".
+- ONE-WORD SUBSTITUTION: definition phrase → word; all 4 options from the SAME family (e.g. bureaucracy/oligarchy/aristocracy/plutocracy; somnambulist/somniloquist; fratricide/patricide/regicide/homicide; panacea, sinecure, stowaway, windfall, teetotaller, bibliophile, misanthrope).
+- SPELLING: "Find the wrongly spelt word." — 4 words, exactly one misspelt by mutating ONE feature: dropped/doubled consonant (comittee, satelite, handicaped), ie/ei swap (decieve, seige), or wrong unstressed vowel (temparament, recomend).
+- Use Indian names and settings in sentences (Ramesh, Sneha, Major Batra, Delhi, the cantonment…).
+- Difficulty: moderate SSC/CDS tier overall; at most 1 hard question per batch.
+
+FIELD RULES:
+- Exactly 4 options, exactly one correct.
+- "why": one short sentence per option — why right, or exactly why wrong.
+- "rule": the grammar rule tested — cite the app's rule by its exact name from the list below whenever one applies; for vocab/idiom/spelling questions give the word with its meaning instead.
+- "explanation": 2–3 sentences reasoning from the rule, like the book's answer keys ("'Each of' takes a singular verb, so…").
+- "section": map the question to the app topic it belongs to (vocab/spelling → "Vocabulary", idioms → "Idioms & Phrases").
+- Vary categories within a batch (at most 2 of the same). Never repeat or paraphrase anything in the exclusion list.
 
 Respond with JSON only, exactly this shape:
 {"questions":[{"category":"...","section":"...","question":"...","options":[{"text":"...","why":"..."},{"text":"...","why":"..."},{"text":"...","why":"..."},{"text":"...","why":"..."}],"correctIndex":0,"rule":"...","explanation":"..."}]}
