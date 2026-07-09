@@ -305,6 +305,7 @@ export default function PracticeReel({ focus }: { focus?: string }) {
         open={askFor !== null}
         onClose={() => setAskFor(null)}
         title={askFor ? askFor.rule : ""}
+        contextPreview={askFor ? `Q: ${askFor.question}\nAnswer: ${LETTERS[askFor.correctIndex]}) ${askFor.options[askFor.correctIndex].text}` : undefined}
         context={askFor ? [
           `Practice question (${askFor.category} / ${askFor.section}): ${askFor.question}`,
           `Options: ${askFor.options.map((o, i) => `${LETTERS[i]}) ${o.text}`).join("  ")}`,

@@ -84,14 +84,16 @@ export function practiceStats(days = 7) {
 }
 
 // Blend the rule-based topic progress (tests/confidence) with the last-7-days
-// AI-practice accuracy for that section. Practice counts only once the student
-// has attempted at least 3 AI questions in the section.
+// AI-practice accuracy for that section. Counts from the very first answered
+// question, but its weight grows with attempts (up to 50% at 5+ attempts) so a
+// single lucky/unlucky answer can't swing the bar wildly.
 export function blendedTopicPct(rulePct: number, section: string, readiness: SectionReadiness): {
   pct: number; fromAI: boolean;
 } {
   const r = readiness[section];
-  if (!r || r.attempts < 3) return { pct: Math.round(rulePct), fromAI: false };
-  return { pct: Math.round(rulePct * 0.5 + r.pct * 0.5), fromAI: true };
+  if (!r || r.attempts === 0) return { pct: Math.round(rulePct), fromAI: false };
+  const w = Math.min(r.attempts / 5, 1) * 0.5;
+  return { pct: Math.round(rulePct * (1 - w) + r.pct * w), fromAI: true };
 }
 
 // ── API base ──────────────────────────────────────────────────────────────────

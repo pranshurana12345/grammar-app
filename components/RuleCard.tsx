@@ -293,6 +293,7 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
           open={askOpen}
           onClose={() => setAskOpen(false)}
           title={rule.title}
+          contextPreview={`Rule ${rule.ruleNumber} — ${rule.title}\n${rule.rule}`}
           seed="Please explain this rule to me in a simpler way, with an easy example."
           context={[
             `Grammar rule the student is reading — Rule ${rule.ruleNumber} (${rule.section}): ${rule.title}`,

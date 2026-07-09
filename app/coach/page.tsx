@@ -6,7 +6,7 @@ import { SECTIONS } from "@/data/rules";
 import AskAISheet from "@/components/AskAISheet";
 import {
   apiBase, getPracticeHistory, practiceStats, sectionReadiness,
-  type SectionReadiness,
+  type SectionReadiness, type PracticeRecord,
 } from "@/lib/practice";
 
 type Analysis = {
@@ -29,11 +29,14 @@ export default function CoachPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
+  const [history, setHistory] = useState<PracticeRecord[]>([]);
+  const [mistakeFor, setMistakeFor] = useState<PracticeRecord | null>(null);
 
   useEffect(() => {
     setMounted(true);
     setReadiness(sectionReadiness(7));
     setStats(practiceStats(7));
+    setHistory(getPracticeHistory());
   }, []);
 
   async function analyze() {
@@ -57,6 +60,25 @@ export default function CoachPage() {
 
   const topics = [...SECTIONS, ...EXTRA_TOPICS];
   const withData = topics.filter((t) => readiness[t.name]?.attempts);
+
+  // Per question-type accuracy (last 7 days) + latest mistakes.
+  const sevenDays = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const recent7 = history.filter((r) => new Date(r.ts).getTime() >= sevenDays);
+  const byCategory: Record<string, { a: number; c: number }> = {};
+  for (const r of recent7) {
+    (byCategory[r.category] ??= { a: 0, c: 0 }).a += 1;
+    if (r.correct) byCategory[r.category].c += 1;
+  }
+  const categories = Object.entries(byCategory)
+    .map(([name, v]) => ({ name, attempts: v.a, pct: Math.round((v.c / v.a) * 100) }))
+    .sort((a, b) => a.pct - b.pct);
+  const mistakes = history.filter((r) => !r.correct).slice(-5).reverse();
+
+  const sectionHref = (name: string): string | null => {
+    if (SECTIONS.some((s) => s.name === name)) return `/sections/${encodeURIComponent(name)}`;
+    if (name === "Idioms & Phrases") return "/reference/idioms";
+    return null;
+  };
   const weakFocus = withData
     .filter((t) => readiness[t.name].attempts >= 3 && readiness[t.name].pct < 60)
     .map((t) => t.name)
@@ -168,13 +190,15 @@ export default function CoachPage() {
                 .map((t) => {
                   const r = readiness[t.name];
                   const low = r.attempts >= 3 && r.pct < 60;
-                  return (
-                    <div key={t.name} className="bg-white rounded-3xl px-4 py-3.5" style={{ boxShadow: "0 2px 8px -2px rgba(15,23,42,0.06)" }}>
+                  const href = sectionHref(t.name);
+                  const row = (
+                    <div className="bg-white rounded-3xl px-4 py-3.5" style={{ boxShadow: "0 2px 8px -2px rgba(15,23,42,0.06)" }}>
                       <div className="flex items-center justify-between mb-2">
                         <p className="font-bold text-slate-800 text-[13px] truncate">{t.name}</p>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="text-[10.5px] font-semibold text-slate-400">{r.correct}/{r.attempts}</span>
                           <span className="text-[12px] font-black" style={{ color: low ? "#e11d48" : t.color }}>{r.pct}%</span>
+                          {href && <span className="text-slate-200 text-[14px] leading-none">›</span>}
                         </div>
                       </div>
                       <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden">
@@ -182,10 +206,59 @@ export default function CoachPage() {
                       </div>
                     </div>
                   );
+                  return href
+                    ? <Link key={t.name} href={href} className="press block">{row}</Link>
+                    : <div key={t.name}>{row}</div>;
                 })}
             </div>
           )}
         </div>
+
+        {/* ── Question-type accuracy ── */}
+        {categories.length > 0 && (
+          <div>
+            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">
+              By question type · last 7 days
+            </p>
+            <div className="bg-white rounded-3xl px-4 py-2 divide-y divide-slate-50" style={{ boxShadow: "0 2px 8px -2px rgba(15,23,42,0.06)" }}>
+              {categories.map((c) => (
+                <div key={c.name} className="py-2.5 flex items-center gap-3">
+                  <p className="font-bold text-slate-700 text-[12.5px] w-36 flex-shrink-0 truncate">{c.name}</p>
+                  <div className="flex-1 h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${c.pct}%`, background: c.pct < 60 ? "#f43f5e" : "#2d7ff9" }} />
+                  </div>
+                  <span className="text-[11px] font-black flex-shrink-0 w-9 text-right" style={{ color: c.pct < 60 ? "#e11d48" : "#2d7ff9" }}>{c.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Recent mistakes — tap to have AI explain ── */}
+        {mistakes.length > 0 && (
+          <div>
+            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">
+              Recent mistakes · tap to ask AI
+            </p>
+            <div className="space-y-2">
+              {mistakes.map((m, i) => (
+                <button key={`${m.ts}-${i}`} onClick={() => setMistakeFor(m)} className="w-full text-left press">
+                  <div className="bg-white rounded-3xl px-4 py-3 flex items-center gap-3" style={{ boxShadow: "0 2px 8px -2px rgba(15,23,42,0.06)", borderLeft: "3px solid #fda4af" }}>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-slate-700 text-[12.5px] font-semibold leading-snug"
+                        style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                        {m.q}
+                      </p>
+                      <p className="text-[10px] text-slate-400 font-bold mt-1">{m.section} · {m.category}</p>
+                    </div>
+                    <span className="w-8 h-8 rounded-xl flex items-center justify-center text-[13px] flex-shrink-0"
+                      style={{ background: "linear-gradient(135deg,#2d7ff9,#7c3aed)" }}>✨</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── AI analysis ── */}
         <div>
@@ -272,10 +345,24 @@ export default function CoachPage() {
         </div>
       </div>
 
+      {/* Mistake explainer — keyed so each mistake gets a fresh chat */}
+      {mistakeFor && (
+        <AskAISheet
+          key={`${mistakeFor.ts}-mistake`}
+          open
+          onClose={() => setMistakeFor(null)}
+          title="Why was I wrong?"
+          contextPreview={`You answered this wrong:\n${mistakeFor.q}\n(${mistakeFor.section} · ${mistakeFor.category})`}
+          seed="I got this question wrong. Explain the concept behind it simply, and give me a trick to never repeat this mistake."
+          context={`The student answered this AFCAT practice question WRONG earlier: "${mistakeFor.q}" (topic: ${mistakeFor.section}, type: ${mistakeFor.category}). Explain the underlying concept and how to avoid the mistake.`}
+        />
+      )}
+
       <AskAISheet
         open={chatOpen}
         onClose={() => setChatOpen(false)}
         title="Grammy AI Coach"
+        contextPreview={`Your practice: ${stats.recent} questions this week at ${stats.recentPct}% accuracy (${stats.total} all-time) · all 101 rules · AFCAT pattern`}
         context={`The student opened the general chat from the AI Coach page. They may ask about any grammar rule, vocabulary, the AFCAT exam, study strategy, or the app. Their recent practice: ${stats.recent} questions in the last 7 days at ${stats.recentPct}% accuracy (${stats.total} all-time).`}
       />
     </div>
