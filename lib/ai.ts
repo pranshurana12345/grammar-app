@@ -12,23 +12,35 @@ type Provider = { name: string; url: string; key: string | undefined; model: str
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-// Quality-ordered fallback chain. Groq rate limits are PER MODEL *and* per
-// key, so we try each Groq model on every configured key (best model first)
-// before touching the (flakier) OpenRouter free tier.
+// Quality-ordered fallback chain using EVERY suitable text model across the
+// configured keys. Groq rate limits are PER MODEL *and* per key, so each Groq
+// model is tried on every key (best model first) before falling through to
+// the OpenRouter free tier (account-level quota, flakier upstreams).
 function providers(): Provider[] {
   const groqKeys = [process.env.GROQ_API_KEY, process.env.GROQ_API_KEY_2].filter(Boolean);
   const openrouter = process.env.OPENROUTER_API_KEY;
   const groqModels = [
     process.env.GROQ_MODEL || "openai/gpt-oss-120b",
     "llama-3.3-70b-versatile",
+    "qwen/qwen3.6-27b",
     "meta-llama/llama-4-scout-17b-16e-instruct",
+    "qwen/qwen3-32b",
+    "openai/gpt-oss-20b",
+    "llama-3.1-8b-instant",
+  ];
+  const openrouterModels = [
+    process.env.OPENROUTER_MODEL || "openai/gpt-oss-120b:free",
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "qwen/qwen3-next-80b-a3b-instruct:free",
+    "nvidia/nemotron-3-super-120b-a12b:free",
+    "google/gemma-4-31b-it:free",
+    "nousresearch/hermes-3-llama-3.1-405b:free",
   ];
   return [
     ...groqModels.flatMap((model) =>
       groqKeys.map((key) => ({ name: "groq", url: GROQ_URL, key, model })),
     ),
-    { name: "openrouter", url: OPENROUTER_URL, key: openrouter, model: process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free" },
-    { name: "openrouter", url: OPENROUTER_URL, key: openrouter, model: "qwen/qwen3-next-80b-a3b-instruct:free" },
+    ...openrouterModels.map((model) => ({ name: "openrouter", url: OPENROUTER_URL, key: openrouter, model })),
   ].filter((p) => !!p.key);
 }
 
@@ -51,7 +63,9 @@ async function callProvider(
       // gpt-oss is a reasoning model — its thinking eats into max_tokens, so
       // give it headroom and keep the reasoning short.
       max_tokens: p.model.includes("gpt-oss") ? opts.maxTokens + 2048 : opts.maxTokens,
-      ...(p.model.includes("gpt-oss") ? { reasoning_effort: "low" } : {}),
+      ...(p.name === "groq" && p.model.includes("gpt-oss") ? { reasoning_effort: "low" } : {}),
+      // Qwen models on Groq are reasoning models — hide the <think> stream.
+      ...(p.name === "groq" && p.model.includes("qwen") ? { reasoning_format: "hidden" } : {}),
       temperature: opts.temperature,
       ...(opts.json ? { response_format: { type: "json_object" } } : {}),
     }),
