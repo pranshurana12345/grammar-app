@@ -12,16 +12,21 @@ type Provider = { name: string; url: string; key: string | undefined; model: str
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
-// Quality-ordered fallback chain. Groq rate limits are PER MODEL, so listing
-// several Groq models gives us separate daily quotas before we ever touch the
-// (flakier) OpenRouter free tier.
+// Quality-ordered fallback chain. Groq rate limits are PER MODEL *and* per
+// key, so we try each Groq model on every configured key (best model first)
+// before touching the (flakier) OpenRouter free tier.
 function providers(): Provider[] {
-  const groq = process.env.GROQ_API_KEY;
+  const groqKeys = [process.env.GROQ_API_KEY, process.env.GROQ_API_KEY_2].filter(Boolean);
   const openrouter = process.env.OPENROUTER_API_KEY;
+  const groqModels = [
+    process.env.GROQ_MODEL || "openai/gpt-oss-120b",
+    "llama-3.3-70b-versatile",
+    "meta-llama/llama-4-scout-17b-16e-instruct",
+  ];
   return [
-    { name: "groq", url: GROQ_URL, key: groq, model: process.env.GROQ_MODEL || "openai/gpt-oss-120b" },
-    { name: "groq", url: GROQ_URL, key: groq, model: "llama-3.3-70b-versatile" },
-    { name: "groq", url: GROQ_URL, key: groq, model: "meta-llama/llama-4-scout-17b-16e-instruct" },
+    ...groqModels.flatMap((model) =>
+      groqKeys.map((key) => ({ name: "groq", url: GROQ_URL, key, model })),
+    ),
     { name: "openrouter", url: OPENROUTER_URL, key: openrouter, model: process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free" },
     { name: "openrouter", url: OPENROUTER_URL, key: openrouter, model: "qwen/qwen3-next-80b-a3b-instruct:free" },
   ].filter((p) => !!p.key);
