@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
 import EmojiPic from "@/components/EmojiPic";
+import PatternAnalysis from "@/components/PatternAnalysis";
 import { VOCAB } from "@/data/vocabulary";
 
 const ACCENT = "#0d9488"; // teal — the Vocabulary theme colour
@@ -55,6 +56,18 @@ export default function VocabularyPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 lg:px-6 pt-5">
+        <PatternAnalysis
+          accent={ACCENT}
+          subject="vocabulary"
+          points={[
+            { icon: "🔢", head: "Weight", body: "Every paper asks 2–5 synonym/antonym questions plus 4–5 vocabulary questions (one-word substitution or spelling) — roughly 20–30 of the 300 English-section marks." },
+            { icon: "🔁", head: "It recycles", body: "The exam reuses its word bank across years — the same words cycle from the master list into real papers (intrepid, sporadic, cajole, mitigate…). The words on this page ARE that bank, plus predictions from the same clusters." },
+            { icon: "🎭", head: "Word profile", body: "Moderate-to-advanced latinate words, clustered around character traits (the biggest group), emotions, praise/blame, calm/agitate verbs, military-flavoured words, and truth/falsehood." },
+            { icon: "🪤", head: "The signature trap", body: "In ANTONYM questions, 2–3 wrong options are SYNONYMS of the word (antonym of 'cajole': persuade / wheedle / coax / bully → bully). Synonym questions hide one sound-alike (cantankerous → cancerous)." },
+            { icon: "✍️", head: "Spelling questions", body: "One wrongly-spelt word among four — always one mutation: dropped/doubled consonant (comittee), ie/ei swap (decieve), or a wrong unstressed vowel (temparament)." },
+          ]}
+          tip="Learn each word WITH its synonyms and antonym together — that's exactly the shape the exam asks it in. The hard word is the question; the options are always easy words."
+        />
         {search && (
           <p className="text-xs text-slate-400 font-semibold mb-3">{filtered.length} result{filtered.length === 1 ? "" : "s"} for &quot;{search}&quot;</p>
         )}

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
 import EmojiPic from "@/components/EmojiPic";
+import PatternAnalysis from "@/components/PatternAnalysis";
 import { IDIOMS } from "@/data/idioms";
 
 const ACCENT = "#d97706"; // amber — the Idioms theme colour
@@ -51,6 +52,17 @@ export default function IdiomsPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 lg:px-6 pt-5">
+        <PatternAnalysis
+          accent={ACCENT}
+          subject="idioms & phrases"
+          points={[
+            { icon: "🔢", head: "Weight", body: "Usually 4–5 idiom questions per paper (some sessions skip them and ask spelling + one-word substitution instead). Easy-to-moderate difficulty — among the fastest marks in the paper." },
+            { icon: "📋", head: "Two formats", body: "Either the idiom alone (\"What is the meaning of 'At daggers drawn'?\") or a one-line sentence with the idiom marked in italics/bold — both with 4 meaning options." },
+            { icon: "🪤", head: "The trap", body: "One option is always the LITERAL word-for-word reading ('rain cats and dogs' → 'cats and dogs fight'; 'smell a rat' → 'to smell a bad odour'). Eliminate it first." },
+            { icon: "🔁", head: "It recycles", body: "The exam draws from the classic SSC-tier pool and repeats across years — every idiom tagged from 2015–2019 papers is in this list, plus the most likely next ones from the same pool." },
+          ]}
+          tip="Always think FIGURATIVE: picture the emoji, not the words. In sentence-format questions, plug each option into the sentence — only the true meaning keeps it natural."
+        />
         {search && (
           <p className="text-xs text-slate-400 font-semibold mb-3">{filtered.length} result{filtered.length === 1 ? "" : "s"} for &quot;{search}&quot;</p>
         )}
