@@ -57,9 +57,36 @@ export default function AskAISheet({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ context, messages: next }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "AI is unavailable right now");
-      setMessages([...next, { role: "assistant", content: data.reply }]);
+
+      // Errors still come back as JSON; a success is a plain-text stream.
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "AI is unavailable right now");
+      }
+      if (!res.body) throw new Error("AI is unavailable right now");
+
+      // Render tokens as they arrive — the student sees the answer being written
+      // instead of staring at the typing dots until the whole reply is done.
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let reply = "";
+      let started = false;
+
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        reply += decoder.decode(value, { stream: true });
+        if (!started) {
+          started = true;
+          setBusy(false); // swap the typing dots for the live bubble
+          setMessages([...next, { role: "assistant", content: reply }]);
+        } else {
+          setMessages([...next, { role: "assistant", content: reply }]);
+        }
+      }
+
+      if (!reply.trim()) throw new Error("AI is unavailable right now");
+      setMessages([...next, { role: "assistant", content: reply.trim() }]);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {

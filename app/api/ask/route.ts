@@ -1,11 +1,18 @@
 import {
-  aiChat, RULE_KB, APP_KB,
-  corsPreflight, jsonResponse, errorResponse,
+  aiChatStream, RULE_INDEX, APP_KB, relevantRules,
+  CORS_HEADERS, corsPreflight, jsonResponse, errorResponse,
 } from "@/lib/ai";
 
 export const maxDuration = 60;
 
-const SYSTEM = `You are Grammy AI — the friendly English tutor inside the Grammy app, used by AFCAT/SSC aspirants in India. You know the app's complete rulebook (all 101 rules, below), the AFCAT exam, and the app itself — the student can ask you anything about any of these.
+// The instructions are fixed; the rulebook part is assembled per request. We
+// used to inline all 101 rules in full (~5.5k tokens) on every single message —
+// re-sent on every retry in the fallback chain, which inflated latency and ate
+// the Groq per-minute token limit. Now the tutor gets every rule TITLE (so it
+// can still cite anything) plus the full text of only the relevant rules.
+function systemPrompt(topic: string): string {
+  const relevant = relevantRules(topic);
+  return `You are Grammy AI — the friendly English tutor inside the Grammy app, used by AFCAT/SSC aspirants in India. You know the app's complete rulebook, the AFCAT exam, and the app itself — the student can ask you anything about any of these.
 
 If a CONTEXT block is present, it describes what the student is currently looking at (a grammar rule, or a practice question they just attempted) — anchor your answer to it, but you may bring in any related rule.
 
@@ -19,8 +26,10 @@ How to answer:
 
 ${APP_KB}
 
-The complete rulebook:
-${RULE_KB}`;
+Every rule in the app's rulebook (cite these by name):
+${RULE_INDEX}
+${relevant ? `\nThe rules most relevant to what the student is asking, in full:\n${relevant}` : ""}`;
+}
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -48,15 +57,44 @@ export async function POST(request: Request) {
         ]
       : history;
 
-    const reply = await aiChat({
-      system: SYSTEM,
+    // Retrieve against the context plus the live question, so follow-ups
+    // ("what about neither?") still pull the right rules in.
+    const topic = `${context}\n${history[history.length - 1].content}`;
+    const { model, provider, stream } = await aiChatStream({
+      system: systemPrompt(topic),
       messages,
       maxTokens: 700,
       temperature: 0.5,
     });
 
-    // The sheet renders plain text — strip any markdown emphasis the model sneaks in.
-    return jsonResponse({ reply: reply.replace(/\*\*|__|^#+\s*/gm, "").trim() });
+    // Stream straight through to the client, stripping any markdown emphasis the
+    // model sneaks in (the sheet renders plain text).
+    const encoder = new TextEncoder();
+    const out = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        try {
+          for await (const delta of stream) {
+            controller.enqueue(encoder.encode(delta.replace(/\*\*|__/g, "")));
+          }
+        } catch (e) {
+          console.warn("[ask] stream broke mid-reply:", e);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(out, {
+      headers: {
+        ...CORS_HEADERS,
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-cache, no-transform",
+        // Lets the client (and us) see which model actually answered, instead of
+        // the chain degrading silently.
+        "X-AI-Model": model,
+        "X-AI-Provider": provider,
+      },
+    });
   } catch (err) {
     return errorResponse(err);
   }

@@ -10,6 +10,7 @@ import AltTrick from "@/components/AltTrick";
 import { ALT_TRICKS } from "@/data/altTricks";
 import { RuleVisual, VisualType } from "@/components/visuals/RuleVisual";
 import { detectConcepts } from "@/data/concepts";
+import AskAISheet from "@/components/AskAISheet";
 
 export default function FeedPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -260,8 +261,9 @@ function DesktopRuleDetail({
 }) {
   const c = rule.sectionColor;
   const [langOpen, setLangOpen] = useState(false);
+  const [askOpen, setAskOpen] = useState(false);
 
-  useEffect(() => { setLangOpen(false); }, [rule.id]);
+  useEffect(() => { setLangOpen(false); setAskOpen(false); }, [rule.id]);
 
   return (
     <div className="max-w-3xl mx-auto px-10 py-10">
@@ -423,6 +425,39 @@ function DesktopRuleDetail({
           </div>
         </div>
       )}
+
+      {/* Ask AI — same tutor the mobile RuleCard offers, scaled up for the split pane */}
+      <div className="mb-8">
+        <button onClick={() => setAskOpen(true)}
+          className="w-full flex items-center justify-between px-6 py-5 rounded-3xl press transition-all hover:shadow-lg"
+          style={{ background: "linear-gradient(135deg,#eff6ff,#ede9fe)", border: "1.5px solid #c7d2fe" }}>
+          <div className="flex items-center gap-4">
+            <span className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"
+              style={{ background: "linear-gradient(135deg,#2d7ff9,#7c3aed)" }}>✨</span>
+            <div className="text-left">
+              <p className="text-[15px] font-black text-indigo-800">Still don&apos;t understand?</p>
+              <p className="text-[12.5px] text-indigo-400 font-bold">Ask AI to explain this rule your way</p>
+            </div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 14 14" fill="none" className="text-indigo-400 flex-shrink-0">
+            <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
+
+      <AskAISheet
+        open={askOpen}
+        onClose={() => setAskOpen(false)}
+        title={rule.title}
+        contextPreview={`Rule ${rule.ruleNumber} — ${rule.title}\n${rule.rule}`}
+        seed="Please explain this rule to me in a simpler way, with an easy example."
+        context={[
+          `Grammar rule the student is reading — Rule ${rule.ruleNumber} (${rule.section}): ${rule.title}`,
+          `Rule text: ${rule.rule}`,
+          rule.correct.length ? `Correct examples: ${rule.correct.slice(0, 3).join(" | ")}` : "",
+          rule.wrong?.length ? `Wrong examples: ${rule.wrong.slice(0, 3).join(" | ")}` : "",
+        ].filter(Boolean).join("\n")}
+      />
 
       {/* Action buttons — desktop inline at bottom of content */}
       <div className="flex items-center gap-4 pt-6 border-t border-slate-100">
