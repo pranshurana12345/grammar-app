@@ -100,9 +100,9 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
 
               {/* caption */}
               <div className="text-left idiom-rise">
-                {idi.kind === "word" && (
-                  <p className="text-white/55 text-[10px] font-black tracking-[0.22em] mb-1.5">VOCAB · AFCAT</p>
-                )}
+                <p className="text-white/55 text-[10px] font-black tracking-[0.22em] mb-1.5">
+                  {idi.kind === "word" ? "VOCAB · AFCAT" : "IDIOM · AFCAT"}
+                </p>
                 <h2 className="text-white text-[31px] font-black tracking-tight leading-[1.08] mb-2.5" style={{ textShadow: "0 2px 14px rgba(0,0,0,0.30)" }}>
                   {idi.phrase}
                 </h2>
@@ -123,28 +123,21 @@ export default function IdiomReel({ idioms }: { idioms: Idiom[] }) {
                         )}
                       </div>
                     ) : null}
-                    {/* The backstory, not an example sentence: knowing WHY a
-                        phrase means what it means is what makes it stick. Vocab
-                        cards have no story, so they keep their sentence. */}
+                    {/* Sits exactly where the example sentence used to — same
+                        faded italic line. Idioms carry a backstory instead of a
+                        sentence; vocab cards have no story and keep theirs. */}
                     {idi.story ? (
-                      <div className="rounded-2xl px-3.5 py-2.5"
-                        style={{ background: "rgba(0,0,0,0.22)", border: "1px solid rgba(255,255,255,0.16)" }}>
-                        <p className="text-white/50 text-[9.5px] font-black uppercase tracking-[0.16em] mb-1">
-                          📖 Where it comes from
-                        </p>
-                        <p className="text-white/90 text-[13px] leading-snug">{idi.story}</p>
-                      </div>
+                      <p className="text-white/70 text-[14px] italic leading-snug">{idi.story}</p>
                     ) : idi.example ? (
                       <p className="text-white/70 text-[14px] italic leading-snug">“{idi.example}”</p>
                     ) : null}
 
-                    {/* hard words inside the phrase itself */}
+                    {/* hard words inside the phrase itself — quieter still */}
                     {idi.hardWords && idi.hardWords.length > 0 && (
-                      <div className="mt-2.5 flex flex-col gap-1">
+                      <div className="mt-2 flex flex-col gap-0.5">
                         {idi.hardWords.map((w) => (
-                          <p key={w.word} className="text-white/75 text-[12px] leading-snug">
-                            <span className="font-black text-amber-300">{w.word}</span>
-                            <span className="text-white/40"> — </span>{w.meaning}
+                          <p key={w.word} className="text-white/50 text-[12px] italic leading-snug">
+                            <span className="font-semibold text-white/70">{w.word}</span> — {w.meaning}
                           </p>
                         ))}
                       </div>
