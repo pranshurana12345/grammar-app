@@ -21,6 +21,22 @@ export default function FeedPage() {
 
   useEffect(() => {
     setProgress(getProgress());
+    // ?rule=<id> opens a specific rule — used by the AI Question Solver, which
+    // links from the rule it cited straight to the card that teaches it.
+    // Read from location rather than useSearchParams so the static (Android)
+    // export doesn't need a Suspense boundary here.
+    const wanted = new URLSearchParams(window.location.search).get("rule");
+    if (wanted !== null) {
+      const index = rules.findIndex((r) => String(r.id) === wanted);
+      if (index >= 0) {
+        setCurrentIndex(index);
+        localStorage.setItem("feed_position", String(index));
+        setTimeout(() => {
+          document.querySelector(`[data-index="${index}"]`)?.scrollIntoView({ block: "nearest" });
+        }, 60);
+        return;
+      }
+    }
     const saved = localStorage.getItem("feed_position");
     if (saved) setCurrentIndex(Math.min(parseInt(saved, 10), rules.length - 1));
   }, []);

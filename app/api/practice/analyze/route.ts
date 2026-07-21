@@ -1,5 +1,5 @@
 import {
-  aiChat, extractJSON, RULE_INDEX,
+  aiChat, extractJSON, ruleIndexSample,
   corsPreflight, jsonResponse, errorResponse,
 } from "@/lib/ai";
 
@@ -7,7 +7,7 @@ export const maxDuration = 60;
 
 type Rec = { q: string; category: string; section: string; correct: boolean; ts: string };
 
-const SYSTEM = `You are Grammy AI — a personal English coach for an AFCAT aspirant using a grammar app. You are given the student's AI-practice history (per-topic accuracy plus their recent wrong answers). Write a short, motivating performance analysis.
+const SYSTEM_TEMPLATE = `You are Grammy AI — a personal English coach for an AFCAT aspirant using a grammar app. You are given the student's AI-practice history (per-topic accuracy plus their recent wrong answers). Write a short, motivating performance analysis.
 
 Respond with JSON only, exactly this shape:
 {"headline":"...","weakAreas":[{"area":"...","note":"...","tip":"..."}],"strengths":["..."],"plan":["..."]}
@@ -19,8 +19,12 @@ Rules:
 - "plan": 3–5 short, actionable study steps for the next few days, ordered.
 - Only claim weakness/strength where the data supports it (at least 3 attempts). Simple English; Hinglish flavour is fine in tips. Plain text, no markdown.
 
-App rule list:
-${RULE_INDEX}`;
+App rules you may cite by name:
+{{RULE_INDEX}}`;
+
+// A rotating slice, not all 101 titles — the full index is ~1.7k tokens and the
+// free tier rejects a request whose prompt + max_tokens exceeds its ceiling.
+const systemPrompt = () => SYSTEM_TEMPLATE.replace("{{RULE_INDEX}}", ruleIndexSample(30));
 
 export async function OPTIONS() { return corsPreflight(); }
 
@@ -45,8 +49,8 @@ export async function POST(request: Request) {
       Object.entries(m)
         .map(([k, v]) => `${k}: ${v.c}/${v.a} correct (${Math.round((v.c / v.a) * 100)}%)`)
         .join("\n");
-    const wrong = history.filter((r) => !r.correct).slice(-30)
-      .map((r) => `- [${r.section} / ${r.category}] ${r.q}`)
+    const wrong = history.filter((r) => !r.correct).slice(-20)
+      .map((r) => `- [${r.section} / ${r.category}] ${r.q.slice(0, 90)}`)
       .join("\n");
     const sevenDays = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const recent = history.filter((r) => new Date(r.ts).getTime() >= sevenDays);
@@ -55,13 +59,13 @@ export async function POST(request: Request) {
       : 0;
 
     const raw = await aiChat({
-      system: SYSTEM,
+      system: systemPrompt(),
       messages: [{
         role: "user",
         content: `Analyse my practice performance. Respond as JSON.\n\nTotal questions answered: ${history.length}\nLast 7 days: ${recent.length} answered, ${recentPct}% correct\n\nAccuracy by topic:\n${fmt(bySection)}\n\nAccuracy by question type:\n${fmt(byCategory)}\n\nRecent wrong answers:\n${wrong || "(none)"}`,
       }],
       json: true,
-      maxTokens: 1800,
+      maxTokens: 1300,
       temperature: 0.4,
     });
 

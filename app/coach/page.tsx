@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SECTIONS } from "@/data/rules";
 import AskAISheet from "@/components/AskAISheet";
+import QuestionSolver from "@/components/QuestionSolver";
 import {
   apiBase, getPracticeHistory, practiceStats, sectionReadiness,
   type SectionReadiness, type PracticeRecord,
@@ -29,6 +30,7 @@ export default function CoachPage() {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState("");
   const [chatOpen, setChatOpen] = useState(false);
+  const [solverOpen, setSolverOpen] = useState(false);
   const [history, setHistory] = useState<PracticeRecord[]>([]);
   const [mistakeFor, setMistakeFor] = useState<PracticeRecord | null>(null);
 
@@ -123,6 +125,41 @@ export default function CoachPage() {
 
       <div className="px-4 lg:px-10 pt-5 space-y-5 max-w-2xl">
 
+        {/* ── Two ways to use the AI ── */}
+        <div>
+          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-2.5">Start with AI</p>
+          <div className="grid grid-cols-2 gap-2.5">
+            <button onClick={() => setChatOpen(true)} className="press text-left">
+              <div className="rounded-3xl p-4 h-full bg-white flex flex-col"
+                style={{ border: "1.5px solid #dbeafe", boxShadow: "0 4px 16px -8px rgba(45,127,249,0.35)" }}>
+                <span className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-2.5"
+                  style={{ background: "linear-gradient(135deg,#2d7ff9,#7c3aed)" }}>💬</span>
+                <p className="font-black text-slate-800 text-[14px] leading-tight">Normal chat</p>
+                <p className="text-slate-400 text-[11px] font-semibold mt-1 leading-snug">
+                  Any doubt, any rule, AFCAT strategy
+                </p>
+              </div>
+            </button>
+
+            <button onClick={() => setSolverOpen(true)} className="press text-left">
+              <div className="rounded-3xl p-4 h-full flex flex-col relative overflow-hidden"
+                style={{ background: "linear-gradient(140deg,#0f766e,#0d9488 55%,#2d7ff9)", boxShadow: "0 8px 24px -8px rgba(13,148,136,0.55)" }}>
+                <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-20 pointer-events-none"
+                  style={{ background: "radial-gradient(circle, white, transparent)" }} />
+                <span className="relative w-11 h-11 rounded-2xl flex items-center justify-center text-xl mb-2.5"
+                  style={{ background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.25)" }}>🧩</span>
+                <p className="relative font-black text-white text-[14px] leading-tight">Solve questions</p>
+                <p className="relative text-teal-100 text-[11px] font-semibold mt-1 leading-snug">
+                  Type · speak · snap a paper
+                </p>
+                <p className="relative text-[9px] font-black text-white/90 uppercase tracking-widest mt-2">
+                  Answer + the rule
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+
         {/* ── CTAs ── */}
         <div className="space-y-2.5">
           <Link href="/reels?tab=practice" className="block press lg:pointer-events-none">
@@ -138,19 +175,6 @@ export default function CoachPage() {
               <div className="relative w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center flex-shrink-0"><span className="text-2xl">🧠</span></div>
             </div>
           </Link>
-
-          {/* Ask anything — full rulebook + AFCAT + app knowledge */}
-          <button onClick={() => setChatOpen(true)} className="w-full press text-left">
-            <div className="rounded-3xl p-4 flex items-center gap-3 bg-white" style={{ boxShadow: "0 2px 8px -2px rgba(15,23,42,0.06)", border: "1.5px solid #e0e7ff" }}>
-              <span className="w-10 h-10 rounded-2xl flex items-center justify-center text-lg flex-shrink-0"
-                style={{ background: "linear-gradient(135deg,#2d7ff9,#7c3aed)" }}>💬</span>
-              <div className="flex-1 min-w-0">
-                <p className="font-black text-slate-800 text-sm">Ask me anything</p>
-                <p className="text-slate-400 text-[11px] mt-0.5">Any rule, any doubt, AFCAT pattern, strategy…</p>
-              </div>
-              <span className="text-slate-300 text-lg flex-shrink-0">›</span>
-            </div>
-          </button>
 
           {weakFocus.length > 0 && (
             <Link href={`/reels?tab=practice&focus=${encodeURIComponent(weakFocus.join(", "))}`} className="block press">
@@ -357,6 +381,8 @@ export default function CoachPage() {
           context={`The student answered this AFCAT practice question WRONG earlier: "${mistakeFor.q}" (topic: ${mistakeFor.section}, type: ${mistakeFor.category}). Explain the underlying concept and how to avoid the mistake.`}
         />
       )}
+
+      <QuestionSolver open={solverOpen} onClose={() => setSolverOpen(false)} />
 
       <AskAISheet
         open={chatOpen}
