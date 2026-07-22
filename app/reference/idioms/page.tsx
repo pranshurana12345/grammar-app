@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { Fragment, useState, useMemo } from "react";
 import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
 import EmojiPic from "@/components/EmojiPic";
@@ -51,7 +51,8 @@ export default function IdiomsPage() {
             <div className="flex-1 min-w-0">
               <h1 className="text-lg font-black text-slate-800">Idioms &amp; Phrases</h1>
               <p className="text-[11px] text-slate-400 font-semibold">
-                {IDIOMS.length} idioms · {IDIOM_GROUPS.length} themes · tap any one for its story
+                {IDIOMS.length} idioms · {IDIOM_GROUPS.length} themes
+                <span className="no-print"> · tap any one for its story</span>
               </p>
             </div>
             <PrintButton />
@@ -88,17 +89,52 @@ export default function IdiomsPage() {
           </p>
         )}
 
-        <div className="space-y-4">
+        {/* ── Printed version: two idioms per row, full page width ──────────
+            Built separately from the screen list because the on-screen cards
+            do not survive being poured into print columns. Group notes and the
+            tap affordances are left out — on paper they are just noise. */}
+        <table className="print-table">
+          <tbody>
+            {groups.map((g) => {
+              const pairs: (typeof g.items[number] | undefined)[][] = [];
+              for (let i = 0; i < g.items.length; i += 2) pairs.push([g.items[i], g.items[i + 1]]);
+              return (
+                <Fragment key={g.name}>
+                  <tr className="grp">
+                    <td colSpan={2}>{g.icon} {g.name}</td>
+                  </tr>
+                  {pairs.map((pair, i) => (
+                    <tr key={i}>
+                      {pair.map((idi, j) => (
+                        <td key={j}>
+                          {idi && (
+                            <>
+                              <span className="ph">{idi.pic} {idi.phrase}</span>
+                              <br />
+                              <span className="mn">{idi.meaning}</span>
+                            </>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <div className="no-print space-y-4">
           {groups.map((g) => {
             const isCollapsed = !q && collapsed[g.name];
             return (
               // Groups flow one after another in the PDF — a heading, then the
               // rows — instead of each group claiming its own page.
-              <section key={g.name} className="print-group">
+              <section key={g.name}>
                 {/* group header */}
                 <button
                   onClick={() => setCollapsed((c) => ({ ...c, [g.name]: !c[g.name] }))}
-                  className="w-full text-left press mb-2 print-keep-next"
+                  className="w-full text-left press mb-2"
                   aria-expanded={!isCollapsed}>
                   <div className="flex items-center gap-2.5 px-1">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center text-base flex-shrink-0"
@@ -117,15 +153,13 @@ export default function IdiomsPage() {
                   {g.note}
                 </p>
 
-                {/* Collapsed groups are hidden with CSS rather than unmounted,
-                    so a group you collapsed on screen still lands in the PDF. */}
                 <div
-                  className={`bg-white rounded-2xl overflow-hidden divide-y divide-slate-50 print-cols print-tight ${isCollapsed ? "hidden print-show" : ""}`}
+                  className={`bg-white rounded-2xl overflow-hidden divide-y divide-slate-50 ${isCollapsed ? "hidden" : ""}`}
                   style={{ border: "1px solid #eef2f7", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
                   {g.items.map((idi) => (
                     <button key={idi.phrase} onClick={() => setOpen(idi)}
-                      className="print-row w-full text-left press flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-50 transition-colors">
-                      <span className="print-emoji w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                      className="w-full text-left press flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-50 transition-colors">
+                      <span className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
                         style={{ background: `${ACCENT}10` }}>
                         <EmojiPic pic={idi.pic} single={19} filter={idi.picFilter} />
                       </span>
