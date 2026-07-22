@@ -92,11 +92,13 @@ export default function IdiomsPage() {
           {groups.map((g) => {
             const isCollapsed = !q && collapsed[g.name];
             return (
-              <section key={g.name} className="print-avoid-break">
+              // Groups flow one after another in the PDF — a heading, then the
+              // rows — instead of each group claiming its own page.
+              <section key={g.name} className="print-group">
                 {/* group header */}
                 <button
                   onClick={() => setCollapsed((c) => ({ ...c, [g.name]: !c[g.name] }))}
-                  className="w-full text-left press mb-2"
+                  className="w-full text-left press mb-2 print-keep-next"
                   aria-expanded={!isCollapsed}>
                   <div className="flex items-center gap-2.5 px-1">
                     <span className="w-8 h-8 rounded-xl flex items-center justify-center text-base flex-shrink-0"
@@ -111,29 +113,30 @@ export default function IdiomsPage() {
                 </button>
 
                 {/* why these sit together */}
-                {!isCollapsed && (
-                  <p className="text-[11.5px] text-slate-500 leading-snug mb-2.5 px-1 italic">{g.note}</p>
-                )}
+                <p className={`text-[11.5px] text-slate-500 leading-snug mb-2.5 px-1 italic ${isCollapsed ? "hidden" : ""}`}>
+                  {g.note}
+                </p>
 
-                {!isCollapsed && (
-                  <div className="bg-white rounded-2xl overflow-hidden divide-y divide-slate-50"
-                    style={{ border: "1px solid #eef2f7", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
-                    {g.items.map((idi) => (
-                      <button key={idi.phrase} onClick={() => setOpen(idi)}
-                        className="w-full text-left press flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-50 transition-colors">
-                        <span className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                          style={{ background: `${ACCENT}10` }}>
-                          <EmojiPic pic={idi.pic} single={19} filter={idi.picFilter} />
-                        </span>
-                        <span className="flex-1 min-w-0">
-                          <span className="block text-[13.5px] font-black text-slate-900 leading-tight truncate">{idi.phrase}</span>
-                          <span className="block text-[12px] text-slate-500 leading-snug truncate">{idi.meaning}</span>
-                        </span>
-                        <span className="no-print text-slate-200 text-base flex-shrink-0">›</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {/* Collapsed groups are hidden with CSS rather than unmounted,
+                    so a group you collapsed on screen still lands in the PDF. */}
+                <div
+                  className={`bg-white rounded-2xl overflow-hidden divide-y divide-slate-50 print-cols print-tight ${isCollapsed ? "hidden print-show" : ""}`}
+                  style={{ border: "1px solid #eef2f7", boxShadow: "0 2px 8px rgba(15,23,42,0.05)" }}>
+                  {g.items.map((idi) => (
+                    <button key={idi.phrase} onClick={() => setOpen(idi)}
+                      className="print-row w-full text-left press flex items-center gap-3 px-3.5 py-2.5 hover:bg-slate-50 transition-colors">
+                      <span className="print-emoji w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                        style={{ background: `${ACCENT}10` }}>
+                        <EmojiPic pic={idi.pic} single={19} filter={idi.picFilter} />
+                      </span>
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-[13.5px] font-black text-slate-900 leading-tight truncate">{idi.phrase}</span>
+                        <span className="block text-[12px] text-slate-500 leading-snug truncate">{idi.meaning}</span>
+                      </span>
+                      <span className="no-print text-slate-200 text-base flex-shrink-0">›</span>
+                    </button>
+                  ))}
+                </div>
               </section>
             );
           })}
@@ -143,7 +146,7 @@ export default function IdiomsPage() {
           <div className="text-center text-slate-400 text-sm py-12">No idioms match “{search}”.</div>
         )}
 
-        <div className="mt-6 px-5 py-4 rounded-2xl bg-amber-50 border border-amber-200">
+        <div className="no-print mt-6 px-5 py-4 rounded-2xl bg-amber-50 border border-amber-200">
           <p className="text-xs font-bold text-amber-800 mb-1.5">Tip</p>
           <p className="text-xs text-amber-700 leading-relaxed">
             Tap any idiom to see where it came from — the story is what makes it stick. For the swipeable version, open the <b>Reels</b> tab from the bottom bar.
