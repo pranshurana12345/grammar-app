@@ -59,9 +59,11 @@ export function saveQueue(qs: PracticeQuestion[]) {
 const inflight = new Map<string, Promise<PracticeQuestion[]>>();
 
 export function fetchQuestions(
-  count: number, focus = "", extraExclude: string[] = [],
+  count: number, focus = "", extraExclude: string[] = [], grammarOnly = false,
 ): Promise<PracticeQuestion[]> {
-  const existing = inflight.get(focus);
+  // Grammar-only batches must not share an in-flight request with mixed batches.
+  const key = `${grammarOnly ? "grammar:" : ""}${focus}`;
+  const existing = inflight.get(key);
   if (existing) return existing;
 
   const p = (async () => {
@@ -73,7 +75,7 @@ export function fetchQuestions(
       const res = await fetch(`${apiBase()}/api/practice/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count, exclude, focus: focus || undefined }),
+        body: JSON.stringify({ count, exclude, focus: focus || undefined, grammarOnly: grammarOnly || undefined }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not load questions");
@@ -87,11 +89,11 @@ export function fetchQuestions(
         return true;
       });
     } finally {
-      inflight.delete(focus);
+      inflight.delete(key);
     }
   })();
 
-  inflight.set(focus, p);
+  inflight.set(key, p);
   return p;
 }
 

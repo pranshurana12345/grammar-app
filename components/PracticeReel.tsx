@@ -7,6 +7,7 @@ import {
   fetchQuestions, loadQueue, saveQueue, normalizeStem,
   type PracticeQuestion,
 } from "@/lib/practiceQueue";
+import { isGrammarQuestion } from "@/lib/questionCheck";
 
 export type { PracticeQuestion };
 
@@ -35,9 +36,14 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [timerMode, setTimerMode] = useState(true); // auto-timer on by default
   const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const [grammarOnly, setGrammarOnly] = useState(false); // false = all questions
   const [askFor, setAskFor] = useState<PracticeQuestion | null>(null);
   const questionsRef = useRef<PracticeQuestion[]>([]);
   questionsRef.current = questions;
+
+  // What the student actually scrolls through. In Grammar-only mode, vocab/idiom
+  // questions are hidden (belt-and-braces with the server, which also filters).
+  const visible = grammarOnly ? questions.filter(isGrammarQuestion) : questions;
 
   useEffect(() => {
     const prev = document.body.style.overflow;
@@ -45,20 +51,24 @@ export default function PracticeReel({ focus }: { focus?: string }) {
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  const fetchBatch = useCallback(async (initial = false) => {
+  // grammarMode is passed in (not read from state) so this callback doesn't need
+  // grammarOnly in its deps — that keeps the one-time initial-load effect from
+  // re-firing and flashing the loader every time the student flips the toggle.
+  const fetchBatch = useCallback(async (initial = false, grammarMode = false) => {
     if (fetchingRef.current) return;
     fetchingRef.current = true;
     if (initial) { setLoading(true); setError(""); }
     try {
       const onScreen = questionsRef.current.map((q) => q.question.slice(0, 120));
-      const fresh = await fetchQuestions(5, focus || "", onScreen);
+      const fresh = await fetchQuestions(5, focus || "", onScreen, grammarMode);
       if (fresh.length) {
         setQuestions((prev) => {
           const known = new Set(prev.map((q) => normalizeStem(q.question)));
           return [...prev, ...fresh.filter((q) => !known.has(normalizeStem(q.question)))];
         });
-        // Keep the shared queue topped up for the next session (general mode only).
-        if (!focus) saveQueue([...loadQueue(), ...fresh]);
+        // Keep the shared queue topped up for the next session — general mode only
+        // (a grammar-only batch would otherwise bias the mixed "All" queue).
+        if (!focus && !grammarMode) saveQueue([...loadQueue(), ...fresh]);
       }
     } catch (e) {
       if (initial && questionsRef.current.length === 0) {
@@ -82,10 +92,12 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   }, [focus, fetchBatch]);
 
   // Stay 3+ questions ahead of the student — fetch before they can catch up.
+  // Keyed off `visible` so Grammar-only mode keeps fetching until enough grammar
+  // questions have accumulated (filtered-out vocab/idioms don't count).
   useEffect(() => {
     if (loading || questions.length === 0) return;
-    if (questions.length - currentIdx <= 4) void fetchBatch();
-  }, [loading, questions.length, currentIdx, fetchBatch]);
+    if (visible.length - currentIdx <= 4) void fetchBatch(false, grammarOnly);
+  }, [loading, questions.length, visible.length, currentIdx, fetchBatch, grammarOnly]);
 
   const answer = useCallback((q: PracticeQuestion, idx: number) => {
     setPicked((prev) => {
@@ -104,7 +116,7 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   }, []);
 
   // ── Timer ──────────────────────────────────────────────────────────────────
-  const current = questions[currentIdx];
+  const current = visible[currentIdx];
   const currentAnswered = current ? current.id in picked : false;
   useEffect(() => {
     if (!timerMode || !current || currentAnswered) return;
@@ -127,6 +139,14 @@ export default function PracticeReel({ focus }: { focus?: string }) {
     if (!el) return;
     const idx = Math.round(el.scrollTop / el.clientHeight);
     if (idx !== currentIdx) setCurrentIdx(idx);
+  }
+
+  function toggleGrammarOnly() {
+    setGrammarOnly((g) => !g);
+    // The visible list changes length; jump to the top so the scroll position
+    // and currentIdx stay in sync instead of landing on a different question.
+    setCurrentIdx(0);
+    scrollRef.current?.scrollTo({ top: 0 });
   }
 
   function speak(q: PracticeQuestion) {
@@ -173,7 +193,7 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   return (
     <div className="fixed inset-0 z-40 lg:hidden bg-black">
       <div ref={scrollRef} onScroll={onScroll} className="reel-scroll h-full overflow-y-scroll">
-        {questions.map((q, i) => {
+        {visible.map((q, i) => {
           const chosen = picked[q.id];
           const answered = q.id in picked;
           const timedOut = chosen === -1;
@@ -279,6 +299,9 @@ export default function PracticeReel({ focus }: { focus?: string }) {
 
               {/* bottom action rail */}
               <div className="absolute bottom-24 right-3 flex flex-col items-center gap-4">
+                <RailBtn onClick={toggleGrammarOnly} active={grammarOnly} label={grammarOnly ? "Grammar" : "All"}>
+                  <GrammarIcon />
+                </RailBtn>
                 <RailBtn onClick={() => setTimerMode((t) => !t)} active={timerMode} label={timerMode ? "Timed" : "Timer"}>
                   <ClockIcon />
                 </RailBtn>
@@ -355,6 +378,15 @@ function ClockIcon() {
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.6" />
       <path d="M10 6.5V10l2.5 1.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function GrammarIcon() {
+  // Stylised "A" — grammar vs. the broader vocab/idiom mix.
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+      <path d="M4 16L10 4l6 12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6.4 11.6h7.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   );
 }

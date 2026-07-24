@@ -114,7 +114,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "The news was ___ last night.", options: ["broadcast", "broadcasted", "broadcasting", "broadcasts"], answer: 0 },
       { q: "Which is WRONG?", options: ["The program was telecasted.", "She cut the paper.", "He put the book down.", "The teacher taught us well."], answer: 0 },
-      { q: "He ___ the paper carefully.", options: ["cut", "cutted", "cuted", "had cut (wrong V3)"], answer: 0 },
+      { q: "He ___ the paper carefully.", options: ["cut", "cutted", "cuted", "had cut"], answer: 0 },
       { q: "Verbs like broadcast, cast, cut, put, shut have the SAME form for V2 and V3. So you should NEVER add ___.", options: ["-ed", "-s", "-ing", "'s"], answer: 0 },
     ],
   },
@@ -493,7 +493,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
       { q: "He stood ___ in class.", options: ["the first", "the one", "first", "one"], answer: 0 },
       { q: "He won ___ position in the competition.", options: ["the ninth", "ninth", "the nine", "nine"], answer: 0 },
       { q: "Which numbers take THE?", options: ["Ordinal (first, second, third…)", "Cardinal (one, two, three…)", "Both", "Neither"], answer: 0 },
-      { q: "'He stood ___ in class.' (wrong: cardinal number)", options: ["He stood THE ONE. ❌ (wrong)", "He stood the first. ✓", "He stood firstly.", "He stood THE FIRST. ✓"], answer: 0 },
+      { q: "Which sentence is correct?", options: ["He stood the first in class.", "He stood the one in class.", "He stood firstly in class.", "He stood a first in class."], answer: 0 },
     ],
   },
   {
@@ -699,7 +699,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "Which is CORRECT?", options: ["hundreds of thousands", "thousands of hundreds", "millions of thousands", "billions of millions"], answer: 0 },
       { q: "When nesting units for approximation, the order is ___.", options: ["ascending (smaller → larger)", "descending (larger → smaller)", "alphabetical", "any order"], answer: 0 },
-      { q: "Which is WRONG?", options: ["billions of millions ❌", "hundreds of thousands ✓", "millions of billions ✓", "thousands of millions ✓"], answer: 0 },
+      { q: "Which is WRONG?", options: ["billions of millions", "hundreds of thousands", "millions of billions", "thousands of millions"], answer: 0 },
       { q: "'Hundreds of thousands' is correct because hundreds (smaller) comes ___ thousands (larger).", options: ["before", "after", "equal to", "inside"], answer: 0 },
     ],
   },
@@ -762,7 +762,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "He is ___ good ___ Rahul. (positive comparison)", options: ["as, as", "so, as", "as, than", "so, than"], answer: 0 },
       { q: "He is NOT ___ good ___ Rahul. (negative — so...as is OK)", options: ["so, as (OR as, as — both OK)", "as, than", "so, than", "neither, as"], answer: 0 },
-      { q: "Which is WRONG?", options: ["He is so good as Rahul. ❌", "He is as good as Rahul. ✓", "He is not so good as Rahul. ✓", "He is not as good as Rahul. ✓"], answer: 0 },
+      { q: "Which is WRONG?", options: ["He is so good as Rahul.", "He is as good as Rahul.", "He is not so good as Rahul.", "He is not as good as Rahul."], answer: 0 },
       { q: "'So...as' is used ONLY in ___ comparisons.", options: ["negative", "positive", "both positive and negative", "superlative"], answer: 0 },
     ],
   },
@@ -771,7 +771,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "The population of Delhi is greater than ___ of Chandigarh.", options: ["that", "this", "which", "those"], answer: 0 },
       { q: "The rivers of India are longer than ___ of England. (plural → those)", options: ["those", "that", "this", "which"], answer: 0 },
-      { q: "Which is WRONG?", options: ["The population of Delhi is greater than Chandigarh. ❌", "The population of Delhi is greater than that of Chandigarh. ✓", "Rivers of India are longer than those of England. ✓", "His income is higher than that of his brother. ✓"], answer: 0 },
+      { q: "Which is WRONG?", options: ["The population of Delhi is greater than Chandigarh.", "The population of Delhi is greater than that of Chandigarh.", "Rivers of India are longer than those of England.", "His income is higher than that of his brother."], answer: 0 },
       { q: "'That of' is for ___ nouns. 'Those of' is for ___ nouns.", options: ["singular, plural", "plural, singular", "countable, uncountable", "persons, things"], answer: 0 },
     ],
   },
@@ -789,7 +789,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "I ___ this movie yesterday.", options: ["watched", "have watched", "had watched", "was watching"], answer: 0 },
       { q: "I ___ this movie. (no time marker, focus on the action)", options: ["have watched", "watched", "had watched", "was watching"], answer: 0 },
-      { q: "Which is WRONG?", options: ["I have watched this movie yesterday. ❌", "I watched this movie yesterday. ✓", "I have watched this movie. ✓", "I had watched this before she arrived. ✓"], answer: 0 },
+      { q: "Which is WRONG?", options: ["I have watched this movie yesterday.", "I watched this movie yesterday.", "I have watched this movie.", "I had watched this before she arrived."], answer: 0 },
       { q: "When there is ANY time marker (yesterday, ago, last week, in 1990), ALWAYS use ___.", options: ["Simple Past", "Present Perfect", "Past Perfect", "Present Continuous"], answer: 0 },
     ],
   },
@@ -798,7 +798,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "Which is a SUPERFLUOUS (redundant) expression?", options: ["past history", "best example", "clear explanation", "simple question"], answer: 0 },
       { q: "Why is 'free gift' wrong?", options: ["A gift is always free by definition.", "Gifts cost money.", "'free' is an adverb, not adjective.", "It should be 'gifted for free'."], answer: 0 },
-      { q: "Which is NOT superfluous? (adds genuine meaning)", options: ["advance notice ✓ (not all notices are advance)", "advance planning", "future plans", "end result"], answer: 0 },
+      { q: "Which is NOT superfluous? (adds genuine meaning)", options: ["advance notice", "advance planning", "future plans", "end result"], answer: 0 },
       { q: "Which is a SUPERFLUOUS expression?", options: ["mutual agreement", "simple solution", "clear answer", "good plan"], answer: 0 },
     ],
   },
@@ -823,7 +823,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
   {
     ruleId: 90,
     questions: [
-      { q: "You should avail ___ of this opportunity.", options: ["yourself", "you", "your", "yourself of (correct full form)"], answer: 3 },
+      { q: "You should avail ___ of this opportunity.", options: ["yourself", "you", "your", "ourselves"], answer: 0 },
       { q: "They enjoyed ___.", options: ["themselves", "very much", "a lot", "really much"], answer: 0 },
       { q: "He absented ___ from the meeting.", options: ["himself", "him", "his", "he"], answer: 0 },
       { q: "Which verb MUST take a reflexive pronoun (myself/yourself/himself)?", options: ["avail", "help", "see", "think"], answer: 0 },
@@ -871,7 +871,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
       { q: "I saw the girl and the bicycle ___ you mentioned.", options: ["that", "who", "which", "whom"], answer: 0 },
       { q: "The man and his dog ___ came yesterday are here.", options: ["that", "who", "which", "whom"], answer: 0 },
       { q: "When referring to BOTH a person AND a thing together, use ___.", options: ["that", "who", "which", "either who or which"], answer: 0 },
-      { q: "Which is WRONG?", options: ["The girl and the bike which came. ❌", "The girl and the bike that came. ✓", "The man and the car that passed. ✓", "The boy and his phone that fell. ✓"], answer: 0 },
+      { q: "Which is WRONG?", options: ["The girl and the bike which came.", "The girl and the bike that came.", "The man and the car that passed.", "The boy and his phone that fell."], answer: 0 },
     ],
   },
   {
@@ -897,7 +897,7 @@ export const QUIZ_BANK: RuleQuiz[] = [
     questions: [
       { q: "He seldom ___ never tells the truth.", options: ["or", "if", "and", "nor"], answer: 0 },
       { q: "She seldom ___ ever goes out.", options: ["if", "or", "and", "nor"], answer: 0 },
-      { q: "Which is WRONG?", options: ["seldom or ever ❌", "seldom or never ✓", "seldom if ever ✓", "he seldom comes ✓"], answer: 0 },
+      { q: "Which is WRONG?", options: ["seldom or ever", "seldom or never", "seldom if ever", "he seldom comes"], answer: 0 },
       { q: "'Seldom if ever' means ___.", options: ["occasionally / very rarely", "never", "always", "sometimes"], answer: 0 },
     ],
   },

@@ -4,6 +4,7 @@ import {
 } from "@/lib/ai";
 import { rules } from "@/data/rules";
 import { QUIZ_BANK } from "@/data/questions";
+import { questionProblems, isGrammarQuestion } from "@/lib/questionCheck";
 
 export const maxDuration = 60;
 
@@ -137,9 +138,13 @@ export async function POST(request: Request) {
       .slice(-24)
       .map((s: string) => s.slice(0, 70));
     const focus: string = typeof body.focus === "string" ? body.focus.slice(0, 200) : "";
+    const grammarOnly = body.grammarOnly === true;
 
     const parts = [
       `Write ${count} fresh AFCAT English MCQs as JSON.`,
+      grammarOnly
+        ? `GRAMMAR ONLY: use only these categories — Error Spotting, Fill in the Blank, Sentence Improvement. Do NOT write any Synonym, Antonym, Idiom/Phrase, One-Word Substitution, or Spelling question, and never use the "Vocabulary" or "Idioms & Phrases" section.`
+        : "",
       focus
         ? `The student is weak in: ${focus}. Most questions should test these topics.`
         : "Mix the categories — at most 2 questions of the same category.",
@@ -167,12 +172,17 @@ export async function POST(request: Request) {
           q && typeof q.question === "string" &&
           Array.isArray(q.options) && q.options.length === 4 &&
           q.options.every((o) => o && typeof o.text === "string") &&
-          Number.isInteger(q.correctIndex) && q.correctIndex >= 0 && q.correctIndex <= 3)
+          Number.isInteger(q.correctIndex) && q.correctIndex >= 0 && q.correctIndex <= 3 &&
+          // Same answer-key sanity checks the build applies to the static bank:
+          // drop any AI question that leaks ✓/❌ markup, duplicates an option, etc.
+          questionProblems({ options: q.options, answer: q.correctIndex }).length === 0)
         .map((q, i) => ({
           ...q,
           section: SECTION_NAMES.includes(q.section) ? q.section : "Miscellaneous",
           id: `${Date.now()}-${i}`,
-        }));
+        }))
+        // Grammar-only mode: drop any vocab/idiom question the model slipped in.
+        .filter((q) => !grammarOnly || isGrammarQuestion(q));
       if (questions.length === 0) throw new Error("AI returned no usable questions");
     } catch (aiErr) {
       // Don't fail the reel — fall back to the app's own question bank.
