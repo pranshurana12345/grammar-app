@@ -195,9 +195,10 @@ export function buildPlan(
       case "Spelling": {
         const set = nextSpelling();
         const target = set[Math.floor(Math.random() * set.length)];
+        const others = set.filter((w) => w !== target);
         return {
-          category, section: "Vocabulary", expect: set.filter((w) => w !== target).slice(0, 2),
-          line: `Spelling | "Find the wrongly spelt word." | use these four words: ${list(set)} | misspell ONLY "${target}" — drop or double a consonant, swap ie/ei, or change one unstressed vowel — and it is the answer | the other three must appear spelt exactly as given | ${diff}`,
+          category, section: "Vocabulary", expect: others.map((w) => w.word).slice(0, 2),
+          line: `Spelling | "Find the wrongly spelt word." | options are exactly these four, in any order: ${list(others.map((w) => w.word))}, ${target.wrong} | the answer is "${target.wrong}" (correct spelling "${target.word}") | change nothing else | ${diff}`,
         };
       }
 

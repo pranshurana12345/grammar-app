@@ -2,9 +2,8 @@ import {
   aiChat, extractJSON, ruleIndexSample, SECTION_NAMES,
   corsPreflight, jsonResponse, errorResponse,
 } from "@/lib/ai";
-import { rules } from "@/data/rules";
-import { QUIZ_BANK } from "@/data/questions";
 import { questionProblems, isGrammarQuestion } from "@/lib/questionCheck";
+import { offlineQuestions } from "@/lib/practiceOffline";
 import {
   buildPlan, planPrompt, followsAssignment, leaksInstructions, leaksBlueprint,
   repeatsHeadword, answerIsInStem, fragmentsMissing, hasFillerOption, type Plan,
@@ -89,52 +88,8 @@ function systemPrompt(): string {
   return SYSTEM_TEMPLATE.replace("{{RULE_INDEX}}", ruleIndexSample(30, Date.now()));
 }
 
-// ── Offline safety net ──────────────────────────────────────────────────────
-// Every provider can be rate-limited at once (free tiers, shared org budget).
-// When that happens the reel used to die with an error; instead we serve real
-// questions from the app's own quiz bank so practice always works.
-function bankQuestions(count: number, exclude: Set<string>): PracticeQuestion[] {
-  const byRule = new Map(rules.map((r) => [r.id, r]));
-  const pool = QUIZ_BANK.flatMap((entry) => {
-    const rule = byRule.get(entry.ruleId);
-    if (!rule) return [];
-    return entry.questions.map((q) => ({ q, rule }));
-  }).filter(({ q }) => !exclude.has(normalize(q.q)));
-
-  // Shuffle so repeated fallbacks don't serve the same questions in order.
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-
-  return pool.slice(0, count).map(({ q, rule }, i) => {
-    // QUIZ_BANK keys are almost all index 0, so serving the options in file
-    // order made "always pick A" a winning strategy whenever the AI was down.
-    const opts = q.options.map((text, oi) => ({
-      text,
-      why: oi === q.answer
-        ? `Correct — this is what "${rule.title}" requires.`
-        : "Doesn't follow the rule being tested here.",
-      wasCorrect: oi === q.answer,
-    }));
-    for (let a = opts.length - 1; a > 0; a--) {
-      const b = Math.floor(Math.random() * (a + 1));
-      [opts[a], opts[b]] = [opts[b], opts[a]];
-    }
-    return {
-      id: `bank-${Date.now()}-${i}`,
-      category: "Rule Practice",
-      section: rule.section,
-      question: q.q,
-      options: opts.map(({ text, why }) => ({ text, why })),
-      correctIndex: opts.findIndex((o) => o.wasCorrect),
-      rule: `Rule ${rule.ruleNumber} — ${rule.title}`,
-      explanation: rule.rule,
-    };
-  });
-}
-
 const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().slice(0, 100);
+const rand = () => Math.random().toString(36).slice(2, 7);
 
 // ── Keeping the batch honest ────────────────────────────────────────────────
 // Models label a category loosely ("Idioms & Phrases", "Fill in the blanks"),
@@ -295,7 +250,7 @@ export async function POST(request: Request) {
           question: q.question.replace(/_{2,}/g, "........."),
           category: canonicalCategory(q.category),
           section: SECTION_NAMES.includes(q.section) ? q.section : "Miscellaneous",
-          id: `${Date.now()}-${i}`,
+          id: `${Date.now()}-${i}-${rand()}`,
         }))
         // Grammar-only mode: drop any vocab/idiom question the model slipped in.
         .filter((q) => !grammarOnly || isGrammarQuestion(q));
@@ -309,9 +264,14 @@ export async function POST(request: Request) {
       }
       if (questions.length === 0) throw new Error("AI returned no usable questions");
     } catch (aiErr) {
-      // Don't fail the reel — fall back to the app's own question bank.
-      console.warn("[practice] AI unavailable, serving bank questions:", aiErr);
-      questions = bankQuestions(count, new Set(exclude.map(normalize)));
+      // Don't fail the reel — build the batch from the app's own content banks
+      // instead (lib/practiceOffline.ts). Free-tier providers are all rate-
+      // limited at once often enough that this path has to be worth sitting.
+      console.warn("[practice] AI unavailable, generating offline questions:", aiErr);
+      questions = offlineQuestions(count, {
+        exclude: new Set(exclude.map(normalize)),
+        grammarOnly,
+      });
       if (questions.length === 0) throw aiErr;
       return jsonResponse({ questions, source: "bank" });
     }

@@ -185,25 +185,31 @@ export const ONE_WORD_ITEMS: OneWordItem[] = [
   { def: "Practice of having more than one wife or husband at a time", answer: "Polygamy", family: ["Monogamy", "Bigamy", "Misogamy"] },
 ];
 
-/** Spelling sets: four correctly spelt exam words. The blueprint names which
- *  ONE the model must misspell, so the key is never in doubt. */
-export const SPELLING_SETS: string[][] = [
-  ["committee", "harassment", "occurrence", "privilege"],
-  ["embarrass", "accommodate", "questionnaire", "millennium"],
-  ["conscience", "definitely", "separate", "maintenance"],
-  ["receive", "achieve", "siege", "mischievous"],
-  ["rhythm", "liaison", "silhouette", "bureaucracy"],
-  ["necessary", "recommend", "argument", "existence"],
-  ["handkerchief", "exaggerate", "jewellery", "acquaintance"],
-  ["temperament", "government", "environment", "parliament"],
-  ["satellite", "guarantee", "restaurant", "lieutenant"],
-  ["perseverance", "correspondence", "independence", "conscientious"],
-  ["bachelor", "calendar", "grammar", "familiar"],
-  ["omitted", "benefited", "occurred", "referred"],
-  ["pronunciation", "exhilarate", "hierarchy", "reminiscence"],
-  ["supersede", "irresistible", "indispensable", "permissible"],
-  ["colonel", "sergeant", "marshal", "squadron"],
-  ["vacuum", "tranquillity", "occasionally", "professional"],
+/**
+ * Spelling sets: four exam words, each paired with the misspelling to use when
+ * it is the one to get wrong. Written out rather than mutated at runtime — a
+ * generated "misspelling" can land on another real word (marshal → marshall),
+ * and every variant here is wrong in both British and American spelling.
+ */
+export type SpellingSet = { word: string; wrong: string }[];
+
+export const SPELLING_SETS: SpellingSet[] = [
+  [{ word: "committee", wrong: "comittee" }, { word: "harassment", wrong: "harrassment" }, { word: "occurrence", wrong: "occurance" }, { word: "privilege", wrong: "priviledge" }],
+  [{ word: "embarrass", wrong: "embarass" }, { word: "accommodate", wrong: "accomodate" }, { word: "questionnaire", wrong: "questionaire" }, { word: "millennium", wrong: "millenium" }],
+  [{ word: "conscience", wrong: "concience" }, { word: "definitely", wrong: "definately" }, { word: "separate", wrong: "seperate" }, { word: "maintenance", wrong: "maintainance" }],
+  [{ word: "receive", wrong: "recieve" }, { word: "achieve", wrong: "acheive" }, { word: "siege", wrong: "seige" }, { word: "mischievous", wrong: "mischievious" }],
+  [{ word: "rhythm", wrong: "rythm" }, { word: "liaison", wrong: "liason" }, { word: "silhouette", wrong: "silhoutte" }, { word: "bureaucracy", wrong: "beaurocracy" }],
+  [{ word: "necessary", wrong: "neccessary" }, { word: "recommend", wrong: "recomend" }, { word: "argument", wrong: "arguement" }, { word: "existence", wrong: "existance" }],
+  [{ word: "handkerchief", wrong: "handkerchef" }, { word: "exaggerate", wrong: "exagerate" }, { word: "jewellery", wrong: "jewellary" }, { word: "acquaintance", wrong: "aquaintance" }],
+  [{ word: "temperament", wrong: "temparament" }, { word: "government", wrong: "goverment" }, { word: "environment", wrong: "enviroment" }, { word: "parliament", wrong: "parliment" }],
+  [{ word: "satellite", wrong: "satelite" }, { word: "guarantee", wrong: "guarentee" }, { word: "restaurant", wrong: "restaraunt" }, { word: "lieutenant", wrong: "leiutenant" }],
+  [{ word: "perseverance", wrong: "perseverence" }, { word: "correspondence", wrong: "correspondance" }, { word: "independence", wrong: "independance" }, { word: "conscientious", wrong: "consciencious" }],
+  [{ word: "bachelor", wrong: "batchelor" }, { word: "calendar", wrong: "calender" }, { word: "grammar", wrong: "grammer" }, { word: "familiar", wrong: "familliar" }],
+  [{ word: "omitted", wrong: "ommitted" }, { word: "benefited", wrong: "benifited" }, { word: "occurred", wrong: "occured" }, { word: "referred", wrong: "refered" }],
+  [{ word: "pronunciation", wrong: "pronounciation" }, { word: "exhilarate", wrong: "exhilerate" }, { word: "hierarchy", wrong: "heirarchy" }, { word: "reminiscence", wrong: "reminiscense" }],
+  [{ word: "supersede", wrong: "supercede" }, { word: "irresistible", wrong: "irresistable" }, { word: "indispensable", wrong: "indispensible" }, { word: "permissible", wrong: "permissable" }],
+  [{ word: "colonel", wrong: "colonal" }, { word: "sergeant", wrong: "sargeant" }, { word: "marshal", wrong: "marshel" }, { word: "squadron", wrong: "squadran" }],
+  [{ word: "vacuum", wrong: "vaccum" }, { word: "tranquillity", wrong: "tranquilty" }, { word: "occasionally", wrong: "occassionally" }, { word: "professional", wrong: "proffessional" }],
 ];
 
 /** Names and settings are rotated per batch so sentences stop reading like the

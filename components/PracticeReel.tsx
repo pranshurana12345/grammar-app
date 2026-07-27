@@ -30,7 +30,6 @@ export default function PracticeReel({ focus }: { focus?: string }) {
 
   const [questions, setQuestions] = useState<PracticeQuestion[]>([]);
   const [picked, setPicked] = useState<Record<string, number>>({}); // -1 = timed out
-  const [score, setScore] = useState({ right: 0, total: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -40,6 +39,25 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   const [askFor, setAskFor] = useState<PracticeQuestion | null>(null);
   const questionsRef = useRef<PracticeQuestion[]>([]);
   questionsRef.current = questions;
+  // Questions already written to the practice history, so a replayed render
+  // can't record the same answer twice.
+  const recordedRef = useRef<Set<string>>(new Set());
+
+  // Counted from what was actually answered rather than tallied as we go. The
+  // running total used to be incremented inside the setPicked updater, and React
+  // may call an updater more than once for a single update — so one answer could
+  // add two or three to the score (and to the saved history behind Topics %).
+  const score = (() => {
+    const byId = new Map(questions.map((q) => [q.id, q]));
+    let right = 0, total = 0;
+    for (const [id, choice] of Object.entries(picked)) {
+      const q = byId.get(id);
+      if (!q) continue;
+      total++;
+      if (choice === q.correctIndex) right++;
+    }
+    return { right, total };
+  })();
 
   // What the student actually scrolls through. In Grammar-only mode, vocab/idiom
   // questions are hidden (belt-and-braces with the server, which also filters).
@@ -100,18 +118,17 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   }, [loading, questions.length, visible.length, currentIdx, fetchBatch, grammarOnly]);
 
   const answer = useCallback((q: PracticeQuestion, idx: number) => {
-    setPicked((prev) => {
-      if (q.id in prev) return prev;
-      const correct = idx === q.correctIndex;
-      setScore((s) => ({ right: s.right + (correct ? 1 : 0), total: s.total + 1 }));
-      recordPracticeAnswer({
-        q: q.question.slice(0, 120),
-        category: q.category,
-        section: q.section,
-        correct,
-        ts: new Date().toISOString(),
-      });
-      return { ...prev, [q.id]: idx };
+    // Guard and record OUTSIDE the state updater: updaters have to be pure, and
+    // this one was writing to the history and the score from inside one.
+    if (recordedRef.current.has(q.id)) return;
+    recordedRef.current.add(q.id);
+    setPicked((prev) => ({ ...prev, [q.id]: idx }));
+    recordPracticeAnswer({
+      q: q.question.slice(0, 120),
+      category: q.category,
+      section: q.section,
+      correct: idx === q.correctIndex,
+      ts: new Date().toISOString(),
     });
   }, []);
 
@@ -121,15 +138,16 @@ export default function PracticeReel({ focus }: { focus?: string }) {
   useEffect(() => {
     if (!timerMode || !current || currentAnswered) return;
     setTimeLeft(TIMER_SECONDS);
+    let left = TIMER_SECONDS;
     const iv = setInterval(() => {
-      setTimeLeft((t) => {
-        if (t <= 1) {
-          clearInterval(iv);
-          answer(current, -1); // time's up → counts as wrong, reveals answer
-          return 0;
-        }
-        return t - 1;
-      });
+      left -= 1;
+      setTimeLeft(left);
+      // Counting down here rather than inside a setTimeLeft updater: answering
+      // from inside one meant a replayed update could fire the time-out twice.
+      if (left <= 0) {
+        clearInterval(iv);
+        answer(current, -1); // time's up → counts as wrong, reveals answer
+      }
     }, 1000);
     return () => clearInterval(iv);
   }, [timerMode, current, currentAnswered, answer]);
@@ -285,9 +303,10 @@ export default function PracticeReel({ focus }: { focus?: string }) {
 
               {/* top-right controls */}
               <div className="absolute top-16 right-4 flex flex-col items-end gap-2 pointer-events-none">
+                {/* Score, not a position counter — the tick says which it is. */}
                 <span className="px-3 py-1.5 rounded-full text-[12px] font-black text-white"
                   style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(6px)" }}>
-                  {score.right}/{score.total}
+                  ✓ {score.right}/{score.total}
                 </span>
                 {timerMode && i === currentIdx && !answered && (
                   <span className="px-3 py-1.5 rounded-full text-[13px] font-black"
