@@ -220,6 +220,41 @@ async function failure(p: Provider, res: Response): Promise<ProviderError> {
   return new ProviderError(`${p.name}/${p.model} ${res.status}: ${detail}`, scope);
 }
 
+// ── Cooldowns: don't rediscover the same rate limit on every request ────────
+// A per-request dead-list still paid a full failed round trip to each limited
+// model on EVERY request, which is what "there was a very much delay in getting
+// responses" felt like: once the best model hit its per-minute cap, every reply
+// for the next minute started with 2–3 doomed calls.
+//
+// So a model/key that answers with a limit error is parked for a while. Module
+// scope, so it lives as long as the warm lambda does — exactly the window where
+// the same student is firing requests back to back.
+const cooldowns = new Map<string, number>();
+const MINUTE_LIMIT_MS = 60_000;   // TPM — clears on the next minute boundary
+const DAY_LIMIT_MS = 10 * 60_000; // TPD/retired model — no point trying again soon
+
+const modelKey = (p: Provider) => `model:${p.name}/${p.model}`;
+const apiKeyKey = (p: Provider) => `key:${p.key?.slice(-6) ?? ""}`;
+
+function coolingDown(p: Provider): boolean {
+  const now = Date.now();
+  for (const k of [modelKey(p), apiKeyKey(p)]) {
+    const until = cooldowns.get(k);
+    if (until === undefined) continue;
+    if (until > now) return true;
+    cooldowns.delete(k);
+  }
+  return false;
+}
+
+function parkProvider(p: Provider, scope: FailScope, message: string) {
+  if (scope === "attempt") return;
+  // "tokens per day", "requests per day", or a retired model: a minute won't help.
+  const long = /per day|\bTPD\b|\bRPD\b|404/i.test(message);
+  const until = Date.now() + (long ? DAY_LIMIT_MS : MINUTE_LIMIT_MS);
+  cooldowns.set(scope === "key" ? apiKeyKey(p) : modelKey(p), until);
+}
+
 /**
  * Walk a provider chain, skipping models/keys that have already proved dead for
  * this request, and hand each live one to `attempt`. The first success wins.
@@ -239,7 +274,16 @@ async function runChain<T>(
   const deadline = Date.now() + TOTAL_BUDGET_MS;
   let tries = 0;
 
-  for (const p of list) {
+  // Skip whatever is still parked from a recent limit error — but if that would
+  // leave nothing to try, ignore the cooldowns rather than fail instantly. A
+  // stale cooldown must never be the reason a student sees "AI unavailable".
+  const fresh = list.filter((p) => !coolingDown(p));
+  const order = fresh.length > 0 ? fresh : list;
+  if (fresh.length < list.length) {
+    console.log(`[ai] ${list.length - fresh.length} provider(s) cooling down${fresh.length ? "" : " — trying anyway"}`);
+  }
+
+  for (const p of order) {
     if (deadModels.has(p.model) || (p.key && deadKeys.has(p.key))) continue;
     if (tries >= MAX_ATTEMPTS) { errors.push("attempt limit reached"); break; }
     if (Date.now() > deadline) { errors.push(`out of time before trying ${p.model}`); break; }
@@ -267,6 +311,7 @@ async function runChain<T>(
       errors.push(msg);
       if (scope === "model") deadModels.add(p.model);
       if (scope === "key" && p.key) deadKeys.add(p.key);
+      parkProvider(p, scope, msg);
     }
   }
   throw new Error(errors.join(" | "));

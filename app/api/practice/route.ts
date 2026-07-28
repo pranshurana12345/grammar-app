@@ -8,6 +8,7 @@ import {
   buildPlan, planPrompt, followsAssignment, leaksInstructions, leaksBlueprint,
   repeatsHeadword, answerIsInStem, fragmentsMissing, hasFillerOption, type Plan,
 } from "@/lib/practicePlan";
+import { answerArguable } from "@/lib/optionQuality";
 
 export const maxDuration = 60;
 
@@ -156,6 +157,16 @@ function enforcePlan(questions: PracticeQuestion[], plan: Plan): PracticeQuestio
     if (q.category === "Error Spotting" &&
         fragmentsMissing(q.question, q.options.map((o) => o.text))) {
       drop("options aren't the stem's fragments", q); return false;
+    }
+    // A wrong option that means the same as the right one gives the student two
+    // defensible answers — the "my correct answer was marked wrong" complaint,
+    // from the other side.
+    if (answerArguable(q.options.map((o) => o.text), q.correctIndex)) {
+      drop("a wrong option is a near-synonym of the answer", q); return false;
+    }
+    // Sentence improvement without the phrase to improve is unanswerable.
+    if (q.category === "Sentence Improvement" && !/["“'‘].+?["”'’]/.test(q.question)) {
+      drop("no quoted phrase to replace", q); return false;
     }
     return true;
   });

@@ -17,6 +17,7 @@
 import { IDIOMS, type Idiom } from "@/data/idioms";
 import { VOCAB } from "@/data/vocabulary";
 import { ONE_WORD_ITEMS, SPELLING_SETS } from "@/data/practicePool";
+import { sameFamily } from "@/lib/optionQuality";
 import { rules } from "@/data/rules";
 import { QUIZ_BANK } from "@/data/questions";
 
@@ -89,7 +90,9 @@ function synonymQuestion(w: typeof VOCAB[number]): OfflineQuestion | null {
     o.phrase !== w.phrase && o.synonyms?.[0] &&
     posOf(o.meaning) === pos &&
     unrelated(o.meaning, w.meaning) &&
-    !w.synonyms?.includes(o.synonyms[0]));
+    !w.synonyms?.includes(o.synonyms[0]) &&
+    // …and not arguable against the answer itself.
+    !sameFamily(o.synonyms[0], correct));
   const fillers = pool.slice(0, opposite ? 2 : 3).map((o) => ({
     text: cap(o.synonyms![0]),
     why: `Means "${o.meaning.replace(/\.$/, "").toLowerCase()}" — a different idea altogether.`,
@@ -125,7 +128,10 @@ function antonymQuestion(w: typeof VOCAB[number]): OfflineQuestion | null {
   const pos = posOf(w.meaning);
   const pool = shuffle(VOCAB).filter((o) =>
     o.phrase !== w.phrase && o.synonyms?.[0] &&
-    posOf(o.meaning) === pos && unrelated(o.meaning, w.meaning));
+    posOf(o.meaning) === pos && unrelated(o.meaning, w.meaning) &&
+    // The filler must not be a second valid opposite: "DEBILITATE → strengthen /
+    // weaken / enfeeble / improve" shipped with two defensible answers.
+    !sameFamily(o.synonyms[0], correct));
   const third = pool[0]?.synonyms?.[0];
   if (!third) return null;
 
