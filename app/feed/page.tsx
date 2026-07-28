@@ -10,6 +10,7 @@ import AltTrick from "@/components/AltTrick";
 import { ALT_TRICKS } from "@/data/altTricks";
 import { RuleVisual, VisualType } from "@/components/visuals/RuleVisual";
 import { detectConcepts } from "@/data/concepts";
+import { triggersFor } from "@/data/triggers";
 import AskAISheet from "@/components/AskAISheet";
 
 export default function FeedPage() {
@@ -79,7 +80,14 @@ export default function FeedPage() {
     if (filter === "unseen" && progress[r.id] === "confident") return false;
     if (filter === "revise" && progress[r.id] !== "revise") return false;
     if (filter === "star" && !r.star) return false;
-    if (search && !r.title.toLowerCase().includes(search.toLowerCase()) && !r.ruleNumber.toLowerCase().includes(search.toLowerCase())) return false;
+    // Searching the trigger words too: in the exam you meet "no sooner" or
+    // "each of" before you know which rule it belongs to, so that has to be a
+    // way in. Rule text is searched for the same reason.
+    if (search) {
+      const q = search.toLowerCase();
+      const hay = [r.title, r.ruleNumber, r.rule, ...triggersFor(r.id)].join(" ").toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
 
@@ -307,6 +315,23 @@ function DesktopRuleDetail({
         {ALT_TRICKS[rule.ruleNumber] && <AltTrick trick={ALT_TRICKS[rule.ruleNumber]} />}
       </div>
 
+      {/* Trigger words — the way into the rule, so it sits right under it */}
+      {triggersFor(rule.id).length > 0 && (
+        <div className="rounded-3xl px-6 py-5 mb-5" style={{ background: "#fffbeb", border: "1.5px solid #fde68a" }}>
+          <p className="text-[10px] font-black uppercase tracking-widest text-amber-600 mb-2.5 flex items-center gap-1.5">
+            <span className="text-[13px]">🎯</span> Spot these in the question
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {triggersFor(rule.id).map((t) => (
+              <span key={t} className="px-3 py-1.5 rounded-xl text-[13px] font-bold text-amber-900"
+                style={{ background: "#fef3c7", border: "1.5px solid #fcd34d" }}>
+                {t}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Concept chips */}
       {(() => {
         const chips = detectConcepts(rule.title, rule.rule, rule.extras?.join(" "));
@@ -470,6 +495,9 @@ function DesktopRuleDetail({
         context={[
           `Grammar rule the student is reading — Rule ${rule.ruleNumber} (${rule.section}): ${rule.title}`,
           `Rule text: ${rule.rule}`,
+          triggersFor(rule.id).length
+            ? `Trigger words for this rule (what the student spots in a question): ${triggersFor(rule.id).join(", ")}`
+            : "",
           rule.correct.length ? `Correct examples: ${rule.correct.slice(0, 3).join(" | ")}` : "",
           rule.wrong?.length ? `Wrong examples: ${rule.wrong.slice(0, 3).join(" | ")}` : "",
         ].filter(Boolean).join("\n")}

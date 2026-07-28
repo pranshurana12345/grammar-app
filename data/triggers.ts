@@ -1,0 +1,119 @@
+// ── Trigger words ────────────────────────────────────────────────────────────
+// The words that give a rule away. In the exam you don't read a sentence and
+// think "which of the 101 rules is this?" — you spot "lest" or "no sooner" or
+// "each of" and the rule arrives with it. That is the whole skill, and it was
+// buried inside the rule text.
+//
+// Keyed by rule id. Rules whose trigger is structural rather than lexical
+// (five forms of a verb, adverb order) are deliberately absent — a chip reading
+// "no auxiliary present" is noise, and half-useful chips make the useful ones
+// stop being read.
+//
+// Used in three places: chips on the rule card, the Learn search box, and the
+// AI (both retrieval and the answer, which is told to name the trigger).
+
+export const RULE_TRIGGERS: Record<number, string[]> = {
+  0: ["lest"],
+  2: ["has / have / had + noun", "no verb after it"],
+  3: ["seldom", "hardly", "scarcely", "barely", "rarely", "never", "few", "little", "none", "nothing"],
+  4: ["Let's", "Let us"],
+  5: ["can", "could", "may", "might", "should", "would", "must", "ought to", "need not", "dare not", "used to"],
+  6: ["everybody", "nobody", "somebody", "everything", "nothing", "something", "anyone"],
+  7: ["Don't …", "Please …", "an order with no subject"],
+  8: ["love", "hate", "know", "think", "believe", "understand", "belong", "contain", "smell", "taste", "see"],
+  11: ["cast", "cut", "put", "shut", "hit", "let", "cost", "hurt", "spread", "burst"],
+  12: ["fly / flow", "fall / fell", "bear", "lie / lay"],
+  13: ["drunk / drunken", "sunk / sunken", "melted / molten", "shaved / shaven"],
+  14: ["be", "been", "being", "is", "am", "are", "was", "were"],
+  15: ["as well as", "along with", "together with", "no less than", "in addition to", "rather than", "besides", "accompanied by", "except"],
+  16: ["many a", "more than one"],
+  17: ["a number of", "the number of"],
+  18: ["a set of", "a chain of", "a team of", "a crowd of", "a band of", "a group of", "a class of"],
+  19: ["one of", "either of", "each of", "neither of", "any of", "none of", "every one of"],
+  20: ["hardly", "scarcely", "seldom", "never", "nobody", "no one"],
+  21: ["either … or", "neither … nor", "not only … but also"],
+  22: ["ten miles", "five years", "fifty rupees", "two hours"],
+  23: ["most of"],
+  24: ["after", "before", "by the time", "when", "already"],
+  25: ["it's time", "it's high time", "it's about time"],
+  26: ["if", "unless", "provided that", "in case"],
+  27: ["though", "although"],
+  28: ["even if", "even though"],
+  29: ["unless", "until"],
+  30: ["whether", "or not"],
+  31: ["wish", "suppose", "if only", "as if", "as though"],
+  32: ["each", "either", "neither", "everyone", "nobody", "no one", "anyone", "someone", "one"],
+  33: ["who", "whom"],
+  34: ["all", "any", "the only", "the same", "none", "the best / the first (superlative)"],
+  35: ["each other", "one another"],
+  36: ["separation", "excuse", "mention", "favour", "pardon", "leave", "report", "sight"],
+  37: ["you, he and I", "I, you and he"],
+  39: ["with a view to", "looking forward to", "it's no use", "can't help", "used to", "accustomed to", "addicted to", "averse to", "prone to", "prior to", "owing to", "devoted to", "object to"],
+  40: ["my going", "his being", "their coming"],
+  41: ["to + adverb + verb"],
+  42: ["bid", "see", "watch", "hear", "make", "let", "help", "would rather", "had better"],
+  43: ["can", "could", "may", "might", "shall", "will", "should", "would", "must", "ought to", "need", "dare", "used to", "had better"],
+  44: ["father-in-law", "brother-in-law", "passer-by", "commander-in-chief", "looker-on"],
+  45: ["jury", "committee", "family", "team", "audience", "crowd", "government", "public"],
+  46: ["hand in hand", "day by day", "side by side", "house to house", "word for word"],
+  47: ["the + a person's name"],
+  48: ["few", "a few", "the few", "little", "a little", "the little"],
+  49: ["equipment", "news", "scenery", "machinery", "furniture", "luggage", "information", "advice", "knowledge", "poetry", "crockery", "grocery"],
+  50: ["mathematics", "statistics", "physics", "economics", "politics", "ethics"],
+  51: ["data", "criteria", "phenomena", "bacteria", "alumni", "strata", "syllabi", "memoranda"],
+  52: ["advise", "ask", "beg", "encourage", "invite", "tell", "order", "attack"],
+  53: ["the first / the second", "chapter one / page two"],
+  54: ["my / our / your / his / her / its / their", "mine / ours / yours / hers / theirs"],
+  56: ["an hour", "an honest", "a university", "a European", "a one-rupee note", "an M.P."],
+  57: ["go to school / the school", "go to hospital / the hospital", "go to bed", "go to church"],
+  58: ["English", "Hindi", "the English", "the poor", "the rich"],
+  59: ["superior", "inferior", "junior", "senior", "prior", "anterior", "posterior", "prefer", "preferable"],
+  60: ["for", "since"],
+  61: ["died of", "died from", "died by", "died in", "died with"],
+  62: ["on foot", "by car", "in his car", "on a bicycle", "by train"],
+  63: ["order for"],
+  64: ["in", "into"],
+  65: ["on", "upon", "onto"],
+  66: ["so", "such"],
+  67: ["too much", "much too"],
+  68: ["at 5 o'clock", "on Monday", "in June"],
+  69: ["with", "by", "in ink"],
+  70: ["in the beginning", "at the beginning"],
+  71: ["made of", "made from"],
+  72: ["Ram's", "boys'", "children's", "a day's journey"],
+  73: ["beside", "besides"],
+  74: ["between", "among", "between … and"],
+  75: ["five-year-old", "ten-rupee note", "two-hour journey"],
+  76: ["hundreds of thousands", "tens of hundreds"],
+  77: ["seldom or never", "seldom if ever", "seldom or ever"],
+  78: ["both … and", "both … as well as", "both … not"],
+  79: ["advice / advise", "practice / practise", "licence / license", "device / devise", "prophecy / prophesy"],
+  80: ["enough"],
+  81: ["no sooner … than", "hardly … when", "scarcely … when", "barely … when"],
+  82: ["seldom", "rarely", "never", "little", "nowhere (at the start)"],
+  83: ["as … as", "so … as"],
+  84: ["that of", "those of"],
+  85: ["superior", "inferior", "senior", "junior", "prior", "prefer"],
+  86: ["yesterday", "last week", "in 1990", "ago", "just", "already", "yet", "ever", "recently"],
+  87: ["return back", "revert back", "repeat again", "cousin brother", "free gift", "more preferable"],
+  88: ["quite", "quiet"],
+  89: ["each", "all", "their own"],
+  90: ["absent", "avail", "reconcile", "amuse", "pride", "exert", "enjoy", "punish"],
+  91: ["one", "one's"],
+  92: ["he and I", "him and me", "between you and me"],
+  93: ["it is I", "it was he"],
+  94: ["through"],
+  95: ["a person and a thing together"],
+  96: ["either of", "neither of"],
+  97: ["a one-eyed man", "an 18-year-old", "a one-rupee note"],
+  98: ["seldom or never", "seldom if ever"],
+  99: ["five-year-old", "ten-rupee", "three-day"],
+  100: ["between", "among"],
+};
+
+/** Trigger words for a rule, or an empty list when its cue is structural. */
+export function triggersFor(ruleId: number): string[] {
+  return RULE_TRIGGERS[ruleId] ?? [];
+}
+
+export const TRIGGER_RULE_COUNT = Object.keys(RULE_TRIGGERS).length;

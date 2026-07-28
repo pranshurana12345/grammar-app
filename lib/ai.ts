@@ -17,6 +17,7 @@
 // clamp max_tokens (or skip the model) so a request is only ever sent when it
 // can actually fit.
 import { rules, SECTIONS } from "@/data/rules";
+import { triggersFor } from "@/data/triggers";
 
 type TextPart = { type: "text"; text: string };
 type ImagePart = { type: "image_url"; image_url: { url: string } };
@@ -606,11 +607,18 @@ function tokenize(text: string): string[] {
  */
 // Indexed once per process: the token bag of every rule, plus how many rules
 // each token appears in (its document frequency).
-const RULE_DOCS = rules.map((r) => ({
-  r,
-  bag: new Set(tokenize(`${r.title} ${r.rule} ${r.section}`)),
-  title: new Set(tokenize(r.title)),
-}));
+// Trigger words are indexed like title words, and weighted like them below: a
+// student's question contains "no sooner" or "each of" long before it contains
+// anything from the rule's title, so those are the terms that should pull the
+// right rule out of the corpus.
+const RULE_DOCS = rules.map((r) => {
+  const triggers = triggersFor(r.id).join(" ");
+  return {
+    r,
+    bag: new Set(tokenize(`${r.title} ${r.rule} ${r.section} ${triggers}`)),
+    title: new Set(tokenize(`${r.title} ${triggers}`)),
+  };
+});
 
 const DOC_FREQ = (() => {
   const df = new Map<string, number>();
@@ -654,8 +662,15 @@ function scoreRules(query: string, k: number) {
     .map((s) => s.r);
 }
 
+/** A rule with its trigger words attached — only used for the handful of rules
+ *  we send in full, so the index itself stays cheap. */
+function ruleWithTriggers(r: (typeof rules)[number]): string {
+  const t = triggersFor(r.id);
+  return `${ruleLine(r)}: ${r.rule}${t.length ? ` [Trigger words: ${t.join(", ")}]` : ""}`;
+}
+
 export function relevantRules(query: string, k = 6): string {
-  return scoreRules(query, k).map((r) => `${ruleLine(r)}: ${r.rule}`).join("\n");
+  return scoreRules(query, k).map(ruleWithTriggers).join("\n");
 }
 
 /**
@@ -681,7 +696,7 @@ export function relevantRulesMulti(text: string, perChunk = 3, cap = 10): string
       picked.push(r);
     }
   }
-  return picked.map((r) => `${ruleLine(r)}: ${r.rule}`).join("\n");
+  return picked.map(ruleWithTriggers).join("\n");
 }
 
 // What the AI should know about the exam and the app itself.

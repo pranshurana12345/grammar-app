@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from "react";
 import RulePoints from "@/components/RulePoints";
 import AltTrick from "@/components/AltTrick";
 import { ALT_TRICKS } from "@/data/altTricks";
+import { triggersFor } from "@/data/triggers";
 import AskAISheet from "@/components/AskAISheet";
 
 type Props = {
@@ -79,6 +80,7 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
 
   const hasLang = !!(rule.hindiTip || rule.hinglishTip);
   const chips = detectConcepts(rule.title, rule.rule, rule.extras?.join(" ")).slice(0, 5);
+  const triggers = triggersFor(rule.id);
 
   return (
     <div className="relative w-full h-full flex flex-col bg-white overflow-hidden">
@@ -119,6 +121,24 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
             <RulePoints text={rule.rule} color={c} />
           </div>
           {ALT_TRICKS[rule.ruleNumber] && <AltTrick trick={ALT_TRICKS[rule.ruleNumber]} />}
+
+          {/* Trigger words — what you actually spot in the exam. Sits directly
+              under the rule because it is the way IN to the rule, not an extra. */}
+          {triggers.length > 0 && (
+            <div className="mt-3 rounded-xl px-3.5 py-3" style={{ background: "#fffbeb", border: "1px solid #fde68a" }}>
+              <p className="text-[9.5px] font-black uppercase tracking-widest text-amber-600 mb-1.5 flex items-center gap-1">
+                <span className="text-[11px]">🎯</span> Spot these in the question
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {triggers.map((t) => (
+                  <span key={t} className="px-2 py-0.5 rounded-md text-[11.5px] font-bold text-amber-900"
+                    style={{ background: "#fef3c7", border: "1px solid #fcd34d" }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Concept chips */}
@@ -298,6 +318,9 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
           context={[
             `Grammar rule the student is reading — Rule ${rule.ruleNumber} (${rule.section}): ${rule.title}`,
             `Rule text: ${rule.rule}`,
+            triggers.length
+              ? `Trigger words for this rule (what the student spots in a question): ${triggers.join(", ")}`
+              : "",
             rule.correct.length ? `Correct examples: ${rule.correct.slice(0, 3).join(" | ")}` : "",
             rule.wrong?.length ? `Wrong examples: ${rule.wrong.slice(0, 3).join(" | ")}` : "",
           ].filter(Boolean).join("\n")}
