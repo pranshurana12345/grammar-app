@@ -10,19 +10,35 @@ export const maxDuration = 60;
 // re-sent on every retry in the fallback chain, which inflated latency and ate
 // the Groq per-minute token limit. Now the tutor gets every rule TITLE (so it
 // can still cite anything) plus the full text of only the relevant rules.
-function systemPrompt(topic: string): string {
-  const relevant = relevantRules(topic);
-  return `You are Grammy AI — the friendly English tutor inside the Grammy app, used by AFCAT/SSC aspirants in India. You know the app's complete rulebook, the AFCAT exam, and the app itself — the student can ask you anything about any of these.
-
-If a CONTEXT block is present, it describes what the student is currently looking at (a grammar rule, or a practice question they just attempted) — anchor your answer to it, but you may bring in any related rule.
-
-How to answer:
+// "practice" is what the chat sheet's Fill-in-the-blanks / Quiz-me buttons send.
+// Those need a longer, numbered answer with the key held back to the end, which
+// is the opposite of the 2–6 sentence house style — so the style block swaps
+// rather than being contradicted mid-prompt.
+const CHAT_STYLE = `How to answer:
 - Be warm, encouraging and CONCISE — 2 to 6 short sentences, or a tiny list. This renders in a small chat sheet on a phone.
 - Explain in simple English. If the student writes in Hindi/Hinglish, reply in easy Hinglish.
 - Use one tiny example sentence where it helps. Mnemonics and tricks are welcome.
 - Quote rules by their exact names (e.g. "Rule 23 — …") so the student can revisit them in the Learn tab.
 - Stay on-topic: English grammar, vocabulary, the AFCAT exam, study strategy, and this app. Politely decline anything else.
-- Plain text only — no markdown headings or bold markers.
+- Plain text only — no markdown headings or bold markers.`;
+
+const PRACTICE_STYLE = `How to answer — the student has asked you to SET PRACTICE, so length is fine here:
+- Give exactly the number of questions asked for, numbered 1, 2, 3…
+- Every question must test the rule or word in the CONTEXT block. Use fresh sentences, Indian names and settings, and AFCAT difficulty — one careless-reader trap in each.
+- Before you write a question down, check that exactly ONE option can be defended. If you cannot make the others clearly wrong, throw that question away and write a different one.
+- Never reveal an answer beside its question. Put a blank line, then "ANSWERS:", then the key — ONE line per question: the letter, then a short reason. Nothing else.
+- Never think aloud, never argue with yourself, never explain your process. If something isn't working, fix it silently before you write. The student sees every word you produce.
+- MCQs: four options labelled (a) (b) (c) (d), one correct, the other three plausible but definitely wrong.
+- Blanks: write the gap as ......... and never leave the missing word visible elsewhere in the sentence.
+- Plain text only — no markdown, no asterisks, no headings. No preamble, start at question 1.`;
+
+function systemPrompt(topic: string, mode: string): string {
+  const relevant = relevantRules(topic);
+  return `You are Grammy AI — the friendly English tutor inside the Grammy app, used by AFCAT/SSC aspirants in India. You know the app's complete rulebook, the AFCAT exam, and the app itself — the student can ask you anything about any of these.
+
+If a CONTEXT block is present, it describes what the student is currently looking at (a grammar rule, or a practice question they just attempted) — anchor your answer to it, but you may bring in any related rule.
+
+${mode === "practice" ? PRACTICE_STYLE : CHAT_STYLE}
 
 ${APP_KB}
 
@@ -39,6 +55,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const context: string = typeof body.context === "string" ? body.context.slice(0, 4000) : "";
+    const mode: string = body.mode === "practice" ? "practice" : "chat";
     const history: ChatMsg[] = Array.isArray(body.messages)
       ? body.messages
           .filter((m: ChatMsg) => (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
@@ -61,10 +78,15 @@ export async function POST(request: Request) {
     // ("what about neither?") still pull the right rules in.
     const topic = `${context}\n${history[history.length - 1].content}`;
     const { model, provider, stream } = await aiChatStream({
-      system: systemPrompt(topic),
+      system: systemPrompt(topic, mode),
       messages,
-      maxTokens: 700,
-      temperature: 0.5,
+      // Five MCQs with an answer key don't fit in a chat reply's budget. Safe to
+      // raise: budgetFor() in lib/ai.ts clamps this down to whatever a model's
+      // per-minute ceiling can spare rather than sending a doomed request.
+      maxTokens: mode === "practice" ? 1200 : 700,
+      // Setting questions needs care, not flair — a hotter sample is what had
+      // the model second-guessing itself out loud inside the answer key.
+      temperature: mode === "practice" ? 0.55 : 0.5,
     });
 
     // Stream straight through to the client, stripping any markdown emphasis the
@@ -74,7 +96,10 @@ export async function POST(request: Request) {
       async start(controller) {
         try {
           for await (const delta of stream) {
-            controller.enqueue(encoder.encode(delta.replace(/\*\*|__/g, "")));
+            // The sheet renders plain text, so markdown emphasis arrives as
+            // literal *stars* around the example sentences. Strip every
+            // asterisk, not just the bold pairs.
+            controller.enqueue(encoder.encode(delta.replace(/\*+|__/g, "")));
           }
         } catch (e) {
           console.warn("[ask] stream broke mid-reply:", e);

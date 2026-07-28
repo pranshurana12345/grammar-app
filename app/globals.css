@@ -95,6 +95,11 @@ html, body {
   /* Drop heavy shadows for a flatter, ink-friendly look */
   .print-flat { box-shadow: none !important; }
 
+  /* A collapsed accordion body still belongs in the printout — the Special
+     Cases notes are closed by default on screen, and a PDF of nothing but
+     headings would be useless. */
+  .print-open { display: block !important; }
+
   /* ── Reference tables (idioms) ─────────────────────────────────────────────
      The screen list is a stack of flex cards, which CSS multi-column splits
      badly — rows overlapped and were clipped at the page edge. So printing

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { EXCEPTION_CASE_COUNT } from "@/data/exceptions";
+import { IDIOMS } from "@/data/idioms";
 
-type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab";
+type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab" | "exceptions";
 
 const SECTIONS: {
   href: string; title: string; overview: string; count: string;
@@ -36,6 +38,15 @@ const SECTIONS: {
     motif: "verbs",
   },
   {
+    href: "/reference/exceptions",
+    title: "Special Cases",
+    overview: "The words that break their own rule.",
+    count: `${EXCEPTION_CASE_COUNT} exceptions`,
+    color: "#e11d48",
+    gradient: "linear-gradient(135deg,#9f1239 0%,#f43f5e 100%)",
+    motif: "exceptions",
+  },
+  {
     href: "/reference/confusables",
     title: "Confusable Words",
     overview: "35+ word pairs people mix up.",
@@ -48,7 +59,8 @@ const SECTIONS: {
     href: "/reference/idioms",
     title: "Idioms & Phrases",
     overview: "Picture-based idioms that stick.",
-    count: "108 idioms",
+    // Counted, not hardcoded — the old "108" was three imports out of date.
+    count: `${IDIOMS.length} idioms`,
     color: "#d97706",
     gradient: "linear-gradient(135deg,#d97706 0%,#f59e0b 100%)",
     motif: "idioms",
@@ -109,6 +121,24 @@ function BannerArt({ motif }: { motif: Motif }) {
         <text x="104" y="56" fill="white" fillOpacity="0.85" fontSize="28" fontWeight="900" textAnchor="middle">B</text>
         <path d="M44 28h36M73 21l9 7-9 7" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M86 50H50M57 43l-9 7 9 7" stroke="white" strokeOpacity="0.8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  if (motif === "exceptions")
+    // A rule-book line of ticks with one crossed-out square breaking rank —
+    // "everything follows the rule except this one".
+    return (
+      <svg width="140" height="78" viewBox="0 0 140 78" fill="none">
+        {[0, 1, 3].map((i) => (
+          <g key={i} transform={`translate(${10 + i * 33}, 22)`}>
+            <rect width="27" height="27" rx="8" fill="white" fillOpacity="0.42" />
+            <path d="M8 14l4.5 4.5L19 9" stroke="white" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+          </g>
+        ))}
+        <g transform="translate(76, 14)">
+          <rect width="33" height="33" rx="9" fill="white" />
+          <path d="M11 11l11 11M22 11L11 22" stroke="#9f1239" strokeWidth="3.2" strokeLinecap="round" />
+        </g>
+        <circle cx="92.5" cy="58" r="3" fill="white" fillOpacity="0.9" />
       </svg>
     );
   if (motif === "idioms")
