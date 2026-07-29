@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "build:android": "next build && npx cap sync android",
+    "build:android": "node scripts/build-android.mjs",
     "cap:open": "npx cap open android"
   },
   "dependencies": {
