@@ -607,18 +607,53 @@ function tokenize(text: string): string[] {
  */
 // Indexed once per process: the token bag of every rule, plus how many rules
 // each token appears in (its document frequency).
-// Trigger words are indexed like title words, and weighted like them below: a
-// student's question contains "no sooner" or "each of" long before it contains
-// anything from the rule's title, so those are the terms that should pull the
-// right rule out of the corpus.
-const RULE_DOCS = rules.map((r) => {
-  const triggers = triggersFor(r.id).join(" ");
-  return {
-    r,
-    bag: new Set(tokenize(`${r.title} ${r.rule} ${r.section} ${triggers}`)),
-    title: new Set(tokenize(`${r.title} ${triggers}`)),
-  };
-});
+// Trigger words are matched as PHRASES, not folded into the word bag. Bagging
+// them and weighting them like title words backfired: "boys'" is a trigger for
+// the apostrophe rule, so "neither of the boys were present" retrieved
+// apostrophes instead of "Neither of + singular verb". A trigger earns its
+// keep by appearing in the question intact — "neither of", "no sooner", "each
+// of" — which is exactly how the student uses it.
+const RULE_DOCS = rules.map((r) => ({
+  r,
+  bag: new Set(tokenize(`${r.title} ${r.rule} ${r.section}`)),
+  title: new Set(tokenize(r.title)),
+  // A trigger written with an ellipsis ("hardly … when", "no sooner … than")
+  // is a SPLIT pair: the two halves sit at either end of the clause with the
+  // sentence in between, so it can never match as one contiguous phrase.
+  // Those are the most diagnostic triggers in the whole file — matching them
+  // is the difference between finding the Inversions rule and finding
+  // "Has/Have/Had" because the sentence happened to contain "had".
+  triggers: triggersFor(r.id)
+    .map((raw) => raw.split(/…|\.\.\./).map(phraseBits).filter((p) => p.length >= 3))
+    .filter((parts) => parts.length > 0 && parts.join("").length >= 4),
+}));
+
+function phraseBits(s: string): string {
+  return s.toLowerCase().replace(/[^a-z\s]/g, " ").replace(/\s+/g, " ").trim();
+}
+
+const phraseNorm = (s: string) => ` ${phraseBits(s)} `;
+
+/** What a trigger found in the question is worth. A split pair or a multi-word
+ *  phrase is far more diagnostic than one common word, so it scores enough to
+ *  outrank incidental vocabulary overlap. */
+function triggerBonus(query: string, triggers: string[][]): number {
+  const hay = phraseNorm(query);
+  let bonus = 0;
+  for (const parts of triggers) {
+    // Each half must appear, and in order — "hardly" before "when".
+    let at = 0;
+    const all = parts.every((p) => {
+      const i = hay.indexOf(` ${p} `, at);
+      if (i === -1) return false;
+      at = i + p.length;
+      return true;
+    });
+    if (!all) continue;
+    bonus += parts.length > 1 || parts[0].includes(" ") ? 9 : 3;
+  }
+  return bonus;
+}
 
 const DOC_FREQ = (() => {
   const df = new Map<string, number>();
@@ -647,7 +682,7 @@ function scoreRules(query: string, k: number) {
   if (terms.length === 0) return [];
 
   return RULE_DOCS.map((doc) => {
-    let score = 0;
+    let score = triggerBonus(query, doc.triggers);
     for (const term of terms) {
       if (!doc.bag.has(term)) continue;
       // A hit in the title still counts for more — just not enough to let a
