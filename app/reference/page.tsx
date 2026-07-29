@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { EXCEPTION_CASE_COUNT } from "@/data/exceptions";
+import { PAIR_COUNT } from "@/data/wordPairs";
 import { IDIOMS } from "@/data/idioms";
 
-type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab" | "exceptions";
+type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab" | "exceptions" | "pairs";
 
 const SECTIONS: {
   href: string; title: string; overview: string; count: string;
@@ -36,6 +37,15 @@ const SECTIONS: {
     color: "#2d7ff9",
     gradient: "linear-gradient(135deg,#1257d6 0%,#5aa0ff 100%)",
     motif: "verbs",
+  },
+  {
+    href: "/reference/pairs",
+    title: "Which Word Takes What",
+    overview: "Notes: word on the left, what it takes on the right.",
+    count: `${PAIR_COUNT} notes`,
+    color: "#0284c7",
+    gradient: "linear-gradient(135deg,#075985 0%,#0ea5e9 100%)",
+    motif: "pairs",
   },
   {
     href: "/reference/exceptions",
@@ -121,6 +131,20 @@ function BannerArt({ motif }: { motif: Motif }) {
         <text x="104" y="56" fill="white" fillOpacity="0.85" fontSize="28" fontWeight="900" textAnchor="middle">B</text>
         <path d="M44 28h36M73 21l9 7-9 7" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M86 50H50M57 43l-9 7 9 7" stroke="white" strokeOpacity="0.8" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  if (motif === "pairs")
+    // Two columns of a notes sheet: the word, and what it takes.
+    return (
+      <svg width="146" height="78" viewBox="0 0 146 78" fill="none">
+        {[0, 1, 2].map((i) => (
+          <g key={i} transform={`translate(6, ${12 + i * 21})`}>
+            <rect width="46" height="13" rx="6.5" fill="white" fillOpacity="0.95" />
+            <path d="M56 6.5h12" stroke="white" strokeOpacity="0.6" strokeWidth="2.4" strokeLinecap="round" />
+            <path d="M64 3l4 3.5-4 3.5" stroke="white" strokeOpacity="0.6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            <rect x="74" width="60" height="13" rx="6.5" fill="white" fillOpacity={0.55 - i * 0.08} />
+          </g>
+        ))}
       </svg>
     );
   if (motif === "exceptions")
