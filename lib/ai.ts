@@ -673,6 +673,26 @@ export function relevantRules(query: string, k = 6): string {
   return scoreRules(query, k).map(ruleWithTriggers).join("\n");
 }
 
+/** The same retrieval, as data — for the public reference API and for checking
+ *  a citation the model produced. */
+export function searchRules(query: string, k = 6) {
+  return scoreRules(query, k);
+}
+
+/**
+ * Is this a rule the app actually has? Models invent citations — "Rule 47 —
+ * Subject-Verb Agreement" reads exactly like the real thing and sends the
+ * student to a rule that says something else. Matching is on the NUMBER, since
+ * that is what the student navigates by.
+ */
+const RULE_BY_NUMBER = new Map(rules.map((r) => [r.ruleNumber.toLowerCase(), r]));
+
+export function realRule(citation: string) {
+  const m = citation.match(/\b(rule\s*\d+|bonus)\b/i);
+  if (!m) return undefined;
+  return RULE_BY_NUMBER.get(m[1].replace(/\s+/g, " ").trim().toLowerCase());
+}
+
 /**
  * Retrieval for a message that may hold SEVERAL questions (a photographed page
  * of a paper, say). Scoring the whole blob at once lets the wordiest question

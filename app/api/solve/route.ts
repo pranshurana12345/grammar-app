@@ -1,5 +1,5 @@
 import {
-  aiChatStream, RULE_INDEX, relevantRulesMulti,
+  aiChatStream, RULE_INDEX, relevantRulesMulti, realRule,
   CORS_HEADERS, corsPreflight, jsonResponse, errorResponse,
 } from "@/lib/ai";
 
@@ -36,6 +36,7 @@ ${FORMAT}
 
 Hard requirements:
 - Be correct first. Read the question carefully, including every option, before deciding.
+- Everything you say about a rule must come from the rule text given below. Do not restate a rule from memory, do not extend it, and do not invent an exception it doesn't state. If the given rules don't settle the question, say so on the RULE line with "General English — <topic>" and answer from plain English instead. A confident wrong rule costs the student more than an honest "no rule covers this".
 - The RULE line must name a rule from the list below, character for character, or start with "General English —". Never invent a rule number.
 - If ANY rule in the "most likely involved" list covers the point being tested, you MUST cite that rule. Only fall back to "General English —" when the app genuinely has no rule for it (e.g. reported speech, vocabulary meaning).
 - Simple English. If the student writes Hinglish, keep WHY and APPLY in easy Hinglish. No markdown, no bold, no bullet characters.
@@ -47,6 +48,34 @@ The app's 101 rules — cite by these exact names:
 ${RULE_INDEX}
 
 ${relevant ? `Full text of the rules most likely involved here — prefer citing one of these:\n${relevant}` : ""}`;
+}
+
+/**
+ * A cited rule the app doesn't have is the worst hallucination this route can
+ * produce: "Rule 47 — Subject-Verb Agreement" reads exactly like a real
+ * citation, the client turns it into a chip, and the student taps through to a
+ * rule about something else. So every RULE: line is checked against the real
+ * rulebook before it leaves the server.
+ *
+ * A wrong NUMBER is rewritten to the real title for that number when one
+ * exists; an invented number is downgraded to "General English", which is the
+ * honest answer and the one the format already allows.
+ */
+function checkRuleLine(line: string): string {
+  if (!/^\s*RULE:/i.test(line)) return line;
+  const cited = line.replace(/^\s*RULE:\s*/i, "").trim();
+  if (!cited || /^general english/i.test(cited)) return line;
+
+  const found = realRule(cited);
+  if (!found) {
+    console.warn(`[solve] invented rule citation dropped: "${cited}"`);
+    return `RULE: General English — ${cited.replace(/^rule\s*\d+\s*[—-]\s*/i, "")}`;
+  }
+  const proper = `${found.ruleNumber} — ${found.title}`;
+  if (cited.toLowerCase() !== proper.toLowerCase()) {
+    console.warn(`[solve] rule citation corrected: "${cited}" → "${proper}"`);
+  }
+  return `RULE: ${proper}`;
 }
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
@@ -78,11 +107,23 @@ export async function POST(request: Request) {
     const encoder = new TextEncoder();
     const out = new ReadableStream<Uint8Array>({
       async start(controller) {
+        // The reply is line-based, so it can be checked line by line as it
+        // streams: hold back the partial last line, and validate any RULE:
+        // line before it reaches the student.
+        let pending = "";
+        const clean = (s: string) => s.replace(/\*\*|__|^#+ /gm, "");
+
         try {
           for await (const delta of stream) {
-            // The client renders plain text into cards; strip stray markdown.
-            controller.enqueue(encoder.encode(delta.replace(/\*\*|__|^#+ /gm, "")));
+            pending += clean(delta);
+            let nl: number;
+            while ((nl = pending.indexOf("\n")) !== -1) {
+              const line = pending.slice(0, nl);
+              pending = pending.slice(nl + 1);
+              controller.enqueue(encoder.encode(checkRuleLine(line) + "\n"));
+            }
           }
+          if (pending) controller.enqueue(encoder.encode(checkRuleLine(pending)));
         } catch (e) {
           console.warn("[solve] stream broke mid-reply:", e);
         } finally {
