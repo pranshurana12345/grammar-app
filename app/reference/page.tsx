@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { EXCEPTION_CASE_COUNT } from "@/data/exceptions";
 import { PAIR_COUNT } from "@/data/wordPairs";
+import { ONE_WORD_COUNT } from "@/data/oneWord";
 import { IDIOMS } from "@/data/idioms";
 
-type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab" | "exceptions" | "pairs";
+type Motif = "concepts" | "tenses" | "verbs" | "confusables" | "idioms" | "vocab" | "exceptions" | "pairs" | "oneword";
 
 const SECTIONS: {
   href: string; title: string; overview: string; count: string;
@@ -64,6 +65,15 @@ const SECTIONS: {
     color: "#dc2626",
     gradient: "linear-gradient(135deg,#e11d48 0%,#fb7185 100%)",
     motif: "confusables",
+  },
+  {
+    href: "/reference/one-word",
+    title: "One-Word Substitution",
+    overview: "A definition, and the one word for it.",
+    count: `${ONE_WORD_COUNT} words`,
+    color: "#c026d3",
+    gradient: "linear-gradient(135deg,#86198f 0%,#e879f9 100%)",
+    motif: "oneword",
   },
   {
     href: "/reference/idioms",
@@ -145,6 +155,18 @@ function BannerArt({ motif }: { motif: Motif }) {
             <rect x="74" width="60" height="13" rx="6.5" fill="white" fillOpacity={0.55 - i * 0.08} />
           </g>
         ))}
+      </svg>
+    );
+  if (motif === "oneword")
+    // A long definition collapsing into a single word.
+    return (
+      <svg width="146" height="78" viewBox="0 0 146 78" fill="none">
+        {[62, 50, 38].map((w, i) => (
+          <rect key={w} x="8" y={14 + i * 12} width={w} height="7" rx="3.5" fill="white" fillOpacity={0.85 - i * 0.18} />
+        ))}
+        <path d="M78 30h18M91 24.5l6 5.5-6 5.5" stroke="white" strokeOpacity="0.75" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="76" y="46" width="58" height="19" rx="9.5" fill="white" />
+        <text x="105" y="60" fill="#86198f" fontSize="12" fontWeight="900" textAnchor="middle">1 word</text>
       </svg>
     );
   if (motif === "exceptions")

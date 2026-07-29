@@ -3,6 +3,7 @@ import { triggersFor } from "@/data/triggers";
 import { IDIOMS } from "@/data/idioms";
 import { VOCAB } from "@/data/vocabulary";
 import { EXCEPTION_GROUPS } from "@/data/exceptions";
+import { ONE_WORD_GROUPS } from "@/data/oneWord";
 
 // ── Public reference API ─────────────────────────────────────────────────────
 // The app's study material as data, for an assistant outside the app to ground
@@ -79,6 +80,20 @@ function searchWords(q: string, terms: string[], limit: number) {
     .map((w) => ({ word: w.phrase, meaning: w.meaning, synonyms: w.synonyms ?? [], antonyms: w.antonyms ?? [], example: w.example ?? undefined }));
 }
 
+function searchOneWord(q: string, terms: string[], limit: number) {
+  const items = ONE_WORD_GROUPS.flatMap((g) => g.items.map((i) => ({ g, i })));
+  // Scored on the DEFINITION as much as the word: the question gives the
+  // definition and asks for the word, so "one who studies insects" has to find
+  // Entomologist without the word appearing anywhere in the query.
+  return topBy(items, limit, ({ i }) => score(q, terms, i.word, i.def))
+    .map(({ g, i }) => ({
+      word: i.word,
+      definition: i.def,
+      family: g.label,
+      often_confused_with: i.family ?? [],
+    }));
+}
+
 function searchExceptions(q: string, terms: string[], limit: number) {
   const notes = EXCEPTION_GROUPS.flatMap((g) => g.notes.map((note) => ({ g, note })));
   return topBy(notes, limit, ({ note }) =>
@@ -117,6 +132,7 @@ export async function GET(request: Request) {
     if (want("idioms")) body.idioms = searchIdioms(q, terms, limit);
     if (want("words")) body.words = searchWords(q, terms, limit);
     if (want("exceptions")) body.exceptions = searchExceptions(q, terms, limit);
+    if (want("oneword")) body.one_word_substitution = searchOneWord(q, terms, limit);
 
     return new Response(JSON.stringify(body), {
       headers: {

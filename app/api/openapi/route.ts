@@ -47,7 +47,7 @@ const SCHEMA = {
             in: "query",
             required: false,
             description: "Narrow the search. Use 'all' unless you know which one you need.",
-            schema: { type: "string", enum: ["all", "rules", "exceptions", "idioms", "words"], default: "all" },
+            schema: { type: "string", enum: ["all", "rules", "exceptions", "idioms", "words", "oneword"], default: "all" },
           },
           {
             name: "limit",
@@ -122,6 +122,18 @@ const SCHEMA = {
                           meaning: { type: "string" },
                           origin: { type: "string" },
                           group: { type: "string" },
+                        },
+                      },
+                    },
+                    one_word_substitution: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          word: { type: "string" },
+                          definition: { type: "string" },
+                          family: { type: "string", description: "The family the exam draws its distractors from." },
+                          often_confused_with: { type: "array", items: { type: "string" } },
                         },
                       },
                     },

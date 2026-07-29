@@ -129,61 +129,11 @@ export const GRAMMAR_POINTS: GrammarPoint[] = [
   { section: "Miscellaneous", point: "either / neither for two, any / none for more than two" },
 ];
 
-/** One-word substitution items. All three distractors come from the SAME
- *  family as the answer — that is what makes the real exam item hard — and are
- *  deliberately NOT synonyms of it, so the key stays defensible. */
-export type OneWordItem = { def: string; answer: string; family: string[] };
-
-export const ONE_WORD_ITEMS: OneWordItem[] = [
-  { def: "One who studies the origin and history of words", answer: "Etymologist", family: ["Entomologist", "Ethnologist", "Epistemologist"] },
-  { def: "One who studies insects", answer: "Entomologist", family: ["Etymologist", "Ornithologist", "Anthropologist"] },
-  { def: "A person who does not believe in the existence of God", answer: "Atheist", family: ["Agnostic", "Theist", "Heretic"] },
-  { def: "A remedy for all diseases and ills", answer: "Panacea", family: ["Antidote", "Placebo", "Sedative"] },
-  { def: "A post that brings good pay but almost no work", answer: "Sinecure", family: ["Honorarium", "Retainer", "Perquisite"] },
-  { def: "A person who hides on a ship or aircraft to travel free", answer: "Stowaway", family: ["Vagabond", "Fugitive", "Truant"] },
-  { def: "A sudden and unexpected piece of good fortune", answer: "Windfall", family: ["Bequest", "Dividend", "Stipend"] },
-  { def: "One who abstains completely from alcoholic drink", answer: "Teetotaller", family: ["Ascetic", "Recluse", "Epicure"] },
-  { def: "A lover of books", answer: "Bibliophile", family: ["Bibliographer", "Bibliopole", "Bibliomaniac"] },
-  { def: "One who hates mankind", answer: "Misanthrope", family: ["Philanthropist", "Misogynist", "Misogamist"] },
-  { def: "One who hates the institution of marriage", answer: "Misogamist", family: ["Misogynist", "Misanthrope", "Bigamist"] },
-  { def: "The murder of a king", answer: "Regicide", family: ["Fratricide", "Patricide", "Genocide"] },
-  { def: "The killing of one's own brother", answer: "Fratricide", family: ["Patricide", "Matricide", "Infanticide"] },
-  { def: "A person who walks in his sleep", answer: "Somnambulist", family: ["Somniloquist", "Insomniac", "Narcoleptic"] },
-  { def: "A person who talks in his sleep", answer: "Somniloquist", family: ["Somnambulist", "Ventriloquist", "Insomniac"] },
-  { def: "Government by officials", answer: "Bureaucracy", family: ["Aristocracy", "Plutocracy", "Oligarchy"] },
-  { def: "Government by the wealthy", answer: "Plutocracy", family: ["Oligarchy", "Aristocracy", "Autocracy"] },
-  { def: "Government by a small privileged group", answer: "Oligarchy", family: ["Monarchy", "Anarchy", "Theocracy"] },
-  { def: "A speech made without any preparation", answer: "Extempore", family: ["Soliloquy", "Eulogy", "Valediction"] },
-  { def: "A speech made by a person to himself", answer: "Soliloquy", family: ["Monologue", "Colloquy", "Dialogue"] },
-  { def: "Words inscribed on the tomb of a person", answer: "Epitaph", family: ["Epigram", "Epilogue", "Epithet"] },
-  { def: "A poem or song of mourning for the dead", answer: "Elegy", family: ["Ode", "Sonnet", "Ballad"] },
-  { def: "One who is present everywhere at the same time", answer: "Omnipresent", family: ["Omnipotent", "Omniscient", "Omnivorous"] },
-  { def: "One who knows everything", answer: "Omniscient", family: ["Omnipotent", "Omnipresent", "Prescient"] },
-  { def: "Animals that feed on both plants and flesh", answer: "Omnivorous", family: ["Carnivorous", "Herbivorous", "Insectivorous"] },
-  { def: "A hater of women", answer: "Misogynist", family: ["Misanthrope", "Philogynist", "Philanderer"] },
-  { def: "Something that can be believed", answer: "Credible", family: ["Credulous", "Creditable", "Incredulous"] },
-  { def: "A person who is too ready to believe anything", answer: "Credulous", family: ["Credible", "Creditable", "Incredulous"] },
-  { def: "A person who leaves his own country to settle in another", answer: "Emigrant", family: ["Immigrant", "Refugee", "Nomad"] },
-  { def: "A person who comes into a foreign country to settle there", answer: "Immigrant", family: ["Emigrant", "Expatriate", "Alien"] },
-  { def: "Fear of being shut in a small enclosed space", answer: "Claustrophobia", family: ["Agoraphobia", "Acrophobia", "Hydrophobia"] },
-  { def: "Fear of great heights", answer: "Acrophobia", family: ["Agoraphobia", "Claustrophobia", "Xenophobia"] },
-  { def: "A person who eats far too much", answer: "Glutton", family: ["Gourmet", "Epicure", "Ascetic"] },
-  { def: "An alphabetical list of books, with details, on a subject", answer: "Bibliography", family: ["Anthology", "Almanac", "Catalogue"] },
-  { def: "A published collection of poems or writings", answer: "Anthology", family: ["Bibliography", "Chronicle", "Compendium"] },
-  { def: "A yearly table of dates, tides and astronomical events", answer: "Almanac", family: ["Chronicle", "Directory", "Ledger"] },
-  { def: "A person who cannot be corrected or reformed", answer: "Incorrigible", family: ["Incongruous", "Incorruptible", "Inconsolable"] },
-  { def: "Handwriting that cannot be read", answer: "Illegible", family: ["Ineligible", "Indelible", "Ineffable"] },
-  { def: "Food that is not fit to be eaten", answer: "Inedible", family: ["Edible", "Indelible", "Ineffable"] },
-  { def: "A person who is habitually unable to sleep", answer: "Insomniac", family: ["Somnambulist", "Narcoleptic", "Somniloquist"] },
-  { def: "A word that reads the same backwards as forwards", answer: "Palindrome", family: ["Anagram", "Acronym", "Homonym"] },
-  { def: "One who is new to a trade or profession", answer: "Novice", family: ["Veteran", "Connoisseur", "Maestro"] },
-  { def: "A person appointed to settle a dispute between two parties", answer: "Arbitrator", family: ["Advocate", "Adjudicator", "Mediator"] },
-  { def: "A place where birds are kept", answer: "Aviary", family: ["Apiary", "Granary", "Hatchery"] },
-  { def: "A place where bees are kept", answer: "Apiary", family: ["Aviary", "Dairy", "Piggery"] },
-  { def: "One who deliberately sets fire to property", answer: "Arsonist", family: ["Anarchist", "Assassin", "Saboteur"] },
-  { def: "One who lives alone and avoids other people", answer: "Recluse", family: ["Ascetic", "Nomad", "Vagrant"] },
-  { def: "Practice of having more than one wife or husband at a time", answer: "Polygamy", family: ["Monogamy", "Bigamy", "Misogamy"] },
-];
+// One-word substitution moved to data/oneWord.ts, grouped by family so it can
+// also be the Study Hub notes page. Re-exported here so the practice generator
+// keeps one import and the questions can never drift from the notes.
+export { ONE_WORD_ITEMS } from "./oneWord";
+export type { OneWordItem } from "./oneWord";
 
 /**
  * Spelling sets: four exam words, each paired with the misspelling to use when

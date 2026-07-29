@@ -1,0 +1,360 @@
+// ── One-Word Substitution ────────────────────────────────────────────────────
+// Grouped by FAMILY, because that is how the exam sets them: four options that
+// all end in -cide, or all mean a place for something, and only one fits the
+// definition. Learning them alphabetically teaches you nothing about the trap.
+//
+// This is also the source the practice generator deals its One-Word questions
+// from (data/practicePool.ts re-exports it), so the questions and the notes page
+// can never drift apart. `family` holds the three same-family distractors the
+// exam would put beside the answer — present only where a genuine family exists.
+
+export type OneWordItem = {
+  word: string;
+  def: string;
+  /** Same-family words the paper uses as distractors. */
+  family?: string[];
+};
+
+export type OneWordGroup = {
+  id: string;
+  label: string;
+  emoji: string;
+  color: string;
+  note: string;
+  items: OneWordItem[];
+};
+
+export const ONE_WORD_GROUPS: OneWordGroup[] = [
+  {
+    id: "belief",
+    label: "Belief & attitude",
+    emoji: "🧭",
+    color: "#7c3aed",
+    note: "The commonest set in the paper — and the options always come from inside this list.",
+    items: [
+      { word: "Atheist", def: "One who does not believe in the existence of God", family: ["Agnostic", "Theist", "Heretic"] },
+      { word: "Agnostic", def: "One who believes nothing can be known about God's existence", family: ["Atheist", "Theist", "Sceptic"] },
+      { word: "Theist", def: "One who believes in the existence of God" },
+      { word: "Heretic", def: "One who holds a belief against the accepted religion" },
+      { word: "Sceptic", def: "One who habitually doubts accepted beliefs", family: ["Cynic", "Stoic", "Agnostic"] },
+      { word: "Cynic", def: "One who believes people act only out of self-interest" },
+      { word: "Stoic", def: "One who is indifferent to pleasure and pain", family: ["Epicurean", "Cynic", "Ascetic"] },
+      { word: "Epicurean", def: "One devoted to the pleasures of eating and drinking" },
+      { word: "Altruist", def: "One who lives for the good of others", family: ["Egotist", "Misanthrope", "Philanthropist"] },
+      { word: "Egotist", def: "One who talks constantly about himself" },
+      { word: "Philanthropist", def: "One who loves mankind and gives generously to it" },
+      { word: "Misanthrope", def: "One who hates mankind", family: ["Philanthropist", "Misogynist", "Misogamist"] },
+      { word: "Misogynist", def: "One who hates women", family: ["Misanthrope", "Philogynist", "Misogamist"] },
+      { word: "Misogamist", def: "One who hates the institution of marriage", family: ["Misogynist", "Misanthrope", "Bigamist"] },
+      { word: "Fanatic", def: "One filled with excessive and mistaken enthusiasm for a cause" },
+      { word: "Iconoclast", def: "One who attacks established beliefs and customs" },
+      { word: "Patriot", def: "One who loves and serves his country" },
+      { word: "Chauvinist", def: "One with an aggressive belief in the superiority of his own group" },
+    ],
+  },
+
+  {
+    id: "study",
+    label: "One who studies…",
+    emoji: "🔬",
+    color: "#2d7ff9",
+    note: "Etymologist and entomologist are one letter apart and mean entirely different things. That is the question.",
+    items: [
+      { word: "Etymologist", def: "One who studies the origin and history of words", family: ["Entomologist", "Ethnologist", "Epistemologist"] },
+      { word: "Entomologist", def: "One who studies insects", family: ["Etymologist", "Ornithologist", "Anthropologist"] },
+      { word: "Ornithologist", def: "One who studies birds", family: ["Entomologist", "Ichthyologist", "Zoologist"] },
+      { word: "Ichthyologist", def: "One who studies fish" },
+      { word: "Anthropologist", def: "One who studies human beings and their societies" },
+      { word: "Archaeologist", def: "One who studies ancient remains and ruins" },
+      { word: "Geologist", def: "One who studies the earth's crust and rocks" },
+      { word: "Philologist", def: "One who studies the development of language" },
+      { word: "Numismatist", def: "One who collects and studies coins", family: ["Philatelist", "Bibliophile", "Archivist"] },
+      { word: "Philatelist", def: "One who collects and studies postage stamps" },
+      { word: "Cartographer", def: "One who draws maps and charts" },
+      { word: "Calligrapher", def: "One skilled in beautiful handwriting" },
+      { word: "Astrologer", def: "One who studies the influence of stars on human affairs", family: ["Astronomer", "Astronaut", "Cosmologist"] },
+      { word: "Astronomer", def: "One who studies the stars and planets scientifically" },
+      { word: "Botanist", def: "One who studies plants" },
+      { word: "Pathologist", def: "One who studies the causes and effects of disease" },
+    ],
+  },
+
+  {
+    id: "rule",
+    label: "Government & rule",
+    emoji: "🏛️",
+    color: "#0d9488",
+    note: "Every option ends in -cracy or -archy. Sort them by WHO holds the power.",
+    items: [
+      { word: "Autocracy", def: "Government by one person with absolute power", family: ["Monarchy", "Oligarchy", "Democracy"] },
+      { word: "Monarchy", def: "Government by a king or queen" },
+      { word: "Democracy", def: "Government by the people through elected representatives" },
+      { word: "Aristocracy", def: "Government by the nobility or a privileged class", family: ["Plutocracy", "Oligarchy", "Bureaucracy"] },
+      { word: "Bureaucracy", def: "Government by officials", family: ["Aristocracy", "Plutocracy", "Oligarchy"] },
+      { word: "Plutocracy", def: "Government by the wealthy", family: ["Oligarchy", "Aristocracy", "Autocracy"] },
+      { word: "Oligarchy", def: "Government by a small privileged group", family: ["Monarchy", "Anarchy", "Theocracy"] },
+      { word: "Theocracy", def: "Government by priests, in the name of God" },
+      { word: "Anarchy", def: "Absence of government; complete disorder" },
+      { word: "Matriarchy", def: "A society ruled by women", family: ["Patriarchy", "Monarchy", "Oligarchy"] },
+      { word: "Patriarchy", def: "A society ruled by men" },
+      { word: "Autonomy", def: "The right of a state to govern itself" },
+    ],
+  },
+
+  {
+    id: "cide",
+    label: "Killing (-cide)",
+    emoji: "⚔️",
+    color: "#e11d48",
+    note: "All four options will end in -cide. Only the victim changes.",
+    items: [
+      { word: "Homicide", def: "The killing of a human being" },
+      { word: "Suicide", def: "The act of killing oneself" },
+      { word: "Regicide", def: "The murder of a king", family: ["Fratricide", "Patricide", "Genocide"] },
+      { word: "Patricide", def: "The murder of one's own father", family: ["Matricide", "Fratricide", "Infanticide"] },
+      { word: "Matricide", def: "The murder of one's own mother" },
+      { word: "Fratricide", def: "The murder of one's own brother", family: ["Patricide", "Matricide", "Infanticide"] },
+      { word: "Sororicide", def: "The murder of one's own sister" },
+      { word: "Infanticide", def: "The killing of an infant" },
+      { word: "Genocide", def: "The deliberate killing of a whole racial or ethnic group" },
+      { word: "Uxoricide", def: "The murder of one's own wife" },
+      { word: "Deicide", def: "The killing of a god" },
+      { word: "Insecticide", def: "A substance used for killing insects" },
+    ],
+  },
+
+  {
+    id: "fear",
+    label: "Fears & manias",
+    emoji: "😰",
+    color: "#f97316",
+    note: "-phobia is an irrational fear, -mania an irresistible urge. The exam mixes the two.",
+    items: [
+      { word: "Claustrophobia", def: "Fear of being shut in an enclosed space", family: ["Agoraphobia", "Acrophobia", "Hydrophobia"] },
+      { word: "Agoraphobia", def: "Fear of open or public places" },
+      { word: "Acrophobia", def: "Fear of great heights", family: ["Agoraphobia", "Claustrophobia", "Xenophobia"] },
+      { word: "Hydrophobia", def: "Fear of water" },
+      { word: "Xenophobia", def: "Fear or hatred of foreigners" },
+      { word: "Nyctophobia", def: "Fear of darkness or night" },
+      { word: "Pyromania", def: "An uncontrollable urge to set things on fire", family: ["Kleptomania", "Megalomania", "Monomania"] },
+      { word: "Kleptomania", def: "An uncontrollable urge to steal" },
+      { word: "Megalomania", def: "An obsession with one's own power and greatness" },
+      { word: "Bibliomania", def: "An extreme passion for collecting books" },
+    ],
+  },
+
+  {
+    id: "speech",
+    label: "Speech & writing",
+    emoji: "✍️",
+    color: "#a855f7",
+    note: "Several look alike — epitaph, epigram, epilogue, epithet — and each has one exact use.",
+    items: [
+      { word: "Soliloquy", def: "A speech made by a person to himself", family: ["Monologue", "Colloquy", "Dialogue"] },
+      { word: "Monologue", def: "A long speech by one person in company" },
+      { word: "Colloquy", def: "A formal conversation between two or more people" },
+      { word: "Extempore", def: "A speech made without any preparation", family: ["Soliloquy", "Eulogy", "Valediction"] },
+      { word: "Eulogy", def: "A speech or writing in high praise of someone" },
+      { word: "Elegy", def: "A poem or song of mourning for the dead", family: ["Ode", "Sonnet", "Ballad"] },
+      { word: "Epitaph", def: "Words inscribed on the tomb of a person", family: ["Epigram", "Epilogue", "Epithet"] },
+      { word: "Epigram", def: "A short witty saying that makes a point" },
+      { word: "Epilogue", def: "A short passage added at the end of a book or play", family: ["Prologue", "Epitaph", "Postscript"] },
+      { word: "Prologue", def: "An introduction to a poem or play" },
+      { word: "Postscript", def: "Something added at the end of a letter after the signature" },
+      { word: "Palindrome", def: "A word that reads the same backwards as forwards", family: ["Anagram", "Acronym", "Homonym"] },
+      { word: "Anagram", def: "A word made by rearranging the letters of another" },
+      { word: "Acronym", def: "A word formed from the first letters of other words" },
+      { word: "Pseudonym", def: "A false name used by a writer", family: ["Anonym", "Acronym", "Synonym"] },
+      { word: "Autobiography", def: "The life story of a person written by himself", family: ["Biography", "Memoir", "Chronicle"] },
+      { word: "Biography", def: "The life story of a person written by someone else" },
+      { word: "Manuscript", def: "A book or document written by hand" },
+      { word: "Plagiarism", def: "Passing off another's writing as one's own" },
+      { word: "Verbatim", def: "Repeated in exactly the same words" },
+    ],
+  },
+
+  {
+    id: "places",
+    label: "A place for…",
+    emoji: "🏠",
+    color: "#0284c7",
+    note: "Aviary and apiary differ by one letter and by the whole animal.",
+    items: [
+      { word: "Aviary", def: "A place where birds are kept", family: ["Apiary", "Granary", "Hatchery"] },
+      { word: "Apiary", def: "A place where bees are kept", family: ["Aviary", "Dairy", "Piggery"] },
+      { word: "Granary", def: "A place where grain is stored" },
+      { word: "Dairy", def: "A place where milk and butter are produced" },
+      { word: "Arsenal", def: "A place where weapons and ammunition are made or stored", family: ["Armoury", "Depot", "Garrison"] },
+      { word: "Mint", def: "A place where money is coined", family: ["Treasury", "Bursary", "Exchequer"] },
+      { word: "Hangar", def: "A shed where aircraft are kept" },
+      { word: "Sanatorium", def: "A place for the treatment of invalids and convalescents" },
+      { word: "Asylum", def: "A place of refuge, especially for the mentally ill" },
+      { word: "Orphanage", def: "A home for children without parents" },
+      { word: "Cemetery", def: "A burial ground for the dead", family: ["Crematorium", "Mausoleum", "Sepulchre"] },
+      { word: "Crematorium", def: "A place where dead bodies are burnt" },
+      { word: "Mausoleum", def: "A magnificent tomb" },
+      { word: "Archives", def: "A place where public records are kept" },
+      { word: "Aquarium", def: "A tank in which fish and water plants are kept" },
+      { word: "Nursery", def: "A place where young plants are grown" },
+      { word: "Sanctuary", def: "A place of protection for birds and animals" },
+    ],
+  },
+
+  {
+    id: "time",
+    label: "Time & frequency",
+    emoji: "⏳",
+    color: "#d97706",
+    note: "Biannual and biennial are the classic pair — twice a year against once in two years.",
+    items: [
+      { word: "Annual", def: "Happening once a year" },
+      { word: "Biannual", def: "Happening twice a year", family: ["Biennial", "Annual", "Perennial"] },
+      { word: "Biennial", def: "Happening once every two years" },
+      { word: "Perennial", def: "Lasting through the whole year, or for a very long time" },
+      { word: "Quinquennial", def: "Happening once every five years" },
+      { word: "Decennial", def: "Happening once every ten years" },
+      { word: "Centenary", def: "The hundredth anniversary of an event", family: ["Bicentenary", "Millennium", "Jubilee"] },
+      { word: "Millennium", def: "A period of one thousand years" },
+      { word: "Contemporary", def: "Belonging to the same period of time" },
+      { word: "Posthumous", def: "Happening or published after a person's death" },
+      { word: "Ephemeral", def: "Lasting for a very short time", family: ["Perennial", "Eternal", "Perpetual"] },
+      { word: "Obsolete", def: "No longer in use; out of date" },
+      { word: "Chronic", def: "An illness that lasts a long time", family: ["Acute", "Fatal", "Contagious"] },
+      { word: "Antenatal", def: "Occurring before birth", family: ["Postnatal", "Prenatal", "Neonatal"] },
+    ],
+  },
+
+  {
+    id: "cannot",
+    label: "That cannot be…",
+    emoji: "🚫",
+    color: "#64748b",
+    note: "All of these begin with a negative prefix, so the options look identical at a glance.",
+    items: [
+      { word: "Incorrigible", def: "A person who cannot be corrected or reformed", family: ["Incongruous", "Incorruptible", "Inconsolable"] },
+      { word: "Illegible", def: "Handwriting that cannot be read", family: ["Ineligible", "Indelible", "Ineffable"] },
+      { word: "Ineligible", def: "Not qualified to be chosen" },
+      { word: "Indelible", def: "A mark that cannot be erased" },
+      { word: "Inedible", def: "Food that is not fit to be eaten", family: ["Edible", "Indelible", "Ineffable"] },
+      { word: "Inevitable", def: "That which cannot be avoided" },
+      { word: "Invincible", def: "That cannot be defeated", family: ["Invisible", "Inevitable", "Impregnable"] },
+      { word: "Impregnable", def: "A fort that cannot be captured" },
+      { word: "Inaudible", def: "A sound that cannot be heard" },
+      { word: "Incurable", def: "A disease that cannot be cured" },
+      { word: "Indispensable", def: "That which cannot be done without" },
+      { word: "Insoluble", def: "A problem that cannot be solved" },
+      { word: "Irrevocable", def: "That cannot be taken back or changed" },
+      { word: "Infallible", def: "One who never makes a mistake" },
+      { word: "Inexplicable", def: "That cannot be explained" },
+      { word: "Inflammable", def: "That catches fire easily", family: ["Inflated", "Inflexible", "Influential"] },
+      { word: "Unanimous", def: "All of one mind; in complete agreement" },
+    ],
+  },
+
+  {
+    id: "people",
+    label: "A person who…",
+    emoji: "🧑",
+    color: "#22c55e",
+    note: "High-frequency, and the options are usually near-neighbours (novice / amateur / veteran).",
+    items: [
+      { word: "Novice", def: "One who is new to a trade or profession", family: ["Veteran", "Connoisseur", "Maestro"] },
+      { word: "Veteran", def: "One with long experience of an activity" },
+      { word: "Connoisseur", def: "An expert judge in matters of taste" },
+      { word: "Amateur", def: "One who does something for pleasure, not payment" },
+      { word: "Mercenary", def: "A soldier who fights for any country that pays him" },
+      { word: "Martyr", def: "One who dies for a cause or belief" },
+      { word: "Fugitive", def: "One who is running away from the law", family: ["Stowaway", "Vagabond", "Truant"] },
+      { word: "Stowaway", def: "A person who hides on a ship or aircraft to travel free", family: ["Vagabond", "Fugitive", "Truant"] },
+      { word: "Truant", def: "A pupil who stays away from school without permission" },
+      { word: "Nomad", def: "One who wanders from place to place with no fixed home" },
+      { word: "Recluse", def: "One who lives alone and avoids other people", family: ["Ascetic", "Nomad", "Vagrant"] },
+      { word: "Ascetic", def: "One who leads a life of severe self-discipline" },
+      { word: "Teetotaller", def: "One who abstains completely from alcoholic drink", family: ["Ascetic", "Recluse", "Epicure"] },
+      { word: "Glutton", def: "A person who eats far too much", family: ["Gourmet", "Epicure", "Ascetic"] },
+      { word: "Gourmet", def: "A person who is a fine judge of food and drink" },
+      { word: "Spendthrift", def: "One who spends money wastefully", family: ["Miser", "Prodigal", "Philanthropist"] },
+      { word: "Miser", def: "One who hoards money and hates spending it" },
+      { word: "Bibliophile", def: "A lover of books", family: ["Bibliographer", "Bibliopole", "Bibliomaniac"] },
+      { word: "Polyglot", def: "One who speaks many languages" },
+      { word: "Prodigy", def: "A person with exceptional talent, especially a child" },
+      { word: "Protagonist", def: "The chief character in a play or story" },
+      { word: "Sycophant", def: "One who flatters the powerful for his own gain" },
+      { word: "Accomplice", def: "A partner in crime" },
+      { word: "Arsonist", def: "One who deliberately sets fire to property", family: ["Anarchist", "Assassin", "Saboteur"] },
+      { word: "Somnambulist", def: "A person who walks in his sleep", family: ["Somniloquist", "Insomniac", "Narcoleptic"] },
+      { word: "Somniloquist", def: "A person who talks in his sleep", family: ["Somnambulist", "Ventriloquist", "Insomniac"] },
+      { word: "Insomniac", def: "A person who is habitually unable to sleep" },
+      { word: "Ventriloquist", def: "One who can speak without moving his lips" },
+      { word: "Emigrant", def: "One who leaves his own country to settle in another", family: ["Immigrant", "Refugee", "Nomad"] },
+      { word: "Immigrant", def: "One who comes into a foreign country to settle there", family: ["Emigrant", "Expatriate", "Alien"] },
+      { word: "Credulous", def: "A person who is too ready to believe anything", family: ["Credible", "Creditable", "Incredulous"] },
+      { word: "Optimist", def: "One who looks on the bright side of things", family: ["Pessimist", "Cynic", "Realist"] },
+      { word: "Pessimist", def: "One who looks on the dark side of things" },
+    ],
+  },
+
+  {
+    id: "books",
+    label: "Books & collections",
+    emoji: "📚",
+    color: "#8b5cf6",
+    note: "A tight family — anthology, bibliography, almanac, thesaurus all name a kind of book.",
+    items: [
+      { word: "Anthology", def: "A published collection of poems or writings", family: ["Bibliography", "Chronicle", "Compendium"] },
+      { word: "Bibliography", def: "An alphabetical list of books and sources on a subject", family: ["Anthology", "Almanac", "Catalogue"] },
+      { word: "Catalogue", def: "A complete list of items, usually in order" },
+      { word: "Encyclopaedia", def: "A book giving information on all branches of knowledge", family: ["Almanac", "Thesaurus", "Lexicon"] },
+      { word: "Almanac", def: "A yearly table of dates, tides and astronomical events", family: ["Chronicle", "Directory", "Ledger"] },
+      { word: "Thesaurus", def: "A book of words grouped by their meanings" },
+      { word: "Lexicon", def: "A dictionary, especially of an ancient language" },
+      { word: "Glossary", def: "A list of difficult words with their explanations" },
+      { word: "Atlas", def: "A book of maps" },
+      { word: "Chronicle", def: "A record of events in the order they happened" },
+    ],
+  },
+
+  {
+    id: "misc",
+    label: "High-frequency singles",
+    emoji: "⭐",
+    color: "#f43f5e",
+    note: "No family to sort them by — these simply turn up, year after year.",
+    items: [
+      { word: "Panacea", def: "A remedy for all diseases and ills", family: ["Antidote", "Placebo", "Sedative"] },
+      { word: "Sinecure", def: "A post that brings good pay but almost no work", family: ["Honorarium", "Retainer", "Perquisite"] },
+      { word: "Windfall", def: "A sudden and unexpected piece of good fortune", family: ["Bequest", "Dividend", "Stipend"] },
+      { word: "Utopia", def: "An imaginary place where everything is perfect" },
+      { word: "Oasis", def: "A fertile place with water in the middle of a desert" },
+      { word: "Mirage", def: "An optical illusion of water in a desert" },
+      { word: "Silhouette", def: "A dark outline of something seen against the light" },
+      { word: "Souvenir", def: "A thing kept as a reminder of a place or event", family: ["Memento", "Heirloom", "Relic"] },
+      { word: "Heirloom", def: "A valuable object passed down in a family" },
+      { word: "Itinerary", def: "A detailed plan of a journey" },
+      { word: "Agenda", def: "A list of things to be discussed at a meeting" },
+      { word: "Quorum", def: "The minimum number of members needed for a meeting to be valid" },
+      { word: "Referendum", def: "A direct vote by the people on a single question", family: ["Plebiscite", "Ballot", "Poll"] },
+      { word: "Amnesty", def: "A general pardon granted by a government" },
+      { word: "Armistice", def: "An agreement to stop fighting for a time", family: ["Truce", "Treaty", "Embargo"] },
+      { word: "Embargo", def: "An official ban on trade with a country" },
+      { word: "Boycott", def: "A refusal to deal with a person or country as a protest" },
+      { word: "Verdict", def: "The decision of a jury" },
+      { word: "Alibi", def: "A plea that one was elsewhere when a crime was committed" },
+      { word: "Testimony", def: "A formal statement given by a witness" },
+      { word: "Honorary", def: "Holding a position without pay" },
+      { word: "Fastidious", def: "One who is very hard to please" },
+      { word: "Callous", def: "Showing no sympathy for the suffering of others" },
+      { word: "Obituary", def: "A notice of a person's death in a newspaper" },
+    ],
+  },
+];
+
+export const ONE_WORD_COUNT = ONE_WORD_GROUPS.reduce((n, g) => n + g.items.length, 0);
+
+/** Flat list for the practice generator — only entries with a real family, so
+ *  a generated question always has three same-family distractors. */
+export const ONE_WORD_ITEMS: { def: string; answer: string; family: string[] }[] =
+  ONE_WORD_GROUPS.flatMap((g) =>
+    g.items
+      .filter((i): i is OneWordItem & { family: string[] } => !!i.family && i.family.length === 3)
+      .map((i) => ({ def: i.def, answer: i.word, family: i.family })));
