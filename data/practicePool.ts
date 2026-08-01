@@ -127,6 +127,14 @@ export const GRAMMAR_POINTS: GrammarPoint[] = [
   { section: "Miscellaneous", point: "so … that vs such … that" },
   { section: "Miscellaneous", point: "few / a few / the few and little / a little / the little" },
   { section: "Miscellaneous", point: "either / neither for two, any / none for more than two" },
+
+  // ── From the AFCAT paper analysis (Rules 101–106) ──────────────────────────
+  // Points the exam actually tested but the pool had no assignment for. See
+  // data/examPriority.ts for the quoted fragments.
+  { section: "Subject-Verb Agreement", point: "two nouns joined by AND that name one single idea take a singular verb (the ebb and flow is, bread and butter is)" },
+  { section: "Non-Finite Verbs", point: "a NOUN before a gerund takes the possessive — the researcher's submitting, Ram's coming late" },
+  { section: "Special Constructions", point: "reducing a complex sentence to a simple one — the subordinate clause becomes a phrase (On realising…, Being poor…, Despite…)" },
+  { section: "Miscellaneous", point: "homonym sets placed across several blanks — though / through / thorough / threw, principal / principle, stationary / stationery" },
 ];
 
 // One-word substitution moved to data/oneWord.ts, grouped by family so it can

@@ -11,6 +11,7 @@ import AltTrick from "@/components/AltTrick";
 import { ALT_TRICKS } from "@/data/altTricks";
 import { triggersFor } from "@/data/triggers";
 import AskAISheet from "@/components/AskAISheet";
+import ExamPriorityBadge, { ExamTierChip } from "@/components/ExamPriorityBadge";
 
 type Props = {
   rule: Rule;
@@ -95,6 +96,7 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
             {rule.section}
           </span>
           <div className="flex items-center gap-2.5">
+            <ExamTierChip ruleId={rule.id} />
             {rule.star && (
               <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
                 Priority
@@ -139,6 +141,9 @@ export default function RuleCard({ rule, status, onMarkSeen, onRevise }: Props) 
               </div>
             </div>
           )}
+
+          {/* How often this KIND of rule actually shows up in AFCAT English. */}
+          <ExamPriorityBadge ruleId={rule.id} />
         </div>
 
         {/* Concept chips */}

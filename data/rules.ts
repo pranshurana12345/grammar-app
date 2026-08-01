@@ -2516,6 +2516,233 @@ export const rules: Rule[] = [
     ],
     star: false,
   },
+
+  // ── Rules 101–106 ──────────────────────────────────────────────────────────
+  // Added from a question-by-question read of the two EdCIL model papers and
+  // the actual AFCAT 01 2026 paper. Every one of these was TESTED and had no
+  // rule covering it in the original 100. See data/examPriority.ts for the
+  // quoted fragments.
+  {
+    id: 101,
+    ruleNumber: "Rule 101",
+    section: "Subject-Verb Agreement",
+    sectionColor: "#8b5cf6",
+    title: "⭐ Two Nouns, ONE Idea → Singular Verb",
+    rule: "When two nouns joined by AND refer to a SINGLE thing, idea or person, the verb is SINGULAR. Test: if you cannot separate them without destroying the meaning, they are one unit. This is the opposite of the normal 'X and Y = plural' rule.",
+    hindiTip: "'The ebb and flow' = एक ही चीज़ (उतार-चढ़ाव) — इसलिए IS, are नहीं। अगर दो nouns मिलकर एक ही चीज़ बनाते हैं तो verb singular होगा।",
+    hinglishTip: "Normal rule: 'A and B' = plural verb. Lekin jab dono milkar EK cheez banate hain, tab singular. 'Ebb and flow' = ek hi phenomenon. 'Bread and butter' = ek dish. 'Rise and fall' = ek process. Test yeh hai: kya main inhe alag kar sakta hoon? Agar nahi, to SINGULAR verb.",
+    correct: [
+      "The ebb and flow of the tides IS now understood. ✅",
+      "Bread and butter IS my breakfast. ✅",
+      "The rise and fall of the empire WAS gradual. ✅",
+      "Slow and steady WINS the race. ✅",
+    ],
+    correctWhy: [
+      "'Ebb and flow' names one single phenomenon — the tidal movement — not two separate things, so it takes the singular verb 'is'.",
+      "'Bread and butter' here is one dish eaten together, not two foods listed separately, so the verb stays singular.",
+      "'The rise and fall' is one continuous historical process, so 'was' is correct rather than 'were'.",
+      "'Slow and steady' describes a single manner of proceeding, so the singular 'wins' is correct.",
+    ],
+    wrong: [
+      "The ebb and flow of the tides ARE now understood. ❌",
+      "Bread and butter ARE my breakfast. ❌",
+    ],
+    wrongWhy: [
+      "The plural 'are' treats 'ebb' and 'flow' as two separate subjects, but they name one single phenomenon — the verb must be singular.",
+      "'Are' splits 'bread and butter' into two separate foods; as a single dish it needs the singular 'is'.",
+    ],
+    extras: [
+      "Careful — this is NOT every 'A and B'. 'The teacher and the writer ARE here' = two people ✅",
+      "But 'The teacher and writer IS here' (one person doing both) = singular ✅",
+      "The giveaway is a repeated THE: one THE = one person/thing = singular.",
+    ],
+    star: true,
+  },
+  {
+    id: 102,
+    ruleNumber: "Rule 102",
+    section: "Tenses",
+    sectionColor: "#f59e0b",
+    title: "⭐ SINCE → Present Perfect (Never Present Continuous)",
+    rule: "SINCE marks the start of something still going on. It forces PRESENT PERFECT (has/have + V3) or PRESENT PERFECT CONTINUOUS (has/have been + V-ing). It can NEVER sit with a plain present continuous (is/am/are + V-ing).",
+    hindiTip: "'Since' आया तो 'is trying' ❌ — 'HAS BEEN trying' ✅। Since का मतलब है काम पहले शुरू हुआ और अब भी चल रहा है — इसलिए perfect tense चाहिए।",
+    hinglishTip: "Since = kaam pehle shuru hua aur abhi bhi chal raha hai. Isliye simple present continuous kaam nahi karega. 'Since 2019 he is working' ❌ → 'he HAS BEEN working' ✅. Yaad rakho: SINCE dekha → HAS/HAVE BEEN dhundo. For ke saath bhi yahi rule hai.",
+    correct: [
+      "Since his arrival he HAS BEEN TRYING to spread education. ✅",
+      "He HAS BEEN working here since 2019. ✅",
+      "She HAS LIVED in Delhi since childhood. ✅",
+    ],
+    correctWhy: [
+      "'Since his arrival' fixes a starting point for an action still continuing, so the present perfect continuous 'has been trying' is required.",
+      "The action began in 2019 and continues now — 'has been working' correctly links past start to present.",
+      "'Has lived' (present perfect) shows a state that began in childhood and is still true.",
+    ],
+    wrong: [
+      "Since his arrival he IS TRYING to spread education. ❌",
+      "Since 2019 he IS WORKING here. ❌",
+    ],
+    wrongWhy: [
+      "'Is trying' is present continuous, which describes only right now — it cannot carry the 'started earlier and still going' meaning that 'since' demands.",
+      "'Is working' fails to connect 2019 to the present; 'has been working' is needed.",
+    ],
+    extras: [
+      "SINCE = point of time (since Monday, since 2019, since his arrival)",
+      "FOR = duration (for two years, for a week) — also takes the perfect",
+      "This pairs with Rule 60, which tells you WHICH of for/since to pick.",
+    ],
+    star: true,
+  },
+  {
+    id: 103,
+    ruleNumber: "Rule 103",
+    section: "Tenses",
+    sectionColor: "#f59e0b",
+    title: "⭐ No Future Tense Inside a Time Clause",
+    rule: "After a time conjunction — WHEN, AS SOON AS, BEFORE, AFTER, UNTIL, TILL, BY THE TIME, THE MOMENT — use SIMPLE PRESENT, never will/shall. The future goes in the OTHER clause only.",
+    hindiTip: "'As soon as I SHALL reach' ❌ — 'As soon as I REACH' ✅। Time clause में future नहीं आता, भले ही मतलब future का हो।",
+    hinglishTip: "Yeh bilkul 'if' wale rule jaisa hai. Jaise 'If I will go' ❌ hota hai, waise hi 'When I will go' ❌ hai. Time conjunction ke baad hamesha simple present — chahe baat future ki ho. Future sirf DOOSRE clause mein: 'As soon as I reach (present), I shall send (future)'.",
+    correct: [
+      "As soon as I REACH Mumbai, I SHALL SEND you the file. ✅",
+      "When he COMES, I will tell him. ✅",
+      "Wait here until she RETURNS. ✅",
+      "By the time you ARRIVE, we will have finished. ✅",
+    ],
+    correctWhy: [
+      "'As soon as' is a time conjunction, so its clause takes the simple present 'reach'; the future 'shall send' correctly sits in the main clause.",
+      "'When he comes' uses simple present in the time clause while 'will tell' carries the future in the main clause.",
+      "'Until she returns' takes simple present — the futurity is already understood from the context.",
+      "'By the time you arrive' stays present; the main clause carries the future perfect.",
+    ],
+    wrong: [
+      "As soon as I SHALL REACH Mumbai, I shall send you the file. ❌",
+      "When he WILL COME, I will tell him. ❌",
+    ],
+    wrongWhy: [
+      "'Shall reach' puts the future inside the time clause — after 'as soon as' only the simple present is allowed.",
+      "'Will come' inside a 'when' clause is the same error; it must be 'when he comes'.",
+    ],
+    extras: [
+      "Same logic as Rule 26 (conditionals): the IF-clause can't take 'will' either.",
+      "Memory hook: only ONE clause is allowed to hold the future.",
+    ],
+    star: true,
+  },
+  {
+    id: 104,
+    ruleNumber: "Rule 104",
+    section: "Non-Finite Verbs",
+    sectionColor: "#14b8a6",
+    title: "⭐ Possessive Before a Gerund — NOUNS Too",
+    rule: "Rule 40 covers pronouns (his studying). This covers NOUNS: when a person's NAME or role sits before an -ing noun, it takes an apostrophe-S. 'I object to the researcher submitting' ❌ → 'the researcher'S submitting' ✅.",
+    hindiTip: "Gerund से पहले noun भी possessive होगा — 'the researcher submitting' ❌ → \"the researcher'S submitting\" ✅। जैसे his/her आता है, वैसे ही Ram's, teacher's आएगा।",
+    hinglishTip: "Rule 40 ne sikhaya: 'his studying' ✅, 'him studying' ❌. Ab wahi baat NAAM ke saath: 'Ram singing' ❌ → \"Ram'S singing\" ✅. Asli 2026 paper mein yeh DO baar aaya — 'the researcher submitting' aur 'the researcher's withholding'. Test: gerund ke pehle jo bhi ho, use possessive banao.",
+    correct: [
+      "The supervisor disapproved of the researcher'S submitting the data. ✅",
+      "I object to RAM'S coming late. ✅",
+      "The committee objected to the researcher'S withholding of data. ✅",
+      "We were surprised at the TEACHER'S leaving so early. ✅",
+    ],
+    correctWhy: [
+      "'Submitting' is a gerund (a noun), so the doer before it must be possessive — 'the researcher's', exactly as you would write 'the researcher's decision'.",
+      "'Coming' is a gerund, so 'Ram' takes the possessive form 'Ram's'.",
+      "'Withholding' is a gerund acting as the object of 'objected to', so 'researcher's' is required.",
+      "'Leaving' is a gerund, so the noun before it takes apostrophe-S.",
+    ],
+    wrong: [
+      "The supervisor disapproved of the researcher submitting the data. ❌",
+      "I object to RAM coming late. ❌",
+    ],
+    wrongWhy: [
+      "Without the apostrophe-S, 'submitting' reads as a participle describing the researcher — but the thing being disapproved of is the ACT, so the possessive is needed.",
+      "'Ram coming' makes Ram the object; what is objected to is the coming, so it must be 'Ram's coming'.",
+    ],
+    extras: [
+      "Tested TWICE in the actual AFCAT 01 2026 paper — and in neither model paper.",
+      "Common triggers: object to · disapprove of · insist on · depend on · result in + someone's + V-ing",
+      "Quick check: replace the gerund with a plain noun. 'disapproved of the researcher's REPORT' — if the possessive feels right there, it is right with the -ing form too.",
+    ],
+    star: true,
+  },
+  {
+    id: 105,
+    ruleNumber: "Rule 105",
+    section: "Special Constructions",
+    sectionColor: "#ef4444",
+    title: "⭐ Complex → Simple Sentence (Clause to Phrase)",
+    rule: "A SIMPLE sentence has exactly ONE finite verb. To turn a complex sentence simple, collapse the subordinate clause into a PHRASE — usually 'On/After + V-ing', 'Being + adjective', or 'Despite + noun'. Any option that keeps two clauses joined by but/because/while/and is still complex, so it is wrong by definition.",
+    hindiTip: "Simple sentence = सिर्फ एक finite verb। 'When she realised…' को 'On realising…' बना दो। अगर option में अभी भी दो clauses हैं तो वो simple नहीं है — गलत है।",
+    hinglishTip: "Sabse tez trick: options mein FINITE VERBS gino. Simple sentence mein sirf EK hoga. 'When the researcher realised that the data were inconsistent, she revised…' — yahan 3 verbs hain (realised, were, revised) = complex. Sahi answer: 'On realising the inconsistency of the data, she revised…' = sirf 1 finite verb (revised). Baaki options jinme 'because', 'but', 'while' hai — wo complex hi rahenge, cut kar do.",
+    correct: [
+      "On realising the inconsistency of the data, the researcher revised the framework. ✅",
+      "Despite the robustness of the framework, anomalies necessitated a reassessment. ✅",
+      "After finishing his work, he went home. ✅",
+      "Being poor, he could not pay the fees. ✅",
+    ],
+    correctWhy: [
+      "The clause 'When the researcher realised that the data were inconsistent' becomes the phrase 'On realising the inconsistency of the data' — leaving 'revised' as the only finite verb.",
+      "'Though the framework appeared robust' becomes the prepositional phrase 'Despite the robustness of the framework', leaving one finite verb.",
+      "'After he finished his work' reduces to 'After finishing his work' — the subordinate verb becomes a gerund.",
+      "'Because he was poor' reduces to the participial phrase 'Being poor'.",
+    ],
+    wrong: [
+      "The researcher revised the framework because the data were inconsistent. ❌ (still complex)",
+      "The framework appeared robust, but anomalies necessitated a reassessment. ❌ (compound, not simple)",
+    ],
+    wrongWhy: [
+      "'Because' introduces a subordinate clause with its own finite verb 'were' — two finite verbs means it is still a complex sentence.",
+      "Two independent clauses joined by 'but' make this a COMPOUND sentence; the question asked for a simple one.",
+    ],
+    extras: [
+      "Standard conversions: When/After + clause → On/After + V-ing · Because/As → Being / Due to + noun · Though/Although → Despite / In spite of + noun · So that → to + V1",
+      "NEW in the actual AFCAT 01 2026 paper — asked TWICE (Q7, Q21), and absent from both model papers.",
+      "Fastest elimination: strike out every option containing because · but · while · when · although.",
+    ],
+    star: true,
+  },
+  {
+    id: 106,
+    ruleNumber: "Rule 106",
+    section: "Miscellaneous",
+    sectionColor: "#64748b",
+    title: "⭐ Homonym Sets — Though / Through / Thorough / Threw",
+    rule: "Words separated by one letter or one sound, tested as a set in a single sentence with multiple blanks. You must know ALL members of the set, not just one, because the question makes you place each in turn.",
+    hindiTip: "Though = हालाँकि | Through = के आर-पार | Thorough = पूरा/विस्तृत | Threw = फेंका (throw का past)। चारों एक ही sentence में आ सकते हैं!",
+    hinglishTip: "Yeh naya format hai — ek hi sentence mein 4 blanks, aur chaaron similar words. Sirf ek yaad karne se kaam nahi chalega. Though = although/halanki. Through = ek taraf se dusri taraf. Thorough = complete/detailed. Threw = throw ka past tense. Padho aur har blank ka grammar role dekho: shuru mein conjunction chahiye → Though.",
+    correct: [
+      "THOUGH the researcher went THROUGH a THOROUGH review, she THREW the outdated assumptions aside. ✅",
+      "The principal ACCEPTED all students EXCEPT one. ✅",
+      "Her ADVICE was good, so I ADVISE you to take it. ✅",
+    ],
+    correctWhy: [
+      "'Though' opens a concession clause; 'through' means from start to end of the review; 'thorough' is the adjective describing the review; 'threw' is the past tense of throw.",
+      "'Accepted' means received/agreed to; 'except' means excluding — different parts of speech entirely.",
+      "'Advice' is the noun (-ce); 'advise' is the verb (-se).",
+    ],
+    wrong: [
+      "Through the researcher went though a threw review… ❌",
+    ],
+    wrongWhy: [
+      "Each word is in the wrong slot: a clause opener needs 'Though', movement needs 'through', and the adjective before 'review' must be 'thorough'.",
+    ],
+    table: {
+      headers: ["Set", "Words", "Quick tell"],
+      rows: [
+        ["though / through / thorough / threw", "although · across · complete · past of throw", "Sentence opener = Though"],
+        ["accept / except", "receive · excluding", "eX-cept = eXclude"],
+        ["advice / advise", "noun · verb", "-ce = noun, -se = verb"],
+        ["affect / effect", "verb · noun", "A ffect = A ction"],
+        ["principal / principle", "head person, main · a rule", "princiPAL is your PAL"],
+        ["stationary / stationery", "not moving · paper goods", "stationERy = papER"],
+        ["complement / compliment", "completes · praises", "complEment = complEte"],
+        ["lose / loose", "misplace · not tight", "loose has extra o — it is loose"],
+      ],
+    },
+    extras: [
+      "NEW format in the actual AFCAT 01 2026 paper (Q12) — four blanks, one homonym set.",
+      "Rule 88 (quite/quiet) and Rule 79 (advice/advise) are the same family — revise all three together.",
+    ],
+    star: true,
+  },
 ];
 
 export const getSectionRules = (sectionName: string) =>

@@ -109,6 +109,12 @@ export const RULE_TRIGGERS: Record<number, string[]> = {
   98: ["seldom or never", "seldom if ever"],
   99: ["five-year-old", "ten-rupee", "three-day"],
   100: ["between", "among"],
+  101: ["ebb and flow", "bread and butter", "rise and fall", "slow and steady", "two nouns, one idea"],
+  102: ["since", "since his arrival", "since 2019", "for two years"],
+  103: ["as soon as", "when", "before", "after", "until", "till", "by the time", "the moment"],
+  104: ["object to … -ing", "disapprove of … -ing", "insist on … -ing", "a name before an -ing word"],
+  105: ["transform into a simple sentence", "when …", "though …", "because …", "count the finite verbs"],
+  106: ["though / through / thorough / threw", "accept / except", "advice / advise", "principal / principle"],
 };
 
 /** Trigger words for a rule, or an empty list when its cue is structural. */

@@ -919,6 +919,68 @@ export const QUIZ_BANK: RuleQuiz[] = [
       { q: "Which is CORRECT?", options: ["He divided it among the three friends.", "He divided it between the three friends.", "He divided it beside the three friends.", "He divided it besides the three friends."], answer: 0 },
     ],
   },
+  {
+    ruleId: 101,
+    questions: [
+      { q: "The ebb and flow of the tides ___ now understood.", options: ["is", "are", "were", "have been"], answer: 0 },
+      { q: "Bread and butter ___ my usual breakfast.", options: ["is", "are", "were", "have"], answer: 0 },
+      { q: "Slow and steady ___ the race.", options: ["wins", "win", "are winning", "have won"], answer: 0 },
+      { q: "The rise and fall of the empire ___ gradual.", options: ["was", "were", "have been", "are"], answer: 0 },
+      { q: "Which sentence is CORRECT?", options: ["The teacher and writer is here. (one person)", "The teacher and writer are here. (one person)", "The ebb and flow are understood.", "Bread and butter are my breakfast."], answer: 0 },
+      { q: "Two nouns joined by AND that name ONE single idea take a ___ verb.", options: ["singular", "plural", "past", "continuous"], answer: 0 },
+    ],
+  },
+  {
+    ruleId: 102,
+    questions: [
+      { q: "Since his arrival at his native town he ___ to spread education.", options: ["has been trying", "is trying", "was trying", "tries"], answer: 0 },
+      { q: "He ___ in this office since 2019.", options: ["has been working", "is working", "works", "was working"], answer: 0 },
+      { q: "She ___ in Delhi since her childhood.", options: ["has lived", "is living", "lives", "was living"], answer: 0 },
+      { q: "Spot the error: 'Since last Monday he is preparing for the exam.'", options: ["is preparing", "Since", "last Monday", "for the exam"], answer: 0 },
+      { q: "SINCE marks a point of time, so it forces the ___ tense.", options: ["present perfect", "present continuous", "simple past", "simple future"], answer: 0 },
+    ],
+  },
+  {
+    ruleId: 103,
+    questions: [
+      { q: "As soon as I ___ Mumbai, I shall send you the file.", options: ["reach", "shall reach", "will reach", "would reach"], answer: 0 },
+      { q: "When he ___, I will tell him the news.", options: ["comes", "will come", "shall come", "would come"], answer: 0 },
+      { q: "Wait here until she ___.", options: ["returns", "will return", "shall return", "would return"], answer: 0 },
+      { q: "Spot the error: 'As soon as I shall reach Mumbai, I shall send the file.'", options: ["shall reach", "As soon as", "I shall send", "the file"], answer: 0 },
+      { q: "After a time conjunction (when, until, as soon as), use the ___.", options: ["simple present", "simple future", "present perfect", "past continuous"], answer: 0 },
+    ],
+  },
+  {
+    ruleId: 104,
+    questions: [
+      { q: "The supervisor disapproved of ___ submitting the data without authorisation.", options: ["the researcher's", "the researcher", "the researchers", "researchers"], answer: 0 },
+      { q: "I object to ___ coming late every day.", options: ["Ram's", "Ram", "Rams", "Ram is"], answer: 0 },
+      { q: "The committee objected to the ___ of critical data during peer review.", options: ["researcher's withholding", "researcher withholding", "researchers withholding", "researcher withheld"], answer: 0 },
+      { q: "Spot the error: 'We were surprised at the teacher leaving so early.'", options: ["the teacher leaving", "We were surprised", "at", "so early"], answer: 0 },
+      { q: "Before a gerund, a NOUN doer must take the ___ form.", options: ["possessive (apostrophe-S)", "plural", "objective", "base"], answer: 0 },
+    ],
+  },
+  {
+    ruleId: 105,
+    questions: [
+      { q: "Make this SIMPLE: 'When the researcher realised the data were inconsistent, she revised the framework.'", options: ["On realising the inconsistency of the data, she revised the framework.", "She revised the framework because the data were inconsistent.", "The data were inconsistent, so she revised the framework.", "She realised the data were inconsistent and revised the framework."], answer: 0 },
+      { q: "Make this SIMPLE: 'Though he was poor, he could not pay the fees.'", options: ["Being poor, he could not pay the fees.", "He was poor, but he could not pay the fees.", "He could not pay the fees because he was poor.", "As he was poor, he could not pay the fees."], answer: 0 },
+      { q: "Make this SIMPLE: 'After he finished his work, he went home.'", options: ["After finishing his work, he went home.", "He finished his work and went home.", "He went home because he finished his work.", "When he finished his work, he went home."], answer: 0 },
+      { q: "A SIMPLE sentence contains exactly how many finite verbs?", options: ["One", "Two", "Three", "Any number"], answer: 0 },
+      { q: "'Though the framework appeared robust' converts to which phrase?", options: ["Despite the robustness of the framework", "But the framework was robust", "Because the framework was robust", "While the framework appeared robust"], answer: 0 },
+    ],
+  },
+  {
+    ruleId: 106,
+    questions: [
+      { q: "___ the researcher went ___ a ___ review, she ___ the old assumptions aside.", options: ["Though / through / thorough / threw", "Through / thorough / threw / though", "Thorough / threw / though / through", "Threw / though / through / thorough"], answer: 0 },
+      { q: "The principal accepted every application ___ one.", options: ["except", "accept", "expect", "aspect"], answer: 0 },
+      { q: "Her ___ was sound, so I ___ you to follow it.", options: ["advice / advise", "advise / advice", "advice / advice", "advise / advise"], answer: 0 },
+      { q: "He conducted a ___ investigation into the matter.", options: ["thorough", "through", "though", "threw"], answer: 0 },
+      { q: "The shop sells ___ such as pens and paper.", options: ["stationery", "stationary", "stationnery", "stationarry"], answer: 0 },
+      { q: "Which pair is matched correctly?", options: ["principal = head person, principle = a rule", "principal = a rule, principle = head person", "principal = a rule, principle = a rule", "principal = head person, principle = head person"], answer: 0 },
+    ],
+  },
 ];
 
 /** Get quiz questions for a specific rule (returns [] if none exist) */

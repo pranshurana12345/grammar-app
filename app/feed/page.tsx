@@ -11,6 +11,7 @@ import { ALT_TRICKS } from "@/data/altTricks";
 import { RuleVisual, VisualType } from "@/components/visuals/RuleVisual";
 import { detectConcepts } from "@/data/concepts";
 import { triggersFor } from "@/data/triggers";
+import ExamPriorityBadge, { ExamTierChip } from "@/components/ExamPriorityBadge";
 import AskAISheet from "@/components/AskAISheet";
 
 export default function FeedPage() {
@@ -298,6 +299,7 @@ function DesktopRuleDetail({
           <span className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full text-white"
             style={{ background: c }}>{rule.section}</span>
           {rule.star && <span className="text-xs font-black text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200">⭐ HIGH PRIORITY</span>}
+          <ExamTierChip ruleId={rule.id} />
         </div>
         <h1 className="text-4xl font-black text-slate-900 leading-tight" style={{ letterSpacing: "-0.04em" }}>
           {rule.title}
@@ -331,6 +333,11 @@ function DesktopRuleDetail({
           </div>
         </div>
       )}
+
+      {/* How often this KIND of rule actually shows up in AFCAT English. */}
+      <div className="mb-5">
+        <ExamPriorityBadge ruleId={rule.id} />
+      </div>
 
       {/* Concept chips */}
       {(() => {

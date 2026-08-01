@@ -1,7 +1,8 @@
 import QuizPageClient from "./QuizPageClient";
 
 export function generateStaticParams() {
-  return Array.from({ length: 101 }, (_, i) => ({ ruleId: String(i) }));
+  // rules 0–106 (101–106 were added from the AFCAT paper analysis)
+  return Array.from({ length: 107 }, (_, i) => ({ ruleId: String(i) }));
 }
 
 export default function QuizPage() {
