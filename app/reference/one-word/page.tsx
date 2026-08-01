@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import PrintButton from "@/components/PrintButton";
 import { ONE_WORD_GROUPS, ONE_WORD_COUNT } from "@/data/oneWord";
+import { WORD_TABLES, WORD_TABLE_ROW_COUNT } from "@/data/oneWordTables";
 
 // Definition on the left, the word on the right — the direction the exam asks
 // it in. Grouped by family, because the four options always come from one.
@@ -13,6 +14,17 @@ import { ONE_WORD_GROUPS, ONE_WORD_COUNT } from "@/data/oneWord";
 export default function OneWordPage() {
   const [activeGroup, setActiveGroup] = useState("all");
   const [search, setSearch] = useState("");
+  const [view, setView] = useState<"list" | "tables">("list");
+
+  // Table view: same vocabulary, organised by shared stem so one row teaches
+  // three or four words instead of one. Search filters whole rows.
+  const tables = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    if (!q) return WORD_TABLES;
+    return WORD_TABLES
+      .map((t) => ({ ...t, rows: t.rows.filter((r) => r.some((c) => c.toLowerCase().includes(q))) }))
+      .filter((t) => t.rows.length > 0);
+  }, [search]);
 
   const groups = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -40,6 +52,13 @@ export default function OneWordPage() {
           .ows-sheet .w { min-width: 0 !important; width: 30% !important; flex: 0 0 30% !important; }
           .ows-sheet .fam { display: none !important; }
           .ows-sheet .rounded-2xl { border: none !important; border-radius: 0 !important; }
+          /* Table view: print the same markup, just quieter. The scroll
+             container must not clip, and rows must not split across pages. */
+          .ows-sheet .overflow-x-auto { overflow: visible !important; }
+          .ows-sheet table { width: 100% !important; min-width: 0 !important; font-size: 9pt; }
+          .ows-sheet thead { display: table-header-group; }
+          .ows-sheet th, .ows-sheet td { padding: 2.5px 6px !important; }
+          .ows-sheet tr.ows-row { padding: 0 !important; }
         }
       `}</style>
 
@@ -55,7 +74,11 @@ export default function OneWordPage() {
             </div>
             <div>
               <h1 className="text-lg font-black text-slate-800">One-Word Substitution</h1>
-              <p className="text-[11px] text-slate-400 font-semibold">{ONE_WORD_COUNT} words · grouped by family</p>
+              <p className="text-[11px] text-slate-400 font-semibold">
+                {view === "list"
+                  ? `${ONE_WORD_COUNT} words · grouped by family`
+                  : `${WORD_TABLE_ROW_COUNT} rows · learn the stem, get every form`}
+              </p>
             </div>
             <div className="ml-auto"><PrintButton label="PDF" /></div>
           </div>
@@ -69,7 +92,18 @@ export default function OneWordPage() {
             />
           </div>
 
-          <div className="no-print flex gap-2 mt-2 flex-wrap">
+          {/* Same words, two ways in: the exam's grouping, or the stem's. */}
+          <div className="no-print mt-3 flex gap-1 p-1 rounded-xl bg-slate-100">
+            {([["list", "📋", "By family"], ["tables", "🔗", "Paired tables"]] as const).map(([v, icon, label]) => (
+              <button key={v} onClick={() => setView(v)}
+                className="flex-1 px-3 py-1.5 rounded-lg text-xs font-bold press transition-colors"
+                style={view === v ? { background: "#fff", color: "#0f172a", boxShadow: "0 1px 3px rgba(15,23,42,0.1)" } : { color: "#64748b" }}>
+                {icon} {label}
+              </button>
+            ))}
+          </div>
+
+          <div className={`no-print flex gap-2 mt-2 flex-wrap ${view === "tables" ? "hidden" : ""}`}>
             <button onClick={() => setActiveGroup("all")}
               className="px-3 py-1.5 rounded-xl text-xs font-bold press"
               style={activeGroup === "all" ? { background: "#0f172a", color: "#fff" } : { background: "#f1f5f9", color: "#64748b" }}>
@@ -87,9 +121,80 @@ export default function OneWordPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 pt-4 ows-sheet">
-        {search && <p className="text-xs text-slate-400 font-semibold mb-3">{shown} matches for &quot;{search}&quot;</p>}
+        {search && view === "list" && <p className="text-xs text-slate-400 font-semibold mb-3">{shown} matches for &quot;{search}&quot;</p>}
 
-        {groups.map((g) => (
+        {view === "tables" && tables.map((t) => (
+          <div key={t.id} className="mb-6 ows-group">
+            <div className="ows-head mb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">{t.emoji}</span>
+                <h2 className="text-base font-black text-slate-800">{t.label}</h2>
+              </div>
+              <p className="text-[11.5px] text-slate-500 leading-snug mt-0.5 ml-7">{t.note}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-slate-100 overflow-x-auto print-flat"
+              style={{ boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
+              <table className="w-full" style={{ borderCollapse: "collapse", minWidth: t.columns.length > 3 ? "34rem" : undefined }}>
+                <thead>
+                  <tr>
+                    {t.columns.map((col, ci) => (
+                      <th key={col}
+                        className="text-left px-3 py-2 text-[10px] font-black uppercase tracking-wider whitespace-nowrap"
+                        style={{ background: `${t.color}0d`, color: t.color, borderBottom: `1px solid ${t.color}22` }}>
+                        {ci === 0 ? col : `→ ${col}`}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {t.rows.map((row, ri) => (
+                    <tr key={ri} className="ows-row">
+                      {row.map((cell, ci) => (
+                        <td key={ci}
+                          className={ci === 0
+                            ? "px-3 py-2 text-[12.5px] text-slate-600 align-top"
+                            : "px-3 py-2 text-[13px] font-bold align-top"}
+                          style={{
+                            borderTop: ri === 0 ? "none" : "1px solid #f1f5f9",
+                            color: ci === 0 ? undefined : cell === "—" ? "#cbd5e1" : t.color,
+                          }}>
+                          {cell}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {t.irregulars && t.irregulars.length > 0 && (
+              <div className="mt-2 rounded-xl px-3.5 py-3" style={{ background: "#fff7ed", border: "1px solid #fed7aa" }}>
+                <p className="text-[9.5px] font-black uppercase tracking-widest text-orange-600 mb-1.5">
+                  ⚠️ Breaks the pattern — where the marks are lost
+                </p>
+                <div className="space-y-1">
+                  {t.irregulars.map((ir) => (
+                    <p key={ir.word} className="text-[12px] leading-snug text-slate-700">
+                      <span className="font-black text-orange-800">{ir.word}</span>
+                      <span className="text-slate-500"> — {ir.why}</span>
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+
+        {view === "tables" && tables.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-2xl mb-2">🔍</p>
+            <p className="text-slate-500 font-semibold">No row matches &quot;{search}&quot;</p>
+            <button onClick={() => setSearch("")} className="mt-2 text-blue-600 text-sm font-bold press">Clear search</button>
+          </div>
+        )}
+
+        {view === "list" && groups.map((g) => (
           <div key={g.id} className="mb-6 ows-group">
             <div className="ows-head mb-2">
               <div className="flex items-center gap-2">
@@ -123,7 +228,7 @@ export default function OneWordPage() {
           </div>
         ))}
 
-        {groups.length === 0 && (
+        {view === "list" && groups.length === 0 && (
           <div className="text-center py-12">
             <p className="text-2xl mb-2">🔍</p>
             <p className="text-slate-500 font-semibold">Nothing matches &quot;{search}&quot;</p>
